@@ -1,0 +1,47 @@
+.footer {
+    display: flex;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer-sitemap-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-sitemap-list-item {
+    margin-bottom: 10px;
+}
+
+.footer-left {
+    text-align: left;
+}
+
+.footer-right {
+    text-align: right;
+    display: flex;
+}
+
+.footer-logo {
+    height: 50px;
+    width: auto;
+    transition: all 0.2s ease-in-out;
+}
+
+.footer-logo-image {
+    height: 50px;
+    width: auto;
+    transition: all 0.2s ease-in-out;
+}
+
+.footer-legal {
+    margin-left: 20px;
+}
+
+.footer-sitemap {
+    margin-right: 20px;
+}
+

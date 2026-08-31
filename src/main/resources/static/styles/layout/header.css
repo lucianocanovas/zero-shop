@@ -1,0 +1,28 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.header-nav-button {
+    font-size: 24px;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo-image {
+    height: 50px;
+    width: auto;
+    transition: all 0.2s ease-in-out;
+}
+
+.header-logo-image:hover {
+    transform: scale(1.05);
+}
+
+.header-account-button {
+    font-size: 24px;
+}
