@@ -12,10 +12,17 @@
     <script src="https://kit.fontawesome.com/1f6f2e3d37.js" crossorigin="anonymous"></script>
 </head>
 <body>
+    <nav class="nav-overlay">
+        <ul class="nav-list">
+            <li><a href="#">INICIO</a></li>
+            <li><a href="#">PRODUCTOS</a></li>
+            <li><a href="#">NOSOTROS</a></li>
+            <li><a href="#">CONTACTO</a></li>
+            <li><button class="close-button"><i class="fa-solid fa-xmark"></i></button></li>
+        </ul>
+    </nav>
     <header class="header">
-        <nav class="nav">
-            <button class="nav-button"><i class="fa-solid fa-bars"></i> Menu</button>
-        </nav>
+        <button class="nav-button"><i class="fa-solid fa-bars"></i></button>
         <div class="logo">
             <img class="logo-image" src="/src/main/resources/static/images/logo.png">
         </div>
@@ -23,16 +30,14 @@
             <i class="fa-solid fa-user"></i>
         </button>
     </header>
-    <main class="container">
-
+    <main class="main">
     </main>
-    <footer class="container">
+    <footer class="footer">
         <p>Proyecto universitario - Zero Sportwear</p>
         <p>Los productos mostrados en la tienda son de caracter ficticio.</p>
         <p>Cualquier compra realizada es solo para fines de demostración.</p>
     </footer>
     <!-- JavaScript -->
     <script src="/src/main/resources/static/scripts/navbar.js"></script>
-</body>
 </body>
 </html>

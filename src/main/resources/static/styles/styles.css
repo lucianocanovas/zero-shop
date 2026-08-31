@@ -23,3 +23,29 @@ button {
     cursor: pointer;
     border-radius: 5px;
 }
+
+nav {
+    display: none;
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+}
+
+nav.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    margin: 20px 0;
+    text-decoration: none;
+    color: white;
+}
