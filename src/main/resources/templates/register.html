@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 420px; margin: 4rem auto; padding: 0 1rem; }
+        form { display: grid; gap: .75rem; }
+        input { padding: .65rem; font-size: 1rem; }
+        button { padding: .7rem; cursor: pointer; }
+        .error { color: #b00020; font-size: .9rem; }
+    </style>
+</head>
+<body>
+    <h1>Crear cuenta</h1>
+    <form th:action="@{/register}" th:object="${registration}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <label for="firstName">Nombre</label>
+        <input id="firstName" th:field="*{firstName}" required>
+        <p class="error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+        <label for="lastName">Apellidos</label>
+        <input id="lastName" th:field="*{lastName}" required>
+        <p class="error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+        <label for="email">Correo electrónico</label>
+        <input id="email" type="email" th:field="*{email}" required>
+        <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+        <label for="password">Contraseña (mínimo 8 caracteres)</label>
+        <input id="password" type="password" th:field="*{password}" minlength="8" required>
+        <p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+        <button type="submit">Registrarme</button>
+    </form>
+    <p>¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a></p>
+</body>
+</html>

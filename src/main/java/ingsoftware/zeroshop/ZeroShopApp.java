@@ -1,7 +1,11 @@
 package ingsoftware.zeroshop;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
 public class ZeroShopApp {
     public static void main(String[] args) {
-        System.out.println("TEST");
+        SpringApplication.run(ZeroShopApp.class, args);
     }
 }

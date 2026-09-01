@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
-@import url("/src/main/resources/static/styles/layout/nav.css");
-@import url("/src/main/resources/static/styles/layout/header.css");
-@import url("/src/main/resources/static/styles/layout/footer.css");
+@import url("/styles/layout/nav.css");
+@import url("/styles/layout/header.css");
+@import url("/styles/layout/footer.css");
+@import url("/styles/layout/auth-form.css");
 
 :root {
     --light-base: #F0F3FF;

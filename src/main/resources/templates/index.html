@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/src/main/resources/static/styles/styles.css">
+    <link rel="stylesheet" href="/styles/styles.css">
     <title>Inicio</title>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -14,28 +14,35 @@
 <body>
     <nav class="nav-overlay">
         <ul class="nav-list">
-            <li class="nav-list-item"><a class="nav-link" href="index.html">INICIO</a></li>
-            <li class="nav-list-item"><a class="nav-link" href="products.html">PRODUCTOS</a></li>
+            <li class="nav-list-item"><a class="nav-link" th:href="@{/}">INICIO</a></li>
+            <li class="nav-list-item"><a class="nav-link" th:href="@{/}">PRODUCTOS</a></li>
             <li class="nav-list-item"><button class="nav-close-button"><i class="fa-solid fa-xmark"></i></button></li>
             <div class="nav-logo">
-                <img class="nav-logo-image" src="/src/main/resources/static/assets/logo-white.png">
+                <img class="nav-logo-image" src="/assets/logo-white.png">
             </div>
         </ul>
     </nav>
     <header class="header">
         <button class="header-nav-button"><i class="fa-solid fa-bars"></i></button>
         <div class="header-logo">
-            <a href="index.html"><img class="header-logo-image" src="/src/main/resources/static/assets/logo-black.png"></a>
+            <a th:href="@{/}"><img class="header-logo-image" src="/assets/logo-black.png"></a>
         </div>
-        <button class="header-account-button">
+        <a class="header-account-button" th:href="${loggedIn != null and loggedIn ? '/profile' : '/login'}" aria-label="Cuenta" title="Cuenta">
             <i class="fa-solid fa-user"></i>
-        </button>
+        </a>
     </header>
     <main class="main">
+        <h1 th:if="${!loggedIn}">USUARIO NO LOGUEADO</h1>
+        <h1 th:if="${loggedIn}" th:text="|Hola, ${userName}!|">Hola, usuario!</h1>
+
+        <div th:if="${loggedIn and isAdmin}" style="margin: 1rem 0 2rem;">
+            <a th:href="@{/admin/dashboard}" class="btn btn-dark">Ir al dashboard de administrador</a>
+        </div>
+
         <section class="carrousel">
             <button class="prev-button"><i class="fa-solid fa-chevron-left"></i></button>
             <div class="carrousel-card">
-                <img src="/src/main/resources/static/assets/carrousel1.jpg" alt="Imagen 1">
+                <img src="/assets/carrousel1.jpg" alt="Imagen 1">
                 <p>Descripción de la imagen 1</p>
                 <p>Texto adicional</p>
             </div>
@@ -47,7 +54,7 @@
     <footer class="footer">
         <div class="footer-left">
             <div class="footer-logo">
-                <img class="footer-logo-image" src="/src/main/resources/static/assets/logo-white.png">
+                <img class="footer-logo-image" src="/assets/logo-white.png">
                 <h2>Zero Deportes</h2>
             </div>
             <p>&copy; 2026 Zero Shop. Todos los derechos reservados.</p>
@@ -57,8 +64,8 @@
             <div class="footoer-sitemap">
                 <h3 class="footer-sitemap-title">Mapa del sitio</h3>
                 <ul class="footer-sitemap-list">
-                    <li class="footer-sitemap-list-item"><a href="index.html">Inicio</a></li>
-                    <li class="footer-sitemap-list-item"><a href="products.html">Productos</a></li>
+                    <li class="footer-sitemap-list-item"><a th:href="@{/}">Inicio</a></li>
+                    <li class="footer-sitemap-list-item"><a th:href="@{/}">Productos</a></li>
                 </ul>
             </div>
             <div class="footer-legal">
@@ -69,6 +76,6 @@
         </div>
     </footer>
     <!-- JavaScript -->
-    <script src="/src/main/resources/static/scripts/navbar.js"></script>
+    <script src="/scripts/navbar.js"></script>
 </body>
 </html>
