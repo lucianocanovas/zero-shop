@@ -58,3 +58,21 @@ button:hover {
     scroll-snap-type: x mandatory;
     justify-content: center;
 }
+
+.carrousel-card {
+    flex: 0 0 auto;
+    width: 300px;
+    margin: 10px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    scroll-snap-align: start;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.carrousel-card img {
+    height: 200px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
