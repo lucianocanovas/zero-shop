@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+// CLASE DE PRUEBA
+// Inicializa un usuario administrador en la base de datos al iniciar la aplicación para propósitos de prueba y desarrollo.
 @Component
 public class AdminUserInitializer implements ApplicationRunner {
 
@@ -21,6 +23,7 @@ public class AdminUserInitializer implements ApplicationRunner {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Método para inicializar el usuario administrador en la base de datos si no existe
     @Override
     public void run(ApplicationArguments args) {
         String adminEmail = "admin@gmail.com";

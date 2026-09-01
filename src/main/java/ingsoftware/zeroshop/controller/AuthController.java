@@ -13,26 +13,31 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+// Controlador para manejar la autenticación y el registro de usuarios
 @Controller
 public class AuthController {
 
 	private final UserService userService;
 
+	// Constructor para inyectar la dependencia del servicio de usuario
 	public AuthController(UserService userService) {
 		this.userService = userService;
 	}
 
+	// Método para manejar la vista de inicio de sesión
 	@GetMapping("/login")
 	public String login() {
 		return "login";
 	}
 
+	// Método para manejar la vista de registro
 	@GetMapping("/register")
 	public String registerForm(Model model) {
 		model.addAttribute("registration", new RegistrationForm());
 		return "register";
 	}
 
+	// Método para manejar el registro de un nuevo usuario
 	@PostMapping("/register")
 	public String register(@Valid @ModelAttribute("registration") RegistrationForm form,
 						   BindingResult bindingResult,
@@ -50,6 +55,7 @@ public class AuthController {
 		return "redirect:/login";
 	}
 
+	// Método para manejar la vista de cierre de sesión
 	@GetMapping("/logout")
 	public String logout(HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
@@ -59,6 +65,7 @@ public class AuthController {
 		return "redirect:/login?logout";
 	}
 
+	// Clase interna para representar el formulario de registro de usuario
 	@Data
 	public static class RegistrationForm {
 		@jakarta.validation.constraints.NotBlank

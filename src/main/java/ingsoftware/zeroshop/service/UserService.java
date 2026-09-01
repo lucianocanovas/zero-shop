@@ -26,7 +26,6 @@ public class UserService {
         if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             throw new IllegalArgumentException("Ese correo ya esta registrado.");
         }
-
         User user = new User();
         user.setFirst_name(firstName.trim());
         user.setLast_name(lastName.trim());

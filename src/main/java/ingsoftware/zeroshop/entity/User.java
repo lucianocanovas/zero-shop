@@ -12,7 +12,6 @@ import ingsoftware.zeroshop.enums.Role;
 @Table(name = "users")
 @Data
 public class User {
-
     @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
     @Column(nullable = false) private String first_name;
     @Column(nullable = false) private String last_name;
@@ -20,5 +19,4 @@ public class User {
     @Column(nullable = false) private String password;
     @Enumerated(EnumType.STRING) private Role role;
     @Column(nullable = false, updatable = false) private LocalDateTime created_at;
-
 }

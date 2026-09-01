@@ -10,14 +10,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+// Clase de configuración de seguridad para la aplicación
 @Configuration
 public class SecurityConfig {
 
+        // Bean para el codificador de contraseñas utilizando BCrypt
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+        // Bean para el servicio de detalles de usuario que carga los detalles del usuario desde la base de datos
     @Bean
     UserDetailsService userDetailsService(UserRepository userRepository) {
         return username -> userRepository.findByEmailIgnoreCase(username)
@@ -29,6 +32,7 @@ public class SecurityConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
 
+        // Bean para la cadena de filtros de seguridad que define las reglas de autorización y autenticación
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
