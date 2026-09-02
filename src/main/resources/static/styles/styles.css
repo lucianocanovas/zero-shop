@@ -3,6 +3,8 @@
 @import url("/styles/layout/nav.css");
 @import url("/styles/layout/header.css");
 @import url("/styles/layout/footer.css");
+@import url("/styles/layout/overlay.css");
+@import url("/styles/layout/toast.css");
 @import url("/styles/layout/auth-form.css");
 
 :root {
@@ -22,57 +24,51 @@ body {
     height: 100vh;
 }
 
-button {
-    border: none;
-    padding: 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.2s ease-in-out;
-}
-
-button:hover {
-    transform: scale(1.05);
-    background-color: var(--primary);
-}
-
-.featured {
+.auth-form {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    margin: 20px;
+    height: 100vh;
+    .auth-form-title {
+        font-size: 36px;
+        margin: 24px;
+    }
+    .auth-form-input {
+        width: 300px;
+        padding: 8px;
+        margin: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .auth-form-button {
+        width: 300px;
+        padding: 8px;
+        margin: 16px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        &:hover {
+            background-color: #6a5acd;
+            transform: scale(1.05);
+        }
+    }
+    .auth-form-message {
+        font-size: 16px;
+        color: #666;
+        margin: 8px;
+    }
+    .auth-form-logo {
+        margin: 16px;
+        width: auto;
+    }
+    .auth-form-logo-image {
+        height: 48px;
+        width: auto;
+        opacity: 0.5;
+    }
 }
 
-.product-card {
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin: 20px;
-    text-align: center;
-    transition: all 0.2s ease-in-out;
-}
-
-.carrousel {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    justify-content: center;
-}
-
-.carrousel-card {
-    flex: 0 0 auto;
-    width: 300px;
-    margin: 10px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    scroll-snap-align: start;
-    text-align: center;
-    transition: all 0.2s ease-in-out;
-}
-
-.carrousel-card img {
-    height: 200px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}

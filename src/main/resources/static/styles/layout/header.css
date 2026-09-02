@@ -2,37 +2,38 @@
     display: flex;
     justify-content: space-between;
     padding: 20px;
+    border-bottom: 1px solid #ccc;
+    .header-nav-button, .header-account-button {
+        padding: 16px;
+        font-size: 32px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+    .header-logo {
+        display: flex;
+        align-items: center;
+    }
+    .header-logo-image {
+        height: 48px;
+        width: auto;
+        transition: all 0.2s ease-in-out;
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
 }
 
-.header-nav-button {
-    font-size: 24px;
-}
 
-.header-logo {
-    display: flex;
-    align-items: center;
-}
 
-.header-logo-image {
-    height: 50px;
-    width: auto;
-    transition: all 0.2s ease-in-out;
-}
+    
 
-.header-logo-image:hover {
-    transform: scale(1.05);
-}
+    
 
-.header-account-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000;
-    font-size: 24px;
-    text-decoration: none;
-    cursor: pointer;
-}
+    
 
-.header-account-button:hover {
-    opacity: 0.8;
-}
+    

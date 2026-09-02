@@ -3,6 +3,8 @@ package ingsoftware.zeroshop.config;
 import ingsoftware.zeroshop.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,13 +16,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-        // Bean para el codificador de contraseñas utilizando BCrypt
+    // Bean para el codificador de contraseñas utilizando BCrypt
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-        // Bean para el servicio de detalles de usuario que carga los detalles del usuario desde la base de datos
+    // Bean para el servicio de detalles de usuario que carga los detalles del usuario desde la base de datos
     @Bean
     UserDetailsService userDetailsService(UserRepository userRepository) {
         return username -> userRepository.findByEmailIgnoreCase(username)
@@ -32,7 +34,13 @@ public class SecurityConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
 
-        // Bean para la cadena de filtros de seguridad que define las reglas de autorización y autenticación
+    // Bean para el administrador de autenticación que se utiliza para autenticar a los usuarios
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    // Bean para la cadena de filtros de seguridad que define las reglas de autorización y autenticación
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize

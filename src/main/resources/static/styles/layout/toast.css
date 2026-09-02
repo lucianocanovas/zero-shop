@@ -1,0 +1,48 @@
+.toast {
+    display: none;
+    align-items: flex-start;
+    gap: 12px;
+    background-color: #333;
+    color: #fff;
+    padding: 16px 40px 16px 16px;
+    border-radius: 8px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1001;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.toast.show {
+    display: flex;
+}
+
+.toast-message {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.toast-close-button {
+    background: none;
+    border: none;
+    color: #000000;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    opacity: 0.85;
+}
+
+.toast-close-button:hover {
+    opacity: 1;
+}
+

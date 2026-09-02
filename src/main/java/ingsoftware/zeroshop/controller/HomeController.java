@@ -33,9 +33,9 @@ public class HomeController {
             model.addAttribute("isAdmin", isAdmin);
 
             // Redirigir al panel de administración si el usuario es administrador
-            if (isAdmin) {
-                return "redirect:/admin/dashboard";
-            }
+            // if (isAdmin) {
+            //     return "redirect:/admin/dashboard";
+            // }
         }
 
         // Devolver la vista de inicio para usuarios no autenticados o clientes

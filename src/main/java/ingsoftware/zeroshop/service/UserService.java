@@ -21,8 +21,17 @@ public class UserService {
     }
 
     @Transactional
-    public User register(String firstName, String lastName, String email, String rawPassword) {
-        String normalizedEmail = email.trim().toLowerCase();
+    public User register(String firstName, String lastName, String email, String rawPassword, String confirmPassword) {
+        if (rawPassword == null || confirmPassword == null || rawPassword.isBlank() || confirmPassword.isBlank()) {
+            throw new IllegalArgumentException("Debe completar ambas contraseñas.");
+        }
+        if (!rawPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("Las contraseñas no coinciden.");
+        }
+        String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
+        if (normalizedEmail.isBlank()) {
+            throw new IllegalArgumentException("El correo es obligatorio.");
+        }
         if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             throw new IllegalArgumentException("Ese correo ya esta registrado.");
         }

@@ -1,0 +1,74 @@
+.nav-logo-image {
+    height: 50px;
+    width: auto;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-overlay {
+    display: none;
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+    backdrop-filter: blur(5px);
+    &.active {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .nav-list {
+        list-style: none;
+        padding: 0;
+    }
+    .nav-list-item {
+        margin: 40px;
+        font-size: 24px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+        &:hover {
+            transform: scale(1.05);
+            color: var(--primary);
+        }
+    }
+    .nav-link {
+        color: white;
+        text-decoration: none;
+        letter-spacing: 10px;
+    }
+    .nav-close-button {
+        font-size: 24px;
+        border: none;
+        border-radius: 50%;
+        padding: 8px;
+        transition: all 0.2s ease-in-out;
+        &:hover {
+            transform: scale(1.05);
+            background-color: var(--primary);
+        }
+    }
+}
+
+.auth-overlay, .account-overlay {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+    &.active {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
