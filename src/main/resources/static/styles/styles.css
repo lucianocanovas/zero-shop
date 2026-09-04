@@ -1,27 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
-@import url("/styles/layout/nav.css");
 @import url("/styles/layout/header.css");
 @import url("/styles/layout/footer.css");
 @import url("/styles/layout/overlay.css");
-@import url("/styles/layout/toast.css");
-@import url("/styles/layout/auth-form.css");
 
 :root {
-    --light-base: #F0F3FF;
-    --dark-base: #211951;
-    --primary: #836FFF;
+    --smart-blue: #0466c8ff;
+    --sapphire: #0353a4ff;
+    --regal-navy: #023e7dff;
+    --prussian-blue: #002855ff;
+    --prussian-blue-2: #001845ff;
+    --prussian-blue-3: #001233ff;
+    --twilight-indigo: #33415cff;
+    --blue-slate: #5c677dff;
+    --slate-grey: #7d8597ff;
+    --lavender-grey: #979dacff;
 }
 
-* {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     font-family: "Nunito", sans-serif;
-    background-color: #f8f9fa;
-    height: 100vh;
+    color: var(--prussian-blue-3);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .auth-form {
@@ -30,45 +38,276 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
+
     .auth-form-title {
         font-size: 36px;
         margin: 24px;
     }
+
     .auth-form-input {
         width: 300px;
-        padding: 8px;
+        padding: 16px;
         margin: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
     }
+
     .auth-form-button {
         width: 300px;
-        padding: 8px;
+        padding: 16px;
         margin: 16px;
-        background-color: var(--primary);
-        color: white;
+        background-color: var(--smart-blue);
         border: none;
         border-radius: 4px;
         cursor: pointer;
         transition: all 0.2s ease-in-out;
         &:hover {
-            background-color: #6a5acd;
+            background-color: var(--sapphire);
             transform: scale(1.05);
         }
     }
+
     .auth-form-message {
         font-size: 16px;
-        color: #666;
+        color: var(--blue-slate);
         margin: 8px;
     }
+
     .auth-form-logo {
         margin: 16px;
         width: auto;
+        height: 48px;
     }
+
     .auth-form-logo-image {
         height: 48px;
         width: auto;
-        opacity: 0.5;
     }
 }
 
+.separator {
+    width: 100%;
+    padding: 16px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--lavender-grey);
+
+    .separator-title {
+        font-size: clamp(22px, 3vw, 30px);
+        font-weight: 800;
+        color: var(--prussian-blue-3);
+        text-align: center;
+        margin: 16px;
+    }
+}
+
+.banner {
+    width: 100%;
+    min-height: clamp(300px, 42vw, 500px);
+    padding: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url('/assets/banner.png');
+    background-size: cover;
+    background-position: center;
+    isolation: isolate;
+    overflow: hidden;
+    animation: backgroundChange 12s ease-in-out infinite;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(115deg, rgba(23, 33, 27, 0.72), rgba(23, 33, 27, 0.12));
+    }
+
+    .banner-logo {
+        max-width: min(400px, 75vw);
+        width: 100%;
+        height: auto;
+        margin: 16px;
+        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));
+    }
+
+    .banner-logo-image {
+        width: 100%;
+        height: auto;
+        opacity: 0.4;
+        transform: rotate(30deg);
+    }
+}
+
+.carousel {
+    width: 100%;
+    min-height: clamp(360px, 42vw, 420px);
+    padding: clamp(24px, 5vw, 40px) clamp(12px, 8vw, 72px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(8px, 3vw, 24px);
+    align-items: center;
+    justify-content: center;
+
+    .carousel-prev, .carousel-next {
+        flex: 0 0 clamp(40px, 8vw, 48px);
+        width: clamp(40px, 8vw, 48px);
+        height: clamp(40px, 8vw, 48px);
+        border: 0;
+        border-radius: 50%;
+        color: white;
+        background-color: var(--prussian-blue-3);
+        cursor: pointer;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+        background-color: var(--smart-blue);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .carousel-prev:hover, .carousel-next:hover {
+        background-color: var(--sapphire);
+        color: white;
+        transform: scale(1.08);
+    }
+
+    .carousel-slide {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: translateX(24px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+        pointer-events: none;
+    }
+
+    .carousel-slide.active {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+
+    .carousel-slide img {
+        width: min(100%, 300px);
+        height: 210px;
+        object-fit: contain;
+    }
+
+    .carousel-slide h3 {
+        margin: 14px 0 4px;
+        color: var(--prussian-blue-3);
+        font-size: 28px;
+    }
+
+    .carousel-slide p {
+        color: #555;
+        font-size: 17px;
+    }
+
+    .carousel-container {
+        position: relative;
+        flex: 1 1 240px;
+        width: min(720px, 100%);
+        min-height: clamp(280px, 32vw, 320px);
+        overflow: hidden;
+        background: white;
+        border: 1px solid var(--lavender-grey);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .carousel-slide img {
+        border-radius: var(--radius-sm);
+    }
+
+    .carousel-slide p {
+        font-size: 17px;
+        color: var(--blue-slate);
+    }
+}
+
+.categories {
+    width: 100%;
+    padding: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(8px, 3vw, 24px);
+    align-items: center;
+    justify-content: center;
+
+    .category-card {
+        flex: 0 1 clamp(200px, 20vw, 240px);
+        width: clamp(200px, 20vw, 240px);
+        height: clamp(200px, 20vw, 240px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border: 1px solid var(--lavender-grey);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-soft);
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        min-height: clamp(220px, 22vw, 280px);
+        height: auto;
+        padding: 18px;
+    }
+
+    .category-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 32px rgba(23, 33, 27, 0.15);
+    }
+
+    .category-card img {
+        width: min(100%, 120px);
+        height: min(100%, 120px);
+        object-fit: cover;
+        border-radius: var(--radius-sm);
+    }
+
+    .category-card h3 {
+        margin-top: 12px;
+        color: var(--prussian-blue-3);
+        font-size: clamp(18px, 2vw, 22px);
+        font-weight: 800;
+    }
+
+    .category-link {
+        color: var(--sapphire);
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+
+    .category-link:hover {
+        color: var(--prussian-blue-3);
+    }
+}
+
+@keyframes backgroundChange {
+    0%, 25% { background-image: url('/assets/banner.png'); }
+    25%, 50% { background-image: url('/assets/banner2.png'); }
+    50%, 75% { background-image: url('/assets/banner3.png'); }
+    75%, 100% { background-image: url('/assets/banner.png'); }
+}
+
+.test-toast {
+    flex: 0 1 100%;
+    width: fit-content;
+    margin: 8px 0 0 auto;
+    padding: 9px 16px;
+    border: 1px solid #68618f;
+    border-radius: var(--radius-sm);
+    color: #d9d5e8;
+    background-color: transparent;
+    cursor: pointer;
+}

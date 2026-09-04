@@ -1,29 +1,51 @@
 .header {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
-    border-bottom: 1px solid #ccc;
+    align-items: center;
+    padding: 14px clamp(20px, 6vw, 72px);
+    background-color: white;
+    border-bottom: 1px solid var(--lavender-grey);
+    position: relative;
+    z-index: 10;
+
     .header-nav-button, .header-account-button {
-        padding: 16px;
-        font-size: 32px;
+        height: 48px;
+        padding: 8px;
+        font-size: 24px;
+        color: var(--prussian-blue-3);
         background: none;
         border: none;
+        border-radius: 8px;
         cursor: pointer;
         transition: all 0.2s ease-in-out;
         &:hover {
-            transform: scale(1.1);
+            color: var(--smart-blue);
+            transform: translateY(-2px);
         }
     }
+
     .header-logo {
         display: flex;
         align-items: center;
     }
+    
     .header-logo-image {
-        height: 48px;
+        height: 42px;
         width: auto;
         transition: all 0.2s ease-in-out;
         &:hover {
             transform: scale(1.05);
+        }
+    }
+
+    .header-link {
+        text-decoration: none;
+        color: var(--prussian-blue-3);
+        font-size: 24px;
+        font-weight: 400;
+        transition: all 0.2s ease-in-out;
+        &:hover {
+            color: var(--smart-blue);
         }
     }
 }

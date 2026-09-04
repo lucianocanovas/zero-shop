@@ -42,6 +42,21 @@ public class HomeController {
         return "index";
     }
 
+    @GetMapping("/products")
+    public String products(Authentication authentication, Model model) {
+        boolean loggedIn = isAuthenticated(authentication);
+        model.addAttribute("loggedIn", loggedIn);
+
+        if (loggedIn) {
+            model.addAttribute("userName", getUserName(authentication));
+            model.addAttribute("isAdmin", hasRole(authentication, "ADMIN"));
+        } else {
+            model.addAttribute("isAdmin", false);
+        }
+
+        return "products";
+    }
+
     // Método para manejar la vista del cliente
     @GetMapping("/client")
     public String clientView(Authentication authentication, Model model) {
@@ -62,7 +77,7 @@ public class HomeController {
     }
 
     // Metodo para manejar la vista del panel de administración
-    @GetMapping("/admin/dashboard")
+    @GetMapping({"/admin", "/admin/dashboard"})
     public String adminDashboard(Authentication authentication, Model model) {
         // Verificar si el usuario está autenticado y tiene el rol de administrador
         if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
@@ -76,7 +91,7 @@ public class HomeController {
         model.addAttribute("loggedIn", true);
         model.addAttribute("isAdmin", true);
         model.addAttribute("userName", firstName);
-        return "admin/dashboard";
+        return "admin/index";
     }
 
     // Método para manejar la vista del perfil del usuario
@@ -89,7 +104,7 @@ public class HomeController {
 
         // Redirigir al panel de administración si el usuario tiene el rol de administrador, de lo contrario redirigir a la vista del cliente
         if (hasRole(authentication, "ADMIN")) {
-            return "redirect:/admin/dashboard";
+            return "redirect:/admin";
         }
 
         // Redirigir a la vista del cliente si el usuario no es administrador
@@ -101,6 +116,12 @@ public class HomeController {
         return authentication != null
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
+    }
+
+    private String getUserName(Authentication authentication) {
+        return userRepository.findByEmailIgnoreCase(authentication.getName())
+                .map(user -> user.getFirst_name())
+                .orElse(authentication.getName());
     }
 
     // Método para verificar si el usuario tiene un rol específico

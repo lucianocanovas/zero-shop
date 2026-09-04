@@ -1,27 +1,24 @@
-.nav-logo-image {
-    height: 50px;
-    width: auto;
-    transition: all 0.2s ease-in-out;
-}
-
 .nav-overlay {
     display: none;
     position: fixed;
     height: 100vh;
     width: 100%;
     z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 40, 85, 0.625);
     text-align: center;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(14px);
+
     &.active {
         display: flex;
         justify-content: center;
         align-items: center;
     }
+
     .nav-list {
         list-style: none;
         padding: 0;
     }
+
     .nav-list-item {
         margin: 40px;
         font-size: 24px;
@@ -30,24 +27,35 @@
         transition: all 0.2s ease-in-out;
         &:hover {
             transform: scale(1.05);
-            color: var(--primary);
+            color: var(--smart-blue);
         }
     }
+
     .nav-link {
-        color: white;
+        color: var(--lavender-grey);
         text-decoration: none;
         letter-spacing: 10px;
     }
+
     .nav-close-button {
         font-size: 24px;
         border: none;
         border-radius: 50%;
-        padding: 8px;
+        padding: 16px;
+        color: var(--prussian-blue-3);
+        background-color: var(--smart-blue);
         transition: all 0.2s ease-in-out;
         &:hover {
             transform: scale(1.05);
-            background-color: var(--primary);
+            background-color: var(--sapphire);
+            color: white;
         }
+    }
+
+    .nav-logo-image {
+        height: 50px;
+        width: auto;
+        transition: all 0.2s ease-in-out;
     }
 }
 
@@ -57,12 +65,13 @@
     position: fixed;
     top: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(23, 33, 27, 0.72);
     z-index: 1000;
     display: none;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease-in-out;
+
     &.active {
         display: flex;
         justify-content: center;
@@ -70,5 +79,61 @@
         opacity: 1;
         pointer-events: auto;
     }
+
+    .auth-overlay-content {
+        position: relative;
+        width: min(440px, calc(100% - 32px));
+        padding: 40px;
+        color: var(--prussian-blue-3);
+        background: white;
+        border: 1px solid var(--lavender-grey);
+        border-radius: 8px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+        text-align: center;
+    }
+    
+    .auth-overlay-title {
+        margin: 16px;
+        font-weight: 800;
+    }
+    
+    .auth-overlay-content p {
+        color: var(--blue-slate);
+    }
+    
+    .auth-overlay-login-link {
+        display: inline-block;
+        margin: 16px;
+        padding: 8px 16px;
+        border: 0;
+        border-radius: 8px;
+        background-color: var(--smart-blue);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .auth-overlay-login-link:hover {
+        background-color: var(--sapphire);
+
+    }
+    
+    .auth-close-button,
+    .account-close-button {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 8px;
+        color: var(--prussian-blue-3);
+        transition: all 0.2s ease-in-out;
+        &:hover {
+            background-color: var(--sapphire);
+            color: white;
+        }
+    }
+
 }
+
 
