@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/logo-white.png">
     <link rel="stylesheet" href="/styles/styles.css">
     <title>Inicio</title>
     <!-- FontAwesome Icons-->
@@ -12,22 +13,25 @@
 
     <!-- Navigation Overlay -->
     <nav class="nav-overlay">
-        <ul class="nav-list admin" th:if="${isAdmin}">
-            <h3>ADMIN</h3>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/dashboard}">DASHBOARD</a></li>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/users}">USUARIOS</a></li>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/products}">PRODUCTOS</a></li>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/orders}">PEDIDOS</a></li>
-        </ul>
-        <ul class="nav-list">
-            <h3 th:if="${isAdmin}">USER</h3>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/}">INICIO</a></li>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/products}">PRODUCTOS</a></li>
-            <li class="nav-list-item"><button class="nav-close-button"><i class="fa-solid fa-xmark"></i></button></li>
-            <div class="nav-logo">
-                <img class="nav-logo-image" src="/assets/logo-white.png">
-            </div>
-        </ul>
+        <div class="nav-overlay-lists">
+            <ul class="nav-list admin" th:if="${isAdmin}">
+                <h3 class="nav-list-title">ADMIN</h3>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/dashboard}">DASHBOARD</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/users}">USUARIOS</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/products}">PRODUCTOS</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/orders}">PEDIDOS</a></li>
+            </ul>
+            <ul class="nav-list">
+                <h3 class="nav-list-title" th:if="${isAdmin}">USER</h3>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/}">INICIO</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/products}">PRODUCTOS</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/contact}">CONTACTO</a></li>
+            </ul>
+        </div>
+        <button class="nav-close-button"><i class="fa-solid fa-xmark"></i></button>
+        <div class="nav-logo">
+            <img class="nav-logo-image" src="/assets/logo-white.png">
+        </div>
     </nav>
 
     <!-- Not logged in Account Overlay -->
@@ -126,7 +130,6 @@
         </section>
 
     </main>
-    
     
     <!-- Footer -->
     <footer class="footer">

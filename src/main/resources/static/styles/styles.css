@@ -1,10 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
 @import url("/styles/layout/header.css");
 @import url("/styles/layout/footer.css");
 @import url("/styles/layout/overlay.css");
 
 :root {
+    --font-family: "Nunito", sans-serif;
+    --text-xs: 0.8125rem;
+    --text-sm: 0.9375rem;
+    --text-md: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: clamp(1.5rem, 3vw, 1.875rem);
+    --line-tight: 1.2;
+    --line-normal: 1.5;
+    --line-relaxed: 1.6;
     --smart-blue: #0466c8ff;
     --sapphire: #0353a4ff;
     --regal-navy: #023e7dff;
@@ -26,10 +35,30 @@
 }
 
 body {
-    font-family: "Nunito", sans-serif;
+    font-family: var(--font-family);
+    font-size: var(--text-md);
+    font-weight: 400;
+    line-height: var(--line-normal);
     color: var(--prussian-blue-3);
     min-height: 100vh;
     overflow-x: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-family);
+    line-height: var(--line-tight);
 }
 
 .auth-form {
@@ -40,7 +69,9 @@ body {
     height: 100vh;
 
     .auth-form-title {
-        font-size: 36px;
+        font-size: var(--text-xl);
+        font-weight: 800;
+        line-height: var(--line-tight);
         margin: 24px;
     }
 
@@ -68,7 +99,8 @@ body {
     }
 
     .auth-form-message {
-        font-size: 16px;
+        font-size: var(--text-md);
+        line-height: var(--line-relaxed);
         color: var(--blue-slate);
         margin: 8px;
     }
@@ -96,7 +128,7 @@ body {
     border-bottom: 1px solid var(--lavender-grey);
 
     .separator-title {
-        font-size: clamp(22px, 3vw, 30px);
+        font-size: var(--text-xl);
         font-weight: 800;
         color: var(--prussian-blue-3);
         text-align: center;
@@ -140,7 +172,7 @@ body {
         width: 100%;
         height: auto;
         opacity: 0.4;
-        transform: rotate(30deg);
+        transform: rotate(40deg);
     }
 }
 
@@ -202,12 +234,14 @@ body {
     .carousel-slide h3 {
         margin: 14px 0 4px;
         color: var(--prussian-blue-3);
-        font-size: 28px;
+        font-size: var(--text-lg);
+        font-weight: 800;
     }
 
     .carousel-slide p {
         color: #555;
-        font-size: 17px;
+        font-size: var(--text-md);
+        line-height: var(--line-relaxed);
     }
 
     .carousel-container {
@@ -218,7 +252,7 @@ body {
         overflow: hidden;
         background: white;
         border: 1px solid var(--lavender-grey);
-        border-radius: var(--radius-md);
+        border-radius: 16px;
         box-shadow: var(--shadow-soft);
     }
 
@@ -227,7 +261,7 @@ body {
     }
 
     .carousel-slide p {
-        font-size: 17px;
+        font-size: var(--text-md);
         color: var(--blue-slate);
     }
 }
@@ -275,15 +309,15 @@ body {
     .category-card h3 {
         margin-top: 12px;
         color: var(--prussian-blue-3);
-        font-size: clamp(18px, 2vw, 22px);
+        font-size: var(--text-lg);
         font-weight: 800;
     }
 
     .category-link {
         color: var(--sapphire);
-        font-size: 14px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
+        font-size: var(--text-xs);
+        font-weight: 700;
+        letter-spacing: 0.06em;
         text-decoration: none;
         text-transform: uppercase;
     }
@@ -298,16 +332,4 @@ body {
     25%, 50% { background-image: url('/assets/banner2.png'); }
     50%, 75% { background-image: url('/assets/banner3.png'); }
     75%, 100% { background-image: url('/assets/banner.png'); }
-}
-
-.test-toast {
-    flex: 0 1 100%;
-    width: fit-content;
-    margin: 8px 0 0 auto;
-    padding: 9px 16px;
-    border: 1px solid #68618f;
-    border-radius: var(--radius-sm);
-    color: #d9d5e8;
-    background-color: transparent;
-    cursor: pointer;
 }

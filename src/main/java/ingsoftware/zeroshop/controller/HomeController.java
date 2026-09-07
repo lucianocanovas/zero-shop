@@ -42,6 +42,7 @@ public class HomeController {
         return "index";
     }
 
+    // Método para manejar la vista de productos
     @GetMapping("/products")
     public String products(Authentication authentication, Model model) {
         boolean loggedIn = isAuthenticated(authentication);

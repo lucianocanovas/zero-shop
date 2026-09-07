@@ -27,8 +27,13 @@ public class AdminUserInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         String adminEmail = "admin@gmail.com";
+        String clientEmail = "client@gmail.com";
 
         if (userRepository.existsByEmailIgnoreCase(adminEmail)) {
+            return;
+        }
+
+        if (userRepository.existsByEmailIgnoreCase(clientEmail)) {
             return;
         }
 
@@ -40,6 +45,15 @@ public class AdminUserInitializer implements ApplicationRunner {
         admin.setRole(Role.ADMIN);
         admin.setCreated_at(LocalDateTime.now());
 
+        User client = new User();
+        client.setFirst_name("Cliente");
+        client.setLast_name("Sistema");
+        client.setEmail(clientEmail);
+        client.setPassword(passwordEncoder.encode("client123"));
+        client.setRole(Role.USER);
+        client.setCreated_at(LocalDateTime.now());
+
         userRepository.save(admin);
+        userRepository.save(client);
     }
 }

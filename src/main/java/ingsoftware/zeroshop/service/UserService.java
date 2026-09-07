@@ -20,6 +20,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Método para registrar un nuevo usuario en la base de datos
     @Transactional
     public User register(String firstName, String lastName, String email, String rawPassword, String confirmPassword) {
         if (rawPassword == null || confirmPassword == null || rawPassword.isBlank() || confirmPassword.isBlank()) {

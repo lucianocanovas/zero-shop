@@ -44,8 +44,14 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
+
+                        // Rutas públicas que no requieren autenticación
                         .requestMatchers("/", "/products", "/login", "/register", "/register/**", "/css/**", "/styles/**", "/assets/**", "/scripts/**").permitAll()
+                        
+                        // Rutas que requieren el rol de ADMIN para acceder
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // Cualquier otra solicitud requiere autenticación
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
