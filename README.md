@@ -1,10 +1,10 @@
-# 🛒 Zero Shop - E-Commerce Web
+# Zero Shop - E-Commerce Web
 
 Plataforma de comercio electrónico desarrollada con **Java**, **Spring Boot** y **Thymeleaf**. Proyecto desarrollado con fines educativos bajo una arquitectura monolítica MVC con renderizado del lado del servidor (SSR) y autenticación basada en sesiones y roles.
 
 ---
 
-## 🚀 Tecnologías Principales
+## Tecnologías Principales
 
 - **Lenguaje:** Java (compatible con Java 17+)
 - **Framework:** Spring Boot (Web MVC, Data JPA, Security, Mail, Validation)
@@ -14,7 +14,7 @@ Plataforma de comercio electrónico desarrollada con **Java**, **Spring Boot** y
 
 ---
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 - **JDK 17** o superior instalado y configurado en el `JAVA_HOME`.
 - **Apache Maven 3.8+** (o el wrapper de Maven).
@@ -23,7 +23,7 @@ Plataforma de comercio electrónico desarrollada con **Java**, **Spring Boot** y
 
 ---
 
-## ⚙️ Instalación y Configuración
+## Instalación y Configuración
 
 ### 1. Clonar el repositorio
 ```bash
@@ -53,7 +53,7 @@ Edita los valores en `.env` con tus credenciales de correo si deseas probar el s
 
 ---
 
-## ▶️ Ejecución del Proyecto
+## Ejecución del Proyecto
 
 1. **Compilar y descargar dependencias:**
    ```bash
@@ -68,7 +68,7 @@ Edita los valores en `.env` con tus credenciales de correo si deseas probar el s
 
 ---
 
-## 👤 Credenciales de Prueba por Defecto
+## Credenciales de Prueba por Defecto
 
 Al arrancar por primera vez, el sistema inicializa automáticamente dos usuarios de prueba para facilitar el desarrollo:
 
@@ -79,7 +79,7 @@ Al arrancar por primera vez, el sistema inicializa automáticamente dos usuarios
 
 ---
 
-## 📁 Estructura del Código
+## Estructura del Código
 
 ```text
 src/main/java/ingsoftware/zeroshop/
@@ -94,10 +94,3 @@ src/main/resources/
  ├── static/       # CSS, JS e imágenes
  └── templates/    # Vistas HTML Thymeleaf
 ```
-
----
-
-## 📚 Documentación para Desarrolladores
-
-- [Guía de Desarrollo Backend](docs/BACKEND_GUIDE.md): Tutorial paso a paso, arquitectura por capas, buenas prácticas y errores comunes para desarrolladores backend.
-- [Instrucciones para Crear Rutas](docs/ROUTE_INSTRUCTIONS.md): Convenciones obligatorias para registrar endpoints, aplicar permisos en Spring Security y enlazar vistas en Thymeleaf.
