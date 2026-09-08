@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <!-- Navigation Overlay -->
+    <nav class="nav-overlay" th:fragment="navOverlay">
+        <div class="nav-overlay-lists">
+            <ul class="nav-list admin" th:if="${isAdmin}">
+                <h3 class="nav-list-title">ADMIN</h3>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/dashboard}">DASHBOARD</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/users}">USUARIOS</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/products}">PRODUCTOS</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/orders}">PEDIDOS</a></li>
+            </ul>
+            <ul class="nav-list">
+                <h3 class="nav-list-title" th:if="${isAdmin}">USER</h3>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/}">INICIO</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/products}">PRODUCTOS</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/contact}">CONTACTO</a></li>
+            </ul>
+        </div>
+        <button class="nav-close-button"><i class="fa-solid fa-xmark"></i></button>
+        <div class="nav-logo">
+            <img class="nav-logo-image" src="/assets/logo-white.png">
+        </div>
+    </nav>
+
+    <!-- Not logged in Account Overlay -->
+    <div class="auth-overlay" th:fragment="authOverlay">
+        <div class="auth-overlay-content">
+            <h2 class="auth-overlay-title">Iniciar sesión</h2>
+            <p>Para acceder a tu cuenta, por favor inicia sesión.</p>
+            <a th:href="@{/login}" class="auth-overlay-login-link">Iniciar sesión</a>
+            <button class="auth-close-button"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+
+    <!-- Logged in Account Overlay -->
+    <div class="account-overlay" th:fragment="accountOverlay">
+        <div class="account-overlay-content">
+            <h2 class="account-overlay-title">Mi cuenta</h2>
+            <ul class="account-list">
+                <li class="account-list-item"><a class="account-link" th:href="@{/profile}">Perfil</a></li>
+                <li class="account-list-item"><a class="account-link" th:href="@{/logout}">Cerrar sesión</a></li>
+            </ul>
+            <button class="account-close-button" type="button" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" th:fragment="header">
+        <button class="header-nav-button"><i class="fa-solid fa-bars"></i></button>
+        <div class="header-logo">
+            <a th:href="@{/}"><img class="header-logo-image" src="/assets/logo-black.png"></a>
+        </div>
+        <button th:if="${!loggedIn}" class="header-account-button not-logged-in">
+            <i class="fa-solid fa-user"></i>
+        </button>
+        <button th:if="${loggedIn}" class="header-account-button logged-in">
+            <i class="fa-solid fa-user"></i>
+        </button>
+    </header>
+
+    <!-- Footer -->
+    <footer class="footer" th:fragment="footer">
+        <div class="footer-left">
+            <div class="footer-logo">
+                <img class="footer-logo-image" src="/assets/logo-white.png" alt="Zero Deportes">
+                <h2>Zero Deportes</h2>
+            </div>
+            <p>&copy; 2026 Zero Shop. Todos los derechos reservados.</p>
+            <p>Este proyecto es de caracter universitario, los productos mostrados en la tienda son de caracter ficticio.</p>
+        </div>
+        <div class="footer-right">
+            <div class="footer-sitemap">
+                <h3 class="footer-sitemap-title">Mapa del sitio</h3>
+                <ul class="footer-sitemap-list">
+                    <li class="footer-sitemap-list-item"><a th:href="@{/}">Inicio</a></li>
+                    <li class="footer-sitemap-list-item"><a th:href="@{/products}">Productos</a></li>
+                </ul>
+            </div>
+            <div class="footer-legal">
+                <h3 class="footer-legal-title">Legal</h3>
+                <p>Política de privacidad</p>
+                <p>Términos y condiciones</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

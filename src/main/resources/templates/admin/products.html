@@ -10,58 +10,10 @@
 </head>
 <body>
 
-    <!-- Navigation Overlay -->
-    <nav class="nav-overlay">
-        <ul class="nav-list admin" th:if="${isAdmin}">
-            <h3>ADMIN</h3>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/admin}">DASHBOARD</a></li>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/users}">USUARIOS</a></li>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/products}">PRODUCTOS</a></li>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/admin/orders}">PEDIDOS</a></li>
-        </ul>
-        <ul class="nav-list">
-            <h3 th:if="${isAdmin}">USER</h3>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/}">INICIO</a></li>
-            <li class="nav-list-item"><a class="nav-link" th:href="@{/products}">PRODUCTOS</a></li>
-            <li class="nav-list-item"><button class="nav-close-button"><i class="fa-solid fa-xmark"></i></button></li>
-            <div class="nav-logo">
-                <img class="nav-logo-image" src="/assets/logo-white.png">
-            </div>
-        </ul>
-    </nav>
-
-    <!-- Not logged in Account Overlay -->
-    <div class="auth-overlay">
-        <div class="auth-overlay-content">
-            <h2 class="auth-overlay-title">Iniciar sesión</h2>
-            <p>Para acceder a tu cuenta, por favor inicia sesión.</p>
-            <a th:href="@{/login}" class="auth-overlay-login-link">Iniciar sesión</a>
-            <button class="auth-close-button"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-    </div>
-
-    <!-- Logged in Account Overlay -->
-    <div class="account-overlay">
-        <ul class="account-list">
-            <li class="account-list-item"><a class="account-link" th:href="@{/profile}">PERFIL</a></li>
-            <li class="account-list-item"><a class="account-link" th:href="@{/logout}">CERRAR SESIÓN</a></li>
-            <li class="account-list-item"><button class="account-close-button"><i class="fa-solid fa-xmark"></i></button></li>
-        </ul>
-    </div>
-
-    <!-- Header -->
-    <header class="header">
-        <button class="header-nav-button"><i class="fa-solid fa-bars"></i></button>
-        <div class="header-logo">
-            <a th:href="@{/}"><img class="header-logo-image" src="/assets/logo-black.png"></a>
-        </div>
-        <button th:if="${!loggedIn}" class="header-account-button not-logged-in">
-            <i class="fa-solid fa-user"></i>
-        </button>
-        <button th:if="${loggedIn}" class="header-account-button logged-in">
-            <i class="fa-solid fa-user"></i>
-        </button>
-    </header>
+    <nav th:replace="common/fragments :: navOverlay"></nav>
+    <div th:replace="common/fragments :: authOverlay"></div>
+    <div th:replace="common/fragments :: accountOverlay"></div>
+    <header th:replace="common/fragments :: header"></header>
 
     <!-- Main Content -->
     <main class="main">
@@ -70,32 +22,7 @@
 
     </main>
     
-    
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-left">
-            <div class="footer-logo">
-                <img class="footer-logo-image" src="/assets/logo-white.png" alt="Zero Deportes">
-                <h2>Zero Deportes</h2>
-            </div>
-            <p>&copy; 2026 Zero Shop. Todos los derechos reservados.</p>
-            <p>Este proyecto es de caracter universitario, los productos mostrados en la tienda son de caracter ficticio.</p>
-        </div>
-        <div class="footer-right">
-            <div class="footer-sitemap">
-                <h3 class="footer-sitemap-title">Mapa del sitio</h3>
-                <ul class="footer-sitemap-list">
-                    <li class="footer-sitemap-list-item"><a th:href="@{/}">Inicio</a></li>
-                    <li class="footer-sitemap-list-item"><a th:href="@{/products}">Productos</a></li>
-                </ul>
-            </div>
-            <div class="footer-legal">
-                <h3 class="footer-legal-title">Legal</h3>
-                <p>Política de privacidad</p>
-                <p>Términos y condiciones</p>
-            </div>
-        </div>
-    </footer>
+    <footer class="footer" th:replace="common/fragments :: footer"></footer>
 
     <!-- JavaScript -->
     <script src="/scripts/overlay.js"></script>

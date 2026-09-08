@@ -103,13 +103,7 @@ public class HomeController {
             return "redirect:/login";
         }
 
-        // Redirigir al panel de administración si el usuario tiene el rol de administrador, de lo contrario redirigir a la vista del cliente
-        if (hasRole(authentication, "ADMIN")) {
-            return "redirect:/admin";
-        }
-
-        // Redirigir a la vista del cliente si el usuario no es administrador
-        return "redirect:/client";
+        return "redirect:/user.html";
     }
 
     // Método para verificar si el usuario está autenticado

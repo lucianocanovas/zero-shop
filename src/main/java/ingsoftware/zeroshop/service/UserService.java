@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -44,5 +45,48 @@ public class UserService {
         user.setRole(Role.USER);
         user.setCreated_at(LocalDateTime.now());
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public User updateProfile(UUID id, String firstName, String lastName, String email, String rawPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe."));
+        String normalizedEmail = normalizeEmail(email);
+        if (userRepository.existsByEmailIgnoreCaseAndIdNot(normalizedEmail, id)) {
+            throw new IllegalArgumentException("Ese correo ya esta registrado.");
+        }
+
+        user.setFirst_name(requireText(firstName, "El nombre es obligatorio."));
+        user.setLast_name(requireText(lastName, "El apellido es obligatorio."));
+        user.setEmail(normalizedEmail);
+        if (rawPassword != null && !rawPassword.isBlank()) {
+            user.setPassword(passwordEncoder.encode(rawPassword));
+        }
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteNonAdmin(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe."));
+        if (user.getRole() == Role.ADMIN) {
+            throw new IllegalArgumentException("No se puede eliminar un administrador.");
+        }
+        userRepository.delete(user);
+    }
+
+    private String normalizeEmail(String email) {
+        String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
+        if (normalizedEmail.isBlank()) {
+            throw new IllegalArgumentException("El correo es obligatorio.");
+        }
+        return normalizedEmail;
+    }
+
+    private String requireText(String value, String message) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(message);
+        }
+        return value.trim();
     }
 }
