@@ -1,70 +1,103 @@
-# Proyecto de E-Commerce Zero Shop
+# 🛒 Zero Shop - E-Commerce Web
 
-Este proyecto es un sitio web de comercio electrónico desarrollado con Java y Spring Boot. Proporciona una plataforma para que los usuarios puedan explorar y comprar productos en línea. El proyecto incluye funcionalidades como navegación por categorías, búsqueda de productos, carrito de compras y procesamiento de pagos.
-Este proyecto tiene carácter educativo y no está destinado a ser utilizado en producción. Se recomienda a los desarrolladores que lo utilicen como referencia para aprender sobre el desarrollo de aplicaciones web con Java y Spring Boot.
+Plataforma de comercio electrónico desarrollada con **Java**, **Spring Boot** y **Thymeleaf**. Proyecto desarrollado con fines educativos bajo una arquitectura monolítica MVC con renderizado del lado del servidor (SSR) y autenticación basada en sesiones y roles.
 
-## Dependencias
+---
 
-- Java 11 o superior
-- Spring Boot 2.5 o superior
-- Maven 3.6 o superior
-- Acceso a una base de datos (se recomienda PostgreSQL)
+## 🚀 Tecnologías Principales
 
-## Instalación y Configuración
+- **Lenguaje:** Java (compatible con Java 17+)
+- **Framework:** Spring Boot (Web MVC, Data JPA, Security, Mail, Validation)
+- **Motor de Plantillas:** Thymeleaf + Thymeleaf Extras Spring Security
+- **Base de Datos:** PostgreSQL
+- **Herramientas y Utilidades:** Maven, Lombok, Spring Dotenv, Spring DevTools
 
-1. Clonar el repositorio:
+---
 
-   ```bash
-   git clone https://github.com/lucianocanovas/zero-shop.git
-   ```
+## 📋 Requisitos Previos
 
-2. Navegar al directorio del proyecto:
+- **JDK 17** o superior instalado y configurado en el `JAVA_HOME`.
+- **Apache Maven 3.8+** (o el wrapper de Maven).
+- **PostgreSQL 14+** en ejecución local.
+- IDE recomendado: IntelliJ IDEA, VS Code o Eclipse con el plugin de **Lombok** y *Annotation Processing* habilitado.
 
-   ```bash
-   cd zero-shop
-   ```
+---
 
-3. Configurar la base de datos en `src/main/resources/application.properties` según tus necesidades.
-(Se recomienda el uso de PostgreSQL como base de datos.)
+## ⚙️ Instalación y Configuración
 
-4. Instalación y configuración de PostgreSQL en Linux:
-
+### 1. Clonar el repositorio
 ```bash
-sudo apt update
-
-sudo apt install postgresql postgresql-contrib
-
-sudo -i -u postgres
-
-psql
-
-CREATE DATABASE zero_shop;
-
-CREATE USER zero_shop_user WITH ENCRYPTED PASSWORD 'your_password';
-
-GRANT ALL PRIVILEGES ON DATABASE zero_shop TO zero_shop_user;
-
-\q
-
-exit
+git clone https://github.com/lucianocanovas/zero-shop.git
+cd zero-shop
 ```
 
-## Ejecución del Proyecto
+### 2. Configurar la Base de Datos (PostgreSQL)
+Crea la base de datos `zero-shop`:
+```sql
+CREATE DATABASE "zero-shop";
+```
 
-1. Construir el proyecto utilizando Maven:
+Verifica o ajusta tus credenciales en `src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public
+spring.datasource.username=postgres
+spring.datasource.password=tu_password
+```
 
+### 3. Variables de Entorno (`.env`)
+El proyecto utiliza variables de entorno para servicios externos (como el envío de correos). Copia el archivo de ejemplo en la raíz:
+```bash
+cp .env.example .env
+```
+Edita los valores en `.env` con tus credenciales de correo si deseas probar el servicio SMTP.
+
+---
+
+## ▶️ Ejecución del Proyecto
+
+1. **Compilar y descargar dependencias:**
    ```bash
    mvn clean install
    ```
-
-2. Ejecutar la aplicación:
-
+2. **Ejecutar la aplicación:**
    ```bash
    mvn spring-boot:run
    ```
+3. **Abrir en el navegador:**
+   [http://localhost:8080](http://localhost:8080)
 
-3. Acceder a la aplicación en tu navegador web:
+---
 
-   ```text
-   http://localhost:8080
-   ```
+## 👤 Credenciales de Prueba por Defecto
+
+Al arrancar por primera vez, el sistema inicializa automáticamente dos usuarios de prueba para facilitar el desarrollo:
+
+| Rol | Correo | Contraseña | Acceso |
+|---|---|---|---|
+| **Administrador** | `admin@gmail.com` | `admin123` | Panel `/admin`, gestión de productos y usuarios |
+| **Cliente** | `client@gmail.com` | `client123` | Navegación, perfil y compras |
+
+---
+
+## 📁 Estructura del Código
+
+```text
+src/main/java/ingsoftware/zeroshop/
+ ├── config/       # Seguridad (Spring Security) e inicializadores de BD
+ ├── controller/   # Controladores Web MVC (rutas y vistas)
+ ├── entity/       # Entidades JPA (tablas de base de datos)
+ ├── enums/        # Enums del dominio (roles, estados)
+ ├── repository/   # Interfaces Spring Data JPA
+ └── service/      # Lógica de negocio y servicios externos
+
+src/main/resources/
+ ├── static/       # CSS, JS e imágenes
+ └── templates/    # Vistas HTML Thymeleaf
+```
+
+---
+
+## 📚 Documentación para Desarrolladores
+
+- [Guía de Desarrollo Backend](docs/BACKEND_GUIDE.md): Tutorial paso a paso, arquitectura por capas, buenas prácticas y errores comunes para desarrolladores backend.
+- [Instrucciones para Crear Rutas](docs/ROUTE_INSTRUCTIONS.md): Convenciones obligatorias para registrar endpoints, aplicar permisos en Spring Security y enlazar vistas en Thymeleaf.
