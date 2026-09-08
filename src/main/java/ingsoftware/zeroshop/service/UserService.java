@@ -47,6 +47,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // Método para actualizar el perfil de un usuario existente
     @Transactional
     public User updateProfile(UUID id, String firstName, String lastName, String email, String rawPassword) {
         User user = userRepository.findById(id)
@@ -65,6 +66,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // Método para eliminar un usuario que no sea administrador
     @Transactional
     public void deleteNonAdmin(UUID id) {
         User user = userRepository.findById(id)
@@ -75,6 +77,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    // Metodo para normalizar el correo electrónico y validar que no esté vacío
     private String normalizeEmail(String email) {
         String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
         if (normalizedEmail.isBlank()) {
@@ -83,6 +86,7 @@ public class UserService {
         return normalizedEmail;
     }
 
+    // Metodo para validar que un texto no esté vacío y devolverlo sin espacios al inicio y al final
     private String requireText(String value, String message) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(message);
