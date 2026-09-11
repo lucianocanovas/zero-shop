@@ -38,7 +38,6 @@ public class AdminUserInitializer implements ApplicationRunner {
             personaRepository.save(adminPersona);
 
             User admin = new User();
-            admin.setNombreUsuario("admin");
             admin.setEmail(adminEmail);
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setRole(Role.ADMIN);
@@ -53,7 +52,6 @@ public class AdminUserInitializer implements ApplicationRunner {
             personaRepository.save(clientPersona);
 
             User client = new User();
-            client.setNombreUsuario("cliente");
             client.setEmail(clientEmail);
             client.setPassword(passwordEncoder.encode("client123"));
             client.setRole(Role.USER);
