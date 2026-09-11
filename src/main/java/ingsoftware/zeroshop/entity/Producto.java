@@ -43,4 +43,9 @@ public class Producto {
     @JoinColumn(name = "producto_id")
     @Builder.Default
     private List<Imagen> imagenes = new ArrayList<>();
+
+    // Relación con SubCategoria (* Productos -> 1 SubCategoria)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcategoria_id")
+    private SubCategoria subCategoria;
 }
