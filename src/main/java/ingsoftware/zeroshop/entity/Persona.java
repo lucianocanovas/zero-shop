@@ -52,7 +52,7 @@ public class Persona {
     // Composición con Usuario (1 Persona -> 1..* Usuarios)
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Usuario> usuarios = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 
     // Relación con Contacto (1..*) Puede tener un email y un telefono
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

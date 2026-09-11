@@ -1,6 +1,5 @@
 package ingsoftware.zeroshop.entity;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -9,12 +8,12 @@ import lombok.*;
 import ingsoftware.zeroshop.enums.Role;
 
 @Entity
-@Table(name = "users");
+@Table(name = "user")
 @Data 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Usuario {
+public class User {
     @Id 
     @GeneratedValue(strategy = GenerationType.UUID) 
     private UUID id;
@@ -27,6 +26,12 @@ public class Usuario {
     @Enumerated(EnumType.STRING) 
     private Role role;
 
+    @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado;
+    private boolean eliminado = false;
+
+    // Relación con Persona (pertenece a una Persona)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "persona_id")
+    private Persona persona;
 }

@@ -144,7 +144,7 @@ public class UserController {
         model.addAttribute("formAction", formAction);
         model.addAttribute("loggedIn", true);
         model.addAttribute("isAdmin", user.getRole() == Role.ADMIN);
-        model.addAttribute("userName", user.getFirst_name());
+        model.addAttribute("userName", user.getPersona() != null ? user.getPersona().getNombre() : user.getNombreUsuario());
     }
 
     // Método auxiliar para refrescar el contexto de seguridad tras actualizar datos del usuario
