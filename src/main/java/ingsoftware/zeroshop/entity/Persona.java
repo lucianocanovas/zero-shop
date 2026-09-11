@@ -11,11 +11,12 @@ import lombok.*;
 import ingsoftware.zeroshop.enums.TipoDocumento;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "personas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+
 public class Persona {
 
     @Id
@@ -38,7 +39,7 @@ public class Persona {
     @Column(name = "numero_documento")
     private String numeroDocumento;
 
-    @Builder.Default
+    
     @Column(nullable = false)
     private boolean eliminado = false;
 
@@ -46,17 +47,23 @@ public class Persona {
     // Relación con Direccion (1..*) Varias direcciones.
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)// Cascade.all sirve para que cuando se elimine la persona, se eliminen sus direcciones asociadas.
     @JoinColumn(name = "persona_id")
-    @Builder.Default
+    
     private List<Direccion> direcciones = new ArrayList<>();
 
     // Composición con Usuario (1 Persona -> 1..* Usuarios)
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
+    
     private List<User> users = new ArrayList<>();
 
     // Relación con Contacto (1..*) Puede tener un email y un telefono
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "persona_id")
-    @Builder.Default
+    
     private List<Contacto> contactos = new ArrayList<>();
+
+    // Relación con Imagen (1 Persona -> 1..* Imagenes)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "persona_id")
+    
+    private List<Imagen> imagenes = new ArrayList<>();
 }
