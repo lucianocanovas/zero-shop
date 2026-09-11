@@ -1,0 +1,24 @@
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Not logged in Account Overlay -->
+    <div class="auth-overlay" th:fragment="authOverlay">
+        <div class="auth-overlay-content">
+            <h2 class="auth-overlay-title">Iniciar sesión</h2>
+            <p>Para acceder a tu cuenta, por favor inicia sesión.</p>
+            <a th:href="@{/login}" class="auth-overlay-login-link">Iniciar sesión</a>
+            <button class="auth-close-button"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+    <!-- Logged in Account Overlay -->
+    <div class="account-overlay" th:fragment="accountOverlay">
+        <div class="account-overlay-content">
+            <h2 class="account-overlay-title">Mi cuenta</h2>
+            <ul class="account-list">
+                <li class="account-list-item"><a class="account-link" th:href="@{/profile}">Perfil</a></li>
+                <li class="account-list-item"><a class="account-link" th:href="@{/logout}">Cerrar sesión</a></li>
+            </ul>
+            <button class="account-close-button" type="button" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+</body>
+</html>

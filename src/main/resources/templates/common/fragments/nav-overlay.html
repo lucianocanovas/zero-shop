@@ -1,0 +1,14 @@
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav class="nav-overlay" th:fragment="navOverlay">
+            <ul class="nav-list">
+                <h3 class="nav-list-title" th:if="${isAdmin}">USER</h3>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/}">INICIO</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/products}">PRODUCTOS</a></li>
+                <li class="nav-list-item"><a class="nav-link" th:href="@{/contact}">CONTACTO</a></li>
+            </ul>
+        <button class="nav-close-button"><i class="fa-solid fa-xmark"></i></button>
+        <img class="nav-logo-image" src="/assets/logo-white.png">
+    </nav>
+</body>
+</html>

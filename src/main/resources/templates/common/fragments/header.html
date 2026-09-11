@@ -1,0 +1,14 @@
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <header class="header" th:fragment="header">
+        <button class="header-nav-button"><i class="fa-solid fa-bars"></i></button>
+            <a th:href="@{/}"><img class="header-logo" src="/assets/logo-black.png"></a>
+        <button th:if="${!loggedIn}" class="header-account-button not-logged-in">
+            <i class="fa-solid fa-user"></i>
+        </button>
+        <button th:if="${loggedIn}" class="header-account-button logged-in">
+            <i class="fa-solid fa-user"></i>
+        </button>
+    </header>
+</body>
+</html>
