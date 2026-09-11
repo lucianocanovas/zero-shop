@@ -29,5 +29,5 @@ public class DetalleFactura {
     // "esas relaciones que aparecen que salen de detalle factura y detalle compra son hacia producto."
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
-    private Producto producto;
+    private Product product;
 }

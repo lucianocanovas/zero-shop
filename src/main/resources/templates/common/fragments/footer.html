@@ -1,0 +1,28 @@
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <footer class="footer" th:fragment="footer">
+        <div class="footer-left">
+            <div class="footer-logo">
+                <img class="footer-logo-image" src="/assets/logo-white.png" alt="Zero Deportes">
+                <h2>Zero Deportes</h2>
+            </div>
+            <p>&copy; 2026 Zero Shop. Todos los derechos reservados.</p>
+            <p>Este proyecto es de caracter universitario, los productos mostrados en la tienda son de caracter ficticio.</p>
+        </div>
+        <div class="footer-right">
+            <div class="footer-sitemap">
+                <h3 class="footer-sitemap-title">Mapa del sitio</h3>
+                <ul class="footer-sitemap-list">
+                    <li class="footer-sitemap-list-item"><a th:href="@{/}">Inicio</a></li>
+                    <li class="footer-sitemap-list-item"><a th:href="@{/products}">Productos</a></li>
+                </ul>
+            </div>
+            <div class="footer-legal">
+                <h3 class="footer-legal-title">Legal</h3>
+                <p>Política de privacidad</p>
+                <p>Términos y condiciones</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

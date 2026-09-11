@@ -4,10 +4,13 @@
 
 - Iniciar sesión:
   /login
+  
 - Registrarse:
   /register
+
 - Verificación / Activación de cuenta:
   /verify
+
 - Cerrar sesión:
   /logout
 
@@ -15,18 +18,23 @@
 
 - Inicio:
   /
+
 - Productos:
   /products
   /products/:id
+  
 - Ofertas especiales:
   /offers
+
 - Categorías y subcategorías:
   /categories
-  /categories/:id
+
 - Checkout:
   /checkout
+
 - Perfil del cliente:
   /profile
+
 - Mis compras:
   /orders
   /orders/:id
@@ -44,7 +52,6 @@
 
 - Categorías:
   /admin/categories
-  /admin/categories/:id
 
 - Pedidos de Clientes:
   /admin/orders

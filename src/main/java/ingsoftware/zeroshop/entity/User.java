@@ -25,9 +25,9 @@ public class User {
     private Role role;
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
     // Relación con Persona (pertenece a una Persona)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "persona_id")
-    private Persona persona;
+    private Person person;
 }
