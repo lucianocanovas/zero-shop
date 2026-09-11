@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
-
+    Optional<Employee> find(UUID id);
+    Optional<Employee> findActive(UUID id);
     Optional<Employee> findByIdAndDeletedFalse(UUID id);
     List<Employee> findAllByDeletedFalse();
     List<Employee> findByEmployeeTypeAndDeletedFalse(EmployeeType employeeType);
