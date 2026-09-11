@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-// Controlador para manejar la autenticación y el registro de usuarios
 @Controller
 public class AuthController {
 
@@ -33,76 +32,57 @@ public class AuthController {
         this.emailService = emailService;
     }
 
-    // Método para manejar la vista de inicio de sesión
+    // GET /login: Muestra la página de inicio de sesión
     @GetMapping("/login")
-    public String login() {
+    public String loginPage() {
         return "login";
     }
 
-    // Método para manejar la vista del formulario de registro
-    @GetMapping("/register")
-    public String registerForm(Model model) {
-        model.addAttribute("registration", new RegistrationForm());
-        return "register";
-    }
-
-    // Método para manejar el registro de un nuevo usuario
-    @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("registration") RegistrationForm form,
-                           BindingResult bindingResult,
-                           RedirectAttributes redirectAttributes,
-                           HttpServletRequest request) {
-        if (bindingResult.hasErrors()) {
-            return "register";
-        }
-        // Validar que las contraseñas coincidan y no estén vacías
-        String passwordConfirmation = form.getConfirmPassword();
-        if (!passwordConfirmation.equals(form.getPassword()) || passwordConfirmation.isBlank()) {
-            bindingResult.rejectValue("confirmPassword", "mismatch", "Las contraseñas no coinciden.");
-            return "register";
-        }
-        try {
-            userService.register(form.getFirstName(), form.getLastName(), form.getEmail(), form.getPassword(), passwordConfirmation);
-            var authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword())
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            HttpSession session = request.getSession(true);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                    SecurityContextHolder.getContext());
-        } catch (IllegalArgumentException exception) {
-            bindingResult.rejectValue("email", "duplicate", exception.getMessage());
-            return "register";
-        }
-        redirectAttributes.addFlashAttribute("success", "Cuenta creada. Ya puedes iniciar sesión.");
-        emailService.sendEmail(form.getEmail(), "Email de prueba: Registro", "Este es un email de prueba");
+    // POST /login: Maneja el inicio de sesión del usuario
+    @PostMapping("/login")
+    public String login() {
+        // LOGICA DE INICIO DE SESION
         return "redirect:/";
     }
 
-    // Método para manejar el cierre de sesión
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        return "redirect:/login?logout";
+    // GET /register: Muestra la página de registro de usuario
+    @GetMapping("/register")
+    public String registerPage(Model model) {
+        return "register";
     }
 
-    // Clase interna para representar el formulario de registro de usuario
-    @Data
-    public static class RegistrationForm {
-        @jakarta.validation.constraints.NotBlank
-        private String firstName;
-        @jakarta.validation.constraints.NotBlank
-        private String lastName;
-        @jakarta.validation.constraints.Email
-        @jakarta.validation.constraints.NotBlank
-        private String email;
-        @jakarta.validation.constraints.NotBlank
-        @jakarta.validation.constraints.Size(min = 8)
-        private String password;
-        @jakarta.validation.constraints.NotBlank
-        private String confirmPassword;
+    // POST /register: Maneja el registro de un nuevo usuario
+    @PostMapping("/register")
+    public String register() {
+        // LOGICA DE REGISTRO DE USUARIO
+        return "redirect:/verify";
     }
+
+    // GET /verify: Muestra la página de verificación de correo electrónico
+    @GetMapping("/verify")
+    public String verifyPage() {
+        return "verify";
+    }
+
+    // POST /verify: Maneja la verificación del correo electrónico del usuario
+    @PostMapping("/verify")
+    public String verify() {
+        // LOGICA DE VERIFICACION DE CORREO ELECTRONICO
+        return "redirect:/login";
+    }
+
+    // POST /verify/resend: Maneja el reenvío del correo de verificación
+    @PostMapping("/verify/resend")
+    public String resendVerificationEmail() {
+        // LOGICA DE REENVIO DE CORREO DE VERIFICACION
+        return "redirect:/verify";
+    }
+
+    // GET /logout: Maneja el cierre de sesión del usuario
+    @GetMapping("/logout")
+    public String logout() {
+        // LOGICA DE CIERRE DE SESION
+        return "redirect:/";
+    }
+
 }
