@@ -1,4 +1,4 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.catalog;
 
 import jakarta.persistence.*;
 import lombok.*;

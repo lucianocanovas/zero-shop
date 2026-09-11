@@ -1,5 +1,6 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.transaction;
 
+import ingsoftware.zeroshop.entity.actor.Proveedor;
 import jakarta.persistence.*;
 import lombok.*;
 

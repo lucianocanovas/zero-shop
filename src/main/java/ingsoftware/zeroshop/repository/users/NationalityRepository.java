@@ -4,7 +4,8 @@ package ingsoftware.zeroshop.repository.users;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ingsoftware.zeroshop.entity.Nationality;
+
+import ingsoftware.zeroshop.entity.actor.Nationality;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,8 +1,10 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.transaction;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
+
+import ingsoftware.zeroshop.entity.catalog.Product;
 
 @Entity
 @Table(name = "detalles_compra")

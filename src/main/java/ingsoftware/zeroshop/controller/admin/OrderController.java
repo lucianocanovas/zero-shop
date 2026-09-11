@@ -11,46 +11,48 @@ import org.springframework.web.bind.annotation.PutMapping;
 @Controller("adminOrderController")
 public class OrderController {
 
-    // GET /admin/orders: Lista todas las órdenes de los clientes
-    @GetMapping("/admin/orders")
+
+    // GET /admin/sale-orders: Lista todas las órdenes de los clientes
+    @GetMapping("/admin/sale-orders")
     public String listOrders() {
         // LOGICA PARA LISTAR ORDENES
-        return "admin/orders";
+        return "admin/sale-orders";
     }
 
-    // GET /admin/orders/:id: Muestra el detalle de una orden de cliente
-    @GetMapping("/admin/orders/{id}")
+    // GET /admin/sale-orders/:id: Muestra el detalle de una orden de cliente
+    @GetMapping("/admin/sale-orders/{id}")
     public String getOrderDetail(@PathVariable("id") UUID id) {
         // LOGICA PARA OBTENER DETALLE DE ORDEN
         return "admin/order-detail";
     }
 
-    // POST /admin/orders/: Crea una orden manualmente desde administración
-    @PostMapping("/admin/orders/")
+
+    // POST /admin/sale-orders/: Crea una orden manualmente desde administración
+    @PostMapping("/admin/sale-orders/")
     public String createOrder() {
         // LOGICA PARA CREAR ORDEN MANUAL
-        return "redirect:/admin/orders";
+        return "redirect:/admin/sale-orders";
     }
 
-    // PUT /admin/orders/:id: Actualiza datos de una orden
-    @PutMapping("/admin/orders/{id}")
+    // PUT /admin/sale-orders/:id: Actualiza datos de una orden
+    @PutMapping("/admin/sale-orders/{id}")
     public String updateOrder(@PathVariable("id") UUID id) {
         // LOGICA PARA ACTUALIZAR DATOS DE LA ORDEN
-        return "redirect:/admin/orders/" + id;
+        return "redirect:/admin/sale-orders/" + id;
     }
 
-    // PUT /admin/orders/:id/status: Actualiza el estado de la orden (PAGO REALIZADO, ENVIADO, ENTREGADO, etc.)
-    @PutMapping("/admin/orders/{id}/status")
+    // PUT /admin/sale-orders/:id/status: Actualiza el estado de la orden (PAGO REALIZADO, ENVIADO, ENTREGADO, etc.)
+    @PutMapping("/admin/sale-orders/{id}/status")
     public String updateOrderStatus(@PathVariable("id") UUID id) {
         // LOGICA PARA ACTUALIZAR ESTADO DE LA ORDEN
-        return "redirect:/admin/orders/" + id;
+        return "redirect:/admin/sale-orders/" + id;
     }
 
-    // DELETE /admin/orders/:id: Elimina una orden de cliente
-    @DeleteMapping("/admin/orders/{id}")
+    // DELETE /admin/sale-orders/:id: Elimina una orden de cliente
+    @DeleteMapping("/admin/sale-orders/{id}")
     public String deleteOrder(@PathVariable("id") UUID id) {
         // LOGICA PARA ELIMINAR ORDEN
-        return "redirect:/admin/orders";
+        return "redirect:/admin/sale-orders";
     }
 
 }

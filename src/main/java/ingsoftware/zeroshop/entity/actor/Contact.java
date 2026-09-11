@@ -1,11 +1,10 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.actor;
 
 import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import ingsoftware.zeroshop.enums.ContactType;
 import ingsoftware.zeroshop.enums.ContactType;
 
 @Entity

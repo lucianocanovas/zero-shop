@@ -1,7 +1,8 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.actor;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ingsoftware.zeroshop.entity.org.Company;
 import ingsoftware.zeroshop.enums.EmployeeType;
 
 @Entity

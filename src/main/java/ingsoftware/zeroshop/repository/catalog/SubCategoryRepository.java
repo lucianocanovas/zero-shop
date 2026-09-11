@@ -1,9 +1,10 @@
 package ingsoftware.zeroshop.repository.catalog;
 
-import ingsoftware.zeroshop.entity.SubCategory;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import ingsoftware.zeroshop.entity.catalog.SubCategory;
 
 import java.util.List;
 import java.util.Optional;

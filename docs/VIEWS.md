@@ -54,8 +54,8 @@
   /admin/categories
 
 - Pedidos de Clientes:
-  /admin/orders
-  /admin/orders/:id
+  /admin/sale-orders
+  /admin/sale-orders/:id
 
 - Proveedores:
   /admin/providers

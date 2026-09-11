@@ -1,4 +1,4 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.actor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import ingsoftware.zeroshop.enums.DocumentType;
 
 @Entity

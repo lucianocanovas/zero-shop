@@ -1,8 +1,9 @@
 package ingsoftware.zeroshop.repository.catalog;
 
-import ingsoftware.zeroshop.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import ingsoftware.zeroshop.entity.catalog.Product;
 
 import java.util.List;
 import java.util.Optional;

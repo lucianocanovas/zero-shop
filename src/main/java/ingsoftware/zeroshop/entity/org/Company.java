@@ -1,4 +1,4 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.org;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import ingsoftware.zeroshop.enums.CompanyType;
+import ingsoftware.zeroshop.entity.actor.Contact;
+import ingsoftware.zeroshop.entity.actor.Employee;
+import ingsoftware.zeroshop.entity.location.Address;
 
 @Entity
 @Table(name = "empresas")

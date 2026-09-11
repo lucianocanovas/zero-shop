@@ -1,9 +1,9 @@
 package ingsoftware.zeroshop.repository.users;
 
+import ingsoftware.zeroshop.entity.actor.Employee;
 import ingsoftware.zeroshop.enums.EmployeeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ingsoftware.zeroshop.entity.Employee;
 
 import java.util.List;
 import java.util.Optional;

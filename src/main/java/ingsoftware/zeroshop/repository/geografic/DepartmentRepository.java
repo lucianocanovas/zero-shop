@@ -2,7 +2,8 @@ package ingsoftware.zeroshop.repository.geografic;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ingsoftware.zeroshop.entity.Department;
+
+import ingsoftware.zeroshop.entity.org.Department;
 
 import java.util.List;
 import java.util.Optional;

@@ -71,11 +71,11 @@
   - DELETE /admin/categories/:id
 
 - OrderController
-  - GET /admin/orders
-  - GET /admin/orders/:id
-  - POST /admin/orders/
-  - PUT /admin/orders/:id
-  - DELETE /admin/orders/:id
+  - GET /admin/sale-orders
+  - GET /admin/sale-orders/:id
+  - POST /admin/sale-orders/
+  - PUT /admin/sale-orders/:id
+  - DELETE /admin/sale-orders/:id
 
 - ProviderController
   - GET /admin/providers

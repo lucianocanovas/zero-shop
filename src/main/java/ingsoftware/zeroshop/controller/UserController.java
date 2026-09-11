@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.controller;
 
-import ingsoftware.zeroshop.entity.User;
+import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.enums.Role;
 import lombok.Data;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

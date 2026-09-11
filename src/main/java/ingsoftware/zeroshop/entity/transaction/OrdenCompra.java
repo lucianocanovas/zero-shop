@@ -1,4 +1,4 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.transaction;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
+
+import ingsoftware.zeroshop.entity.actor.Client;
+import ingsoftware.zeroshop.entity.actor.Employee;
 import ingsoftware.zeroshop.enums.EstadoOrdenCompra;
 
 @Entity

@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.config;
 
-import ingsoftware.zeroshop.entity.User;
+import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.enums.Role;
 import ingsoftware.zeroshop.repository.users.UserRepository;
 import org.springframework.boot.ApplicationArguments;

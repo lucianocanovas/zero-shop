@@ -1,8 +1,11 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.catalog;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
+
+import ingsoftware.zeroshop.entity.media.Image;
+
 import java.util.List;
 import java.util.ArrayList;
 

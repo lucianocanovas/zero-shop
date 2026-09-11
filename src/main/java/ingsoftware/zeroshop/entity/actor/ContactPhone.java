@@ -1,9 +1,8 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.actor;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
 import ingsoftware.zeroshop.enums.PhoneType;
 
 @Entity

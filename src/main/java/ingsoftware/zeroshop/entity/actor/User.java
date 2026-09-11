@@ -1,10 +1,9 @@
-package ingsoftware.zeroshop.entity;
+package ingsoftware.zeroshop.entity.actor;
 
 import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import ingsoftware.zeroshop.enums.Role;
 
 @Entity

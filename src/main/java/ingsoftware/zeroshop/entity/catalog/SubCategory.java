@@ -1,17 +1,16 @@
-package ingsoftware.zeroshop.entity;
-
-import java.util.UUID;
+package ingsoftware.zeroshop.entity.catalog;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.UUID;
 
 @Entity
-@Table(name = "departamentos")
+@Table(name = "subcategorias")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Department {
+public class SubCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -20,12 +19,11 @@ public class Department {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provincia_id")
-    private State state;
-
     @Builder.Default
     @Column(nullable = false)
     private boolean deleted = false;
-}
 
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Category category;
+}
