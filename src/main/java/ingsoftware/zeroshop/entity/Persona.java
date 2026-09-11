@@ -45,23 +45,27 @@ public class Persona {
 
 
     // Relación con Direccion (1..*) Varias direcciones.
+    //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)// Cascade.all sirve para que cuando se elimine la persona, se eliminen sus direcciones asociadas.
     @JoinColumn(name = "persona_id")
     
     private List<Direccion> direcciones = new ArrayList<>();
 
     // Composición con Usuario (1 Persona -> 1..* Usuarios)
+    //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     
     private List<User> users = new ArrayList<>();
 
     // Relación con Contacto (1..*) Puede tener un email y un telefono
+    //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "persona_id")
     
     private List<Contacto> contactos = new ArrayList<>();
 
     // Relación con Imagen (1 Persona -> 1..* Imagenes)
+    //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "persona_id")
     

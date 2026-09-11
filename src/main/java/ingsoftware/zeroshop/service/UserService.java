@@ -1,10 +1,15 @@
 package ingsoftware.zeroshop.service;
 
+    
 import ingsoftware.zeroshop.entity.Persona;
 import ingsoftware.zeroshop.entity.User;
 import ingsoftware.zeroshop.enums.Role;
+<<<<<<< HEAD
+import ingsoftware.zeroshop.repository.users.UserRepository;
+=======
 import ingsoftware.zeroshop.repository.PersonaRepository;
 import ingsoftware.zeroshop.repository.UserRepository;
+>>>>>>> 6241319d41bf5921ed8be544577cff8653c350fc
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
