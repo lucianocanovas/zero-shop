@@ -7,7 +7,7 @@
 - PUT: Se utiliza para actualizar recursos existentes en el servidor. Puede modificar el estado del servidor y tener efectos secundarios. Se utiliza para modificar datos de registros o recursos ya existentes.
 - DELETE: Se utiliza para eliminar recursos del servidor. Puede modificar el estado del servidor y tener efectos secundarios. Se utiliza para borrar registros o recursos.
 
-## 1. CONTROLADORES DE AUTENTICACIÓN Y CUENTA
+## Controladores de autenticación y cuenta
 
 - AuthController
   - GET /login
@@ -19,11 +19,11 @@
   - POST /verify/resend
   - GET /logout
 
-## 2. CONTROLADORES DE CLIENTE
+## Controladores de cliente
 
 - ClientController
   - GET /
-  
+
 - ProductController
   - GET /products
   - GET /products/:id
@@ -46,7 +46,7 @@
   - GET /orders/:id
   - DELETE /orders/:id
 
-## 3. CONTROLADORES DE ADMINISTRACIÓN
+## Controladores de administración
 
 - AdminController
   - GET /admin/

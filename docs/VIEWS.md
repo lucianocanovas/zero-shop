@@ -1,10 +1,10 @@
 # VISTAS DEL SISTEMA
 
-## 1. VISTAS DE AUTENTICACIÓN Y CUENTA
+## Vistas de autenticación y cuenta
 
 - Iniciar sesión:
   /login
-  
+
 - Registrarse:
   /register
 
@@ -14,7 +14,7 @@
 - Cerrar sesión:
   /logout
 
-## 2. VISTAS DE LA TIENDA
+## Vistas de cliente
 
 - Inicio:
   /
@@ -39,7 +39,7 @@
   /orders
   /orders/:id
 
-## 3. VISTAS DE ADMINISTRACIÓN
+## Vistas de administración
 
 - Inicio:
   /admin
@@ -79,7 +79,7 @@
   /admin/reports/stock
   /admin/reports/suppliers
 
-## 4. VISTAS ADICIONALES
+## Vistas de error
 
 - Error:
   /error/:code

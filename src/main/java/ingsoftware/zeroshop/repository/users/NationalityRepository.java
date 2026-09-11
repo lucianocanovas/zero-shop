@@ -11,7 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface NationalityRepository extends JpaRepository<Nationality, UUID> {
-
+    Optional<Nationality> find(UUID id);
+    Optional<Nationality> findActive(UUID id);
     Optional<Nationality> findByIdAndDeletedFalse(UUID id);
     Optional<Nationality> findByNameIgnoreCase(String name);
     List<Nationality> findAllByDeletedFalse();

@@ -10,7 +10,8 @@ import ingsoftware.zeroshop.entity.City;
 
 @Repository
 public interface CityRepository extends JpaRepository<City, UUID> {
-
+    Optional<City> find(UUID id);
+    Optional<City> findActive(UUID id);
     Optional<City> findById(UUID uuid);
     Optional<City> findByName(String name);
     List<City> findAllCities();

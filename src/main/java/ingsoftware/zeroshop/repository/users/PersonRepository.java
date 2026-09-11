@@ -11,7 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface PersonRepository extends JpaRepository<Person, UUID> {
-
+    Optional<Person> find(UUID id);
+    Optional<Person> findActive(UUID id);
     Optional<Person> findByIdAndDeletedFalse(UUID id);
     Optional<Person> findByDocumentTypeAndDocumentNumberAndDeletedFalseIgnoreCase(DocumentType documentType, String documentNumber);
     List <Person> findByNameIgnoreCaseAndDeletedFalse(String name);
