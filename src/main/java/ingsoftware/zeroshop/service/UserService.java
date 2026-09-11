@@ -1,8 +1,15 @@
 package ingsoftware.zeroshop.service;
 
+    
+import ingsoftware.zeroshop.entity.Persona;
 import ingsoftware.zeroshop.entity.User;
 import ingsoftware.zeroshop.enums.Role;
+<<<<<<< HEAD
 import ingsoftware.zeroshop.repository.users.UserRepository;
+=======
+import ingsoftware.zeroshop.repository.PersonaRepository;
+import ingsoftware.zeroshop.repository.UserRepository;
+>>>>>>> 6241319d41bf5921ed8be544577cff8653c350fc
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +23,13 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PersonaRepository personaRepository;
     private final PasswordEncoder passwordEncoder;
 
     // Constructor para inyectar dependencias del repositorio y codificador de contraseñas
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PersonaRepository personaRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.personaRepository = personaRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -56,7 +65,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public String getUserFirstName(String email) {
         return findByEmail(email)
-                .map(user -> user.getFirst_name())
+                .map(user -> user.getPersona() != null ? user.getPersona().getNombre() : email)
                 .orElse(email);
     }
 
@@ -76,13 +85,18 @@ public class UserService {
         if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             throw new IllegalArgumentException("Ese correo ya esta registrado.");
         }
+
+        Persona persona = new Persona();
+        persona.setNombre(firstName.trim());
+        persona.setApellido(lastName.trim());
+        personaRepository.save(persona);
+
         User user = new User();
-        user.setFirst_name(firstName.trim());
-        user.setLast_name(lastName.trim());
         user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setRole(Role.USER);
-        user.setCreated_at(LocalDateTime.now());
+        user.setPersona(persona);
+        
         return userRepository.save(user);
     }
 
@@ -96,8 +110,19 @@ public class UserService {
             throw new IllegalArgumentException("Ese correo ya esta registrado.");
         }
 
-        user.setFirst_name(requireText(firstName, "El nombre es obligatorio."));
-        user.setLast_name(requireText(lastName, "El apellido es obligatorio."));
+        Persona persona = user.getPersona();
+        if (persona != null) {
+            persona.setNombre(requireText(firstName, "El nombre es obligatorio."));
+            persona.setApellido(requireText(lastName, "El apellido es obligatorio."));
+            personaRepository.save(persona);
+        } else {
+            persona = new Persona();
+            persona.setNombre(requireText(firstName, "El nombre es obligatorio."));
+            persona.setApellido(requireText(lastName, "El apellido es obligatorio."));
+            personaRepository.save(persona);
+            user.setPersona(persona);
+        }
+
         user.setEmail(normalizedEmail);
         if (rawPassword != null && !rawPassword.isBlank()) {
             user.setPassword(passwordEncoder.encode(rawPassword));

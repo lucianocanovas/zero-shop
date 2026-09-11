@@ -144,13 +144,18 @@ public class UserController {
         model.addAttribute("formAction", formAction);
         model.addAttribute("loggedIn", true);
         model.addAttribute("isAdmin", user.getRole() == Role.ADMIN);
-        model.addAttribute("userName", user.getFirst_name());
+        model.addAttribute("userName", user.getPersona() != null ? user.getPersona().getNombre() : user.getEmail());
     }
 
     // Método auxiliar para refrescar el contexto de seguridad tras actualizar datos del usuario
     private void refreshAuthentication(Authentication authentication, User user) {
+        org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                authentication.getAuthorities()
+        );
         UsernamePasswordAuthenticationToken updatedAuthentication =
-                new UsernamePasswordAuthenticationToken(user.getEmail(), authentication.getCredentials(), authentication.getAuthorities());
+                new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), authentication.getAuthorities());
         updatedAuthentication.setDetails(authentication.getDetails());
         SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
     }
