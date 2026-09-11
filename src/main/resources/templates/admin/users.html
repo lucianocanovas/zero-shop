@@ -40,7 +40,7 @@
                     <tbody>
                     <tr th:each="user : ${users}">
                         <td data-label="Usuario">
-                            <strong th:text="${user.persona != null ? user.persona.nombre + ' ' + user.persona.apellido : user.nombreUsuario}">Nombre Apellido</strong>
+                            <strong th:text="${user.persona != null ? user.persona.nombre + ' ' + user.persona.apellido : user.email}">Nombre Apellido</strong>
                         </td>
                         <td data-label="Correo" th:text="${user.email}">correo@ejemplo.com</td>
                         <td data-label="Rol">

@@ -59,4 +59,10 @@ public class Persona {
     @JoinColumn(name = "persona_id")
     @Builder.Default
     private List<Contacto> contactos = new ArrayList<>();
+
+    // Relación con Imagen (1 Persona -> 1..* Imagenes)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "persona_id")
+    @Builder.Default
+    private List<Imagen> imagenes = new ArrayList<>();
 }
