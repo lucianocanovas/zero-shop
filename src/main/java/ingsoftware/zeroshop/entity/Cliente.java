@@ -11,9 +11,6 @@ import lombok.*;
 @AllArgsConstructor
 public class Cliente extends Persona {
 
-    @Column(name = "direccion_estadia")
-    private String direccionEstadia;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nacionalidad_id")
     private Nacionalidad nacionalidad;

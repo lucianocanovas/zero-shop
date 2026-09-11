@@ -39,13 +39,12 @@ public class Producto {
     private boolean eliminado = false;
 
     // Relación con Imagen (1 Producto -> 1..* Imagenes)
-    //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "producto_id")
     @Builder.Default
     private List<Imagen> imagenes = new ArrayList<>();
 
-    // Relación con SubCategoria (* Productos -> 1 SubCategoria)
+    // A que subcategoria pertenece 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subcategoria_id")
     private SubCategoria subCategoria;

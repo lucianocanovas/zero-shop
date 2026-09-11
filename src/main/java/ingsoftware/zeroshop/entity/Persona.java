@@ -57,7 +57,7 @@ public class Persona {
     
     private List<User> users = new ArrayList<>();
 
-    // Relación con Contacto (1..*) Puede tener un email y un telefono
+    // Puede tener un email y un telefono
     //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "persona_id")

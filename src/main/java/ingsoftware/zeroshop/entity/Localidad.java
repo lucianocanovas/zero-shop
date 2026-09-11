@@ -1,5 +1,7 @@
 package ingsoftware.zeroshop.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -30,5 +32,11 @@ public class Localidad {
     @Builder.Default
     @Column(nullable = false)
     private boolean eliminado = false;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "localidad_id")
+    @Builder.Default
+    private List<Direccion> direcciones = new ArrayList<>();
+
 }
 
