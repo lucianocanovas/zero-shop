@@ -46,12 +46,14 @@ public class Empresa {
     private ConfiguracionCorreoEmpresa configuracionCorreo;
 
     // Relación con Contacto (1..*)
+    //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "empresa_id")
     @Builder.Default
     private List<Contacto> contactos = new ArrayList<>();
 
     // Relación con Empleado (1 Empresa -> 1..* Empleados)
+    //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Empleado> empleados = new ArrayList<>();

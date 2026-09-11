@@ -1,9 +1,6 @@
 package ingsoftware.zeroshop.service;
 
-<<<<<<< HEAD
-public class UserService {
     
-=======
 import ingsoftware.zeroshop.entity.Persona;
 import ingsoftware.zeroshop.entity.User;
 import ingsoftware.zeroshop.enums.Role;
@@ -167,5 +164,4 @@ public class UserService {
         }
         return value.trim();
     }
->>>>>>> 7794f6759aa23b94373e9de2328c58332ff07bca
 }
