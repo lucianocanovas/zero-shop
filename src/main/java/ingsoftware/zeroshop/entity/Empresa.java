@@ -50,5 +50,10 @@ public class Empresa {
     @JoinColumn(name = "empresa_id")
     @Builder.Default
     private List<Contacto> contactos = new ArrayList<>();
+
+    // Relación con Empleado (1 Empresa -> 1..* Empleados)
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Empleado> empleados = new ArrayList<>();
 }
 
