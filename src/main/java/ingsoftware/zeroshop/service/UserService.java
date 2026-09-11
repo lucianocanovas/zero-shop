@@ -8,17 +8,56 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+// Servicio para la gestión y lógica de negocio de usuarios
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // Constructor para inyectar dependencias del repositorio y codificador de contraseñas
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    // Método para obtener todos los usuarios registrados
+    @Transactional(readOnly = true)
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    // Método para buscar un usuario por su identificador único
+    @Transactional(readOnly = true)
+    public Optional<User> findById(UUID id) {
+        return userRepository.findById(id);
+    }
+
+    // Método para buscar un usuario por su correo electrónico ignorando mayúsculas/minúsculas
+    @Transactional(readOnly = true)
+    public Optional<User> findByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return Optional.empty();
+        }
+        return userRepository.findByEmailIgnoreCase(email.trim());
+    }
+
+    // Método para obtener un usuario por correo o lanzar excepción si no existe
+    @Transactional(readOnly = true)
+    public User getByEmail(String email) {
+        return findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario autenticado no existe."));
+    }
+
+    // Método para obtener el primer nombre de un usuario por su correo
+    @Transactional(readOnly = true)
+    public String getUserFirstName(String email) {
+        return findByEmail(email)
+                .map(user -> user.getFirst_name())
+                .orElse(email);
     }
 
     // Método para registrar un nuevo usuario en la base de datos
@@ -64,6 +103,17 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(rawPassword));
         }
         return userRepository.save(user);
+    }
+
+    // Método para actualizar el perfil de un usuario garantizando que no sea administrador
+    @Transactional
+    public User updateNonAdminProfile(UUID id, String firstName, String lastName, String email, String rawPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe."));
+        if (user.getRole() == Role.ADMIN) {
+            throw new IllegalArgumentException("Solo se pueden modificar usuarios no administradores.");
+        }
+        return updateProfile(id, firstName, lastName, email, rawPassword);
     }
 
     // Método para eliminar un usuario que no sea administrador

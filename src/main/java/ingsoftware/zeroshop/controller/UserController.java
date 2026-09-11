@@ -2,38 +2,36 @@ package ingsoftware.zeroshop.controller;
 
 import ingsoftware.zeroshop.entity.User;
 import ingsoftware.zeroshop.enums.Role;
-import ingsoftware.zeroshop.repository.UserRepository;
 import ingsoftware.zeroshop.service.UserService;
+import lombok.Data;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.UUID;
 
-// Gestion de la vista de usuarios para el administrador
+// Controlador para gestionar las operaciones y vistas de usuarios y perfiles
 @Controller
 public class UserController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
-    public UserController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
+    // Constructor para inyectar la dependencia del servicio de usuario
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    // Método para manejar la vista de usuarios
-    @GetMapping("/admin/users")
-    public String users(Authentication authentication, Model model) {
-
+    // Método para listar todos los usuarios registrados (vista de administración)
+    @GetMapping({"/users", "/admin/users"})
+    public String listUsers(Authentication authentication, Model model) {
         // Verificar si el usuario está autenticado y tiene el rol de administrador
         if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
             return "redirect:/login";
@@ -43,41 +41,91 @@ public class UserController {
         model.addAttribute("loggedIn", true);
         model.addAttribute("isAdmin", true);
         model.addAttribute("userName", getUserName(authentication));
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("users", userService.findAll());
         return "admin/users";
     }
 
-    @GetMapping("/user.html")
-    public String profile(Authentication authentication, Model model) {
-        if (!isAuthenticated(authentication)) {
-            return "redirect:/login";
-        }
-        User user = currentUser(authentication);
-        addProfileModel(model, user, false, "/user.html");
-        return "user";
-    }
-
-    @GetMapping("/admin/users/{id}/edit")
+    // Método para mostrar el formulario de edición de un usuario específico por su ID
+    @GetMapping({"/users/{id}", "/users/{id}/edit", "/admin/users/{id}/edit"})
     public String editUser(@PathVariable UUID id, Authentication authentication, Model model) {
+        // Verificar si el usuario está autenticado y tiene el rol de administrador
         if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
             return "redirect:/login";
         }
-        User user = userRepository.findById(id).orElse(null);
+
+        // Obtener el usuario mediante el servicio
+        User user = userService.findById(id).orElse(null);
         if (user == null) {
-            return "redirect:/admin/users";
+            return "redirect:/users";
         }
-        addProfileModel(model, user, true, "/admin/users/" + id);
+
+        addProfileModel(model, user, true, "/users/" + id);
         return "user";
     }
 
-    @PostMapping("/user.html")
-    public String updateOwnProfile(Authentication authentication,
-                                  @ModelAttribute ProfileForm form,
-                                  RedirectAttributes redirectAttributes) {
+    // Método para actualizar los datos de un usuario por su ID
+    @PostMapping({"/users/{id}", "/admin/users/{id}"})
+    public String updateUser(@PathVariable UUID id,
+                             Authentication authentication,
+                             @ModelAttribute ProfileForm form,
+                             RedirectAttributes redirectAttributes) {
+        // Verificar si el usuario está autenticado y tiene el rol de administrador
+        if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
+            return "redirect:/login";
+        }
+
+        try {
+            userService.updateNonAdminProfile(id, form.getFirstName(), form.getLastName(), form.getEmail(), form.getPassword());
+            redirectAttributes.addFlashAttribute("success", "Usuario actualizado correctamente.");
+        } catch (IllegalArgumentException exception) {
+            redirectAttributes.addFlashAttribute("error", exception.getMessage());
+        }
+        return "redirect:/users";
+    }
+
+    // Método para eliminar un usuario por su ID
+    @PostMapping({"/users/{id}/delete", "/admin/users/{id}/delete"})
+    public String deleteUser(@PathVariable UUID id,
+                             Authentication authentication,
+                             RedirectAttributes redirectAttributes) {
+        // Verificar si el usuario está autenticado y tiene el rol de administrador
+        if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
+            return "redirect:/login";
+        }
+
+        try {
+            userService.deleteNonAdmin(id);
+            redirectAttributes.addFlashAttribute("success", "Usuario eliminado correctamente.");
+        } catch (IllegalArgumentException exception) {
+            redirectAttributes.addFlashAttribute("error", exception.getMessage());
+        }
+        return "redirect:/users";
+    }
+
+    // Método para mostrar la vista del perfil propio del usuario autenticado
+    @GetMapping({"/profile", "/user.html"})
+    public String viewProfile(Authentication authentication, Model model) {
+        // Verificar si el usuario está autenticado
         if (!isAuthenticated(authentication)) {
             return "redirect:/login";
         }
-        User currentUser = currentUser(authentication);
+
+        User user = userService.getByEmail(authentication.getName());
+        addProfileModel(model, user, false, "/profile");
+        return "user";
+    }
+
+    // Método para actualizar el perfil propio del usuario autenticado
+    @PostMapping({"/profile", "/user.html"})
+    public String updateProfile(Authentication authentication,
+                                @ModelAttribute ProfileForm form,
+                                RedirectAttributes redirectAttributes) {
+        // Verificar si el usuario está autenticado
+        if (!isAuthenticated(authentication)) {
+            return "redirect:/login";
+        }
+
+        User currentUser = userService.getByEmail(authentication.getName());
         try {
             User updated = userService.updateProfile(currentUser.getId(), form.getFirstName(), form.getLastName(),
                     form.getEmail(), form.getPassword());
@@ -86,43 +134,10 @@ public class UserController {
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("error", exception.getMessage());
         }
-        return "redirect:/user.html";
+        return "redirect:/profile";
     }
 
-    @PostMapping("/admin/users/{id}")
-    public String updateUser(@PathVariable UUID id, Authentication authentication,
-                             @ModelAttribute ProfileForm form, RedirectAttributes redirectAttributes) {
-        if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
-            return "redirect:/login";
-        }
-        User target = userRepository.findById(id).orElse(null);
-        if (target == null || target.getRole() == Role.ADMIN) {
-            redirectAttributes.addFlashAttribute("error", "Solo se pueden modificar usuarios no administradores.");
-            return "redirect:/admin/users";
-        }
-        try {
-            userService.updateProfile(id, form.getFirstName(), form.getLastName(), form.getEmail(), form.getPassword());
-            redirectAttributes.addFlashAttribute("success", "Usuario actualizado correctamente.");
-        } catch (IllegalArgumentException exception) {
-            redirectAttributes.addFlashAttribute("error", exception.getMessage());
-        }
-        return "redirect:/admin/users";
-    }
-
-    @PostMapping("/admin/users/{id}/delete")
-    public String deleteUser(@PathVariable UUID id, Authentication authentication, RedirectAttributes redirectAttributes) {
-        if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
-            return "redirect:/login";
-        }
-        try {
-            userService.deleteNonAdmin(id);
-            redirectAttributes.addFlashAttribute("success", "Usuario eliminado correctamente.");
-        } catch (IllegalArgumentException exception) {
-            redirectAttributes.addFlashAttribute("error", exception.getMessage());
-        }
-        return "redirect:/admin/users";
-    }
-
+    // Método auxiliar para preparar el modelo de la vista de perfil o edición de usuario
     private void addProfileModel(Model model, User user, boolean adminEdit, String formAction) {
         model.addAttribute("profileUser", user);
         model.addAttribute("adminEdit", adminEdit);
@@ -132,11 +147,7 @@ public class UserController {
         model.addAttribute("userName", user.getFirst_name());
     }
 
-    private User currentUser(Authentication authentication) {
-        return userRepository.findByEmailIgnoreCase(authentication.getName())
-                .orElseThrow(() -> new IllegalArgumentException("El usuario autenticado no existe."));
-    }
-
+    // Método auxiliar para refrescar el contexto de seguridad tras actualizar datos del usuario
     private void refreshAuthentication(Authentication authentication, User user) {
         UsernamePasswordAuthenticationToken updatedAuthentication =
                 new UsernamePasswordAuthenticationToken(user.getEmail(), authentication.getCredentials(), authentication.getAuthorities());
@@ -144,12 +155,9 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
     }
 
-
-    // Método para obtener el nombre del usuario autenticado
+    // Método para obtener el primer nombre del usuario autenticado
     private String getUserName(Authentication authentication) {
-        return userRepository.findByEmailIgnoreCase(authentication.getName())
-                .map(user -> user.getFirst_name())
-                .orElse(authentication.getName());
+        return userService.getUserFirstName(authentication.getName());
     }
 
     // Método para verificar si el usuario está autenticado
@@ -165,7 +173,8 @@ public class UserController {
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_" + roleName));
     }
 
-    @lombok.Data
+    // Formulario para representar los datos de edición de perfil y usuario
+    @Data
     public static class ProfileForm {
         private String firstName;
         private String lastName;

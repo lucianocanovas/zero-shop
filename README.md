@@ -26,18 +26,22 @@ Plataforma de comercio electrónico desarrollada con **Java**, **Spring Boot** y
 ## Instalación y Configuración
 
 ### 1. Clonar el repositorio
+
 ```bash
 git clone https://github.com/lucianocanovas/zero-shop.git
 cd zero-shop
 ```
 
 ### 2. Configurar la Base de Datos (PostgreSQL)
+
 Crea la base de datos `zero-shop`:
+
 ```sql
 CREATE DATABASE "zero-shop";
 ```
 
 Verifica o ajusta tus credenciales en `src/main/resources/application.properties`:
+
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public
 spring.datasource.username=postgres
@@ -45,10 +49,13 @@ spring.datasource.password=tu_password
 ```
 
 ### 3. Variables de Entorno (`.env`)
+
 El proyecto utiliza variables de entorno para servicios externos (como el envío de correos). Copia el archivo de ejemplo en la raíz:
+
 ```bash
 cp .env.example .env
 ```
+
 Edita los valores en `.env` con tus credenciales de correo si deseas probar el servicio SMTP.
 
 ---
@@ -56,13 +63,17 @@ Edita los valores en `.env` con tus credenciales de correo si deseas probar el s
 ## Ejecución del Proyecto
 
 1. **Compilar y descargar dependencias:**
+
    ```bash
    mvn clean install
    ```
+
 2. **Ejecutar la aplicación:**
+
    ```bash
    mvn spring-boot:run
    ```
+
 3. **Abrir en el navegador:**
    [http://localhost:8080](http://localhost:8080)
 
@@ -73,7 +84,7 @@ Edita los valores en `.env` con tus credenciales de correo si deseas probar el s
 Al arrancar por primera vez, el sistema inicializa automáticamente dos usuarios de prueba para facilitar el desarrollo:
 
 | Rol | Correo | Contraseña | Acceso |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Administrador** | `admin@gmail.com` | `admin123` | Panel `/admin`, gestión de productos y usuarios |
 | **Cliente** | `client@gmail.com` | `client123` | Navegación, perfil y compras |
 

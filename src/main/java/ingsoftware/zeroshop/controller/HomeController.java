@@ -1,20 +1,21 @@
 package ingsoftware.zeroshop.controller;
 
-import ingsoftware.zeroshop.repository.UserRepository;
+import ingsoftware.zeroshop.service.UserService;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-// Controlador para manejar la vista de inicio y redirecciones según el rol del usuario
+// Controlador para manejar las vistas públicas y principales de la tienda
 @Controller
 public class HomeController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public HomeController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    // Constructor para inyectar la dependencia del servicio de usuario
+    public HomeController(UserService userService) {
+        this.userService = userService;
     }
 
     // Método para manejar la vista de inicio
@@ -25,17 +26,10 @@ public class HomeController {
 
         // Si el usuario está autenticado, obtener su nombre y verificar si es administrador
         if (loggedIn) {
-            String firstName = userRepository.findByEmailIgnoreCase(authentication.getName())
-                    .map(user -> user.getFirst_name())
-                    .orElse(authentication.getName());
-            model.addAttribute("userName", firstName);
-            boolean isAdmin = hasRole(authentication, "ADMIN");
-            model.addAttribute("isAdmin", isAdmin);
-
-            // Redirigir al panel de administración si el usuario es administrador
-            // if (isAdmin) {
-            //     return "redirect:/admin/dashboard";
-            // }
+            model.addAttribute("userName", getUserName(authentication));
+            model.addAttribute("isAdmin", hasRole(authentication, "ADMIN"));
+        } else {
+            model.addAttribute("isAdmin", false);
         }
 
         // Devolver la vista de inicio para usuarios no autenticados o clientes
@@ -66,44 +60,14 @@ public class HomeController {
 
         // Si el usuario está autenticado, obtener su nombre y verificar si es administrador
         if (loggedIn) {
-            String firstName = userRepository.findByEmailIgnoreCase(authentication.getName())
-                    .map(user -> user.getFirst_name())
-                    .orElse(authentication.getName());
-            model.addAttribute("userName", firstName);
+            model.addAttribute("userName", getUserName(authentication));
             model.addAttribute("isAdmin", hasRole(authentication, "ADMIN"));
+        } else {
+            model.addAttribute("isAdmin", false);
         }
 
         // Devolver la vista del cliente
         return "index";
-    }
-
-    // Metodo para manejar la vista del panel de administración
-    @GetMapping({"/admin", "/admin/dashboard"})
-    public String adminDashboard(Authentication authentication, Model model) {
-        // Verificar si el usuario está autenticado y tiene el rol de administrador
-        if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
-            return "redirect:/login";
-        }
-
-        // Obtener el nombre del usuario autenticado y agregar atributos al modelo para la vista
-        String firstName = userRepository.findByEmailIgnoreCase(authentication.getName())
-                .map(user -> user.getFirst_name())
-                .orElse(authentication.getName());
-        model.addAttribute("loggedIn", true);
-        model.addAttribute("isAdmin", true);
-        model.addAttribute("userName", firstName);
-        return "admin/index";
-    }
-
-    // Método para manejar la vista del perfil del usuario
-    @GetMapping("/profile")
-    public String profile(Authentication authentication) {
-        // Verificar si el usuario está autenticado
-        if (!isAuthenticated(authentication)) {
-            return "redirect:/login";
-        }
-
-        return "redirect:/user.html";
     }
 
     // Método para verificar si el usuario está autenticado
@@ -113,10 +77,9 @@ public class HomeController {
                 && !(authentication instanceof AnonymousAuthenticationToken);
     }
 
+    // Método para obtener el primer nombre del usuario autenticado a través del servicio
     private String getUserName(Authentication authentication) {
-        return userRepository.findByEmailIgnoreCase(authentication.getName())
-                .map(user -> user.getFirst_name())
-                .orElse(authentication.getName());
+        return userService.getUserFirstName(authentication.getName());
     }
 
     // Método para verificar si el usuario tiene un rol específico

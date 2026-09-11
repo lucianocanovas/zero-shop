@@ -15,7 +15,7 @@
 
 	<main class="profile-page">
 		<section class="profile-panel">
-			<a class="profile-back-link" th:if="${adminEdit}" th:href="@{/admin/users}">
+			<a class="profile-back-link" th:if="${adminEdit}" th:href="@{/users}">
 				<i class="fa-solid fa-arrow-left"></i> Volver a usuarios
 			</a>
 			<h1 th:text="${adminEdit} ? 'Editar usuario' : 'Mi perfil'">Mi perfil</h1>

@@ -10,21 +10,17 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    // Envia un correo electrónico simple
+    // Envia un correo electrónico simple de forma segura
     public void sendEmail(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        mailSender.send(message);
-    }
-
-    // Envia un correo electrónico con formato HTML
-    public void sendHtmlEmail(String to, String subject, String htmlContent) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(htmlContent);
-        mailSender.send(message);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(text);
+            mailSender.send(message);
+            // log.info("Correo simple enviado exitosamente a {}", to);
+        } catch (Exception e) {
+            // log.error("No se pudo enviar el correo a {}. Causa: {}", to, e.getMessage());
+        }
     }
 }

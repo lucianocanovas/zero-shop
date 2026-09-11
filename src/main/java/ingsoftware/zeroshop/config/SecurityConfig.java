@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.config;
 
-import ingsoftware.zeroshop.repository.UserRepository;
+import ingsoftware.zeroshop.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,10 +22,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Bean para el servicio de detalles de usuario que carga los detalles del usuario desde la base de datos
+    // Bean para el servicio de detalles de usuario que carga los detalles del usuario a través de UserService
     @Bean
-    UserDetailsService userDetailsService(UserRepository userRepository) {
-        return username -> userRepository.findByEmailIgnoreCase(username)
+    UserDetailsService userDetailsService(UserService userService) {
+        return username -> userService.findByEmail(username)
                 .map(user -> org.springframework.security.core.userdetails.User
                         .withUsername(user.getEmail())
                         .password(user.getPassword())
@@ -46,12 +46,12 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
 
                         // Rutas públicas que no requieren autenticación
-                        .requestMatchers("/", "/products", "/login", "/register", "/register/**", "/css/**", "/styles/**", "/assets/**", "/scripts/**").permitAll()
+                        .requestMatchers("/", "/products", "/login", "/register", "/register/**", "/logout", "/css/**", "/styles/**", "/assets/**", "/scripts/**").permitAll()
                         
                         // Rutas que requieren el rol de ADMIN para acceder
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/users", "/users/**").hasRole("ADMIN")
 
-                        // Cualquier otra solicitud requiere autenticación
+                        // Cualquier otra solicitud requiere autenticación (incluye /profile)
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
