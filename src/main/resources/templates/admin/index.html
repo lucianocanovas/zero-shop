@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/logo-white.png">
     <link rel="stylesheet" href="/styles/styles.css">
-    <title>Inicio</title>
-    <!-- FontAwesome Icons-->
-    <script src="https://kit.fontawesome.com/1f6f2e3d37.js" crossorigin="anonymous"></script>
+    <title th:text="${title}">Panel de Administración - Inicio</title>
 </head>
 <body>
 
-    <nav th:replace="common/fragments :: navOverlay"></nav>
-    <div th:replace="common/fragments :: authOverlay"></div>
-    <div th:replace="common/fragments :: accountOverlay"></div>
-    <header th:replace="common/fragments :: header"></header>
+    <header>
+        <nav>
+            <a th:href="@{/admin}">Inicio Admin</a>
+            <a th:href="@{/admin/products}">Productos</a>
+            <a th:href="@{/admin/categories}">Categorías</a>
+            <a th:href="@{/admin/orders}">Pedidos</a>
+            <a th:href="@{/admin/providers}">Proveedores</a>
+            <a th:href="@{/admin/purchase-orders}">Órdenes de Compra</a>
+            <a th:href="@{/admin/offices}">Sucursales</a>
+            <a th:href="@{/admin/users}">Usuarios</a>
+            <a th:href="@{/admin/reports}">Reportes</a>
+            <a th:href="@{/}">Ir a la tienda</a>
+        </nav>
+    </header>
 
     <main class="main">
-        
-        <h1 class="title">ADMIN PANEL</h1>
-
+        <h1 th:text="${title}">Panel de Administración - Inicio</h1>
+        <p>Bienvenido al panel principal de administración.</p>
     </main>
-    
-    <footer class="footer" th:replace="common/fragments :: footer"></footer>
 
-    <!-- JavaScript -->
-    <script src="/scripts/overlay.js"></script>
-    <script src="/scripts/carousel.js"></script>
+    <footer>
+        <p>&copy; 2026 Zero Shop. Panel de Administración.</p>
+    </footer>
+
 </body>
 </html>
+

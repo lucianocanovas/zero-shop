@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/logo-white.png">
+    <link rel="stylesheet" href="/styles/styles.css">
+    <title th:text="${title}">Inicio - Tienda</title>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a th:href="@{/}">Inicio</a>
+            <a th:href="@{/products}">Productos</a>
+            <a th:href="@{/categories}">Categorías</a>
+            <a th:href="@{/offers}">Ofertas</a>
+            <a th:href="@{/contact}">Contacto</a>
+            <a th:href="@{/login}">Iniciar sesión</a>
+        </nav>
+    </header>
+
+    <main class="main">
+        <h1 th:text="${title}">Inicio - Tienda</h1>
+        <p>Bienvenido a la tienda Zero Shop.</p>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Zero Shop. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
+

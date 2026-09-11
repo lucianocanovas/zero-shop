@@ -23,20 +23,24 @@
 
 - ClientController
   - GET /
+  
 - ProductController
   - GET /products
   - GET /products/:id
   - GET /offers
+
 - CategoryController
   - GET /categories
-  - GET /categories/:id
+
 - CheckoutController
   - GET /checkout
   - POST /checkout
   - GET /checkout/success
+
 - ProfileController
   - GET /profile
   - PUT /profile
+
 - OrderController
   - GET /orders
   - GET /orders/:id
@@ -46,6 +50,7 @@
 
 - AdminController
   - GET /admin/
+
 - ProductController
   - GET /admin/products
   - GET /admin/products/:id
@@ -57,42 +62,49 @@
   - PUT /admin/products/:id/prices/:priceId
   - DELETE /admin/products/:id/prices/:priceId
   - GET /admin/stock
+
 - CategoryController
   - GET /admin/categories
   - GET /admin/categories/:id
   - POST /admin/categories/
   - PUT /admin/categories/:id
   - DELETE /admin/categories/:id
+
 - OrderController
   - GET /admin/orders
   - GET /admin/orders/:id
   - POST /admin/orders/
   - PUT /admin/orders/:id
   - DELETE /admin/orders/:id
+
 - ProviderController
   - GET /admin/providers
   - GET /admin/providers/:id
   - POST /admin/providers
   - PUT /admin/providers/:id
   - DELETE /admin/providers/:id
+
 - PurchaseOrderController
   - GET /admin/purchase-orders
   - GET /admin/purchase-orders/:id
   - POST /admin/purchase-orders
   - PUT /admin/purchase-orders/:id
   - DELETE /admin/purchase-orders/:id
+
 - OfficeController
   - GET /admin/offices
   - GET /admin/offices/:id
   - POST /admin/offices
   - PUT /admin/offices/:id
   - DELETE /admin/offices/:id
+
 - UserController
   - GET /admin/users
   - GET /admin/users/:id
   - POST /admin/users
   - PUT /admin/users/:id
   - DELETE /admin/users/:id
+
 - ReportController
   - GET /admin/reports
   - GET /admin/reports/sales
