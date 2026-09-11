@@ -1,23 +1,27 @@
 package ingsoftware.zeroshop.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
 import java.util.UUID;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 @Entity
-@Table(name = "nacionalidades")
+@Table(name = "paises")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Nacionalidad {
+@Builder
+public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String nombre;
-
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private String name;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean deleted = false;
 }
+

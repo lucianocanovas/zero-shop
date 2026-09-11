@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import ingsoftware.zeroshop.enums.TipoTelefono;
+import ingsoftware.zeroshop.enums.PhoneType;
 
 @Entity
 @Table(name = "contactos_telefonicos")
@@ -14,13 +14,13 @@ import ingsoftware.zeroshop.enums.TipoTelefono;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ContactoTelefonico extends Contacto {
+public class ContactPhone extends Contact {
 
     @Column(nullable = false)
-    private String telefono;
+    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_telefono")
-    private TipoTelefono tipoTelefono;
+    private PhoneType phoneType;
 }
 

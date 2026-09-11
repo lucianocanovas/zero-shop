@@ -3,7 +3,7 @@ package ingsoftware.zeroshop.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
-import ingsoftware.zeroshop.enums.TipoImagen;
+import ingsoftware.zeroshop.enums.ImageType;
 
 @Entity
 @Table(name = "imagenes")
@@ -11,27 +11,27 @@ import ingsoftware.zeroshop.enums.TipoImagen;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Imagen {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String name;
 
     @Column(nullable = false)
     private String mime;
 
     @Lob
     @Column(columnDefinition = "LONGBLOB", nullable = false)
-    private byte[] contenido;
+    private byte[] content;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_imagen", nullable = false)
-    private TipoImagen tipoImagen;
+    private ImageType ImageType;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 }

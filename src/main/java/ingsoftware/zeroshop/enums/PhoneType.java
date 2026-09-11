@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.enums;
 
-public enum TipoTelefono {
+public enum PhoneType {
     FIJO,
     CELULAR
 }

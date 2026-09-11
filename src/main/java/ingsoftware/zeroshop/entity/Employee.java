@@ -2,7 +2,7 @@ package ingsoftware.zeroshop.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ingsoftware.zeroshop.enums.TipoEmpleado;
+import ingsoftware.zeroshop.enums.EmployeeType;
 
 @Entity
 @Table(name = "empleados")
@@ -10,13 +10,13 @@ import ingsoftware.zeroshop.enums.TipoEmpleado;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Empleado extends Persona {
+public class Employee extends Person {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_empleado", nullable = false)
-    private TipoEmpleado tipoEmpleado;
+    private EmployeeType employeeType;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
-    private Empresa empresa;
+    private Company company;
 }

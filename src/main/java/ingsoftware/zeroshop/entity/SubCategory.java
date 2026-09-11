@@ -10,20 +10,20 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubCategoria {
+public class SubCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String name;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
-    private Categoria categoria;
+    private Category category;
 }

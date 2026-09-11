@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.enums;
 
-public enum TipoEmpresa {
+public enum CompanyType {
     SEDE_CENTRAL,
     SUCURSAL
 }

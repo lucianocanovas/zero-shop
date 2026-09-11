@@ -11,20 +11,20 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ConfiguracionCorreoEmpresa {
+public class CompanyMailSetUp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String correo;
+    private String mail;
 
     @Column(nullable = false)
-    private String clave;
+    private String password;
 
     @Column(nullable = false)
-    private String puerto;
+    private String port;
 
     @Column(nullable = false)
     private String smtp;
@@ -34,6 +34,6 @@ public class ConfiguracionCorreoEmpresa {
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 }
 

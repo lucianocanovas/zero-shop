@@ -7,7 +7,7 @@ import java.util.UUID;
 import jakarta.persistence.*;
 import lombok.*;
 
-import ingsoftware.zeroshop.enums.TipoEmpresa;
+import ingsoftware.zeroshop.enums.CompanyType;
 
 @Entity
 @Table(name = "empresas")
@@ -15,47 +15,47 @@ import ingsoftware.zeroshop.enums.TipoEmpresa;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Empresa {
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "razon_social", nullable = false)
-    private String razonSocial;
+    private String SocialReason;
 
     @Column(nullable = false, unique = true)
     private String cuit;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_empresa")
-    private TipoEmpresa tipoEmpresa;
+    private CompanyType companyType;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 
     // Una empresa tiene sí o sí una dirección (1..1 obligatoria)
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "direccion_id", nullable = false)
-    private Direccion direccion;
+    private Address address;
 
     // Una empresa tiene sí o sí una configuración de correo (1..1 obligatoria)
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "configuracion_correo_id", nullable = false)
-    private ConfiguracionCorreoEmpresa configuracionCorreo;
+    private CompanyMailSetUp companyMailSetUp;
 
     // Relación con Contacto (1..*)
     //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "empresa_id")
     @Builder.Default
-    private List<Contacto> contactos = new ArrayList<>();
+    private List<Contact> contacts = new ArrayList<>();
 
     // Relación con Empleado (1 Empresa -> 1..* Empleados)
     //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Empleado> empleados = new ArrayList<>();
+    private List<Employee> employees = new ArrayList<>();
 }
 

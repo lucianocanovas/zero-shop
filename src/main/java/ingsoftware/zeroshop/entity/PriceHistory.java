@@ -14,24 +14,24 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VigenciaPrecio {
+public class PriceHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "fecha_desde", nullable = false)
-    private LocalDateTime fechaDesde;
+    private LocalDateTime dateFrom;
 
     @Column(name = "fecha_hasta")
-    private LocalDateTime fechaHasta;
+    private LocalDateTime dateTo;
 
     @Column(nullable = false)
-    private Double precio;
+    private Double price;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 
     // NOTA: SOLUCION AL PROBLEMA DE LA COLECCIÓN EN PRODUCTO
     // Para evitar cargar todas las vigencias de precios directamente desde Producto, 
@@ -41,5 +41,5 @@ public class VigenciaPrecio {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Producto producto;
+    private Product product;
 }

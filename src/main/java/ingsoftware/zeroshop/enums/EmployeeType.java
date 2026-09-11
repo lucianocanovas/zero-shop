@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.enums;
 
-public enum TipoEmpleado {
+public enum EmployeeType {
     ADMINISTRATIVO,
     JEFE
 }

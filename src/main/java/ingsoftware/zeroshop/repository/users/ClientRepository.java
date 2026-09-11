@@ -1,17 +1,16 @@
 package ingsoftware.zeroshop.repository.users;
 
+import ingsoftware.zeroshop.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ingsoftware.zeroshop.entity.Customer;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, UUID> {
+public interface ClientRepository extends JpaRepository<Client, UUID> {
 
-    Optional<Customer> findByIdAndDeletedFalse(UUID id);
-    List<Customer> findAllByDeletedFalse();
+    Optional<Client> findByIdAndDeletedFalse(UUID id);
+    List<Client> findAllByDeletedFalse();
 
 }

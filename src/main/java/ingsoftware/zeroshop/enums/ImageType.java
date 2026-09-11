@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.enums;
 
-public enum TipoImagen {
+public enum ImageType {
     PERFIL,
     PRODUCTO,
     OTRO

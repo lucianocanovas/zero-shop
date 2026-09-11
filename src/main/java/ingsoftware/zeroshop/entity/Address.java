@@ -11,33 +11,33 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Direccion {
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String calle;
+    private String Street;
 
-    private String numeracion;
+    private String number;
 
-    private String barrio;
+    private String neighborhood;
 
     @Column(name = "manzana_piso")
-    private String manzanaPiso;
+    private String blockFloor;
 
     @Column(name = "casa_departamento")
-    private String casaDepartamento;
+    private String houseApartment;
 
-    private String referencia;
+    private String reference;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localidad_id") // Clave foranea. Guarda el ID de la localidad a la que pertenece la direccion.
-    private Localidad localidad;
+    private City city;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 }
 

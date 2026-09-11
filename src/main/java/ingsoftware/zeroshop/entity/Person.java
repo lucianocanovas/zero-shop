@@ -8,7 +8,7 @@ import java.util.UUID;
 import jakarta.persistence.*;
 import lombok.*;
 
-import ingsoftware.zeroshop.enums.TipoDocumento;
+import ingsoftware.zeroshop.enums.DocumentType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -17,31 +17,31 @@ import ingsoftware.zeroshop.enums.TipoDocumento;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Persona {
+public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String name;
 
     @Column(nullable = false)
-    private String apellido;
+    private String lastName;
 
     @Column(name = "fecha_nacimiento")
-    private LocalDate fechaNacimiento;
+    private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_documento")
-    private TipoDocumento tipoDocumento;
+    private DocumentType documentType;
 
     @Column(name = "numero_documento")
-    private String numeroDocumento;
+    private String documentNumber;
 
     
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean delete = false;
 
 
     // Relación con Direccion (1..*) Varias direcciones.
@@ -49,7 +49,7 @@ public class Persona {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)// Cascade.all sirve para que cuando se elimine la persona, se eliminen sus direcciones asociadas.
     @JoinColumn(name = "persona_id")
     
-    private List<Direccion> direcciones = new ArrayList<>();
+    private List<Address> addresses = new ArrayList<>();
 
     // Composición con Usuario (1 Persona -> 1..* Usuarios)
     //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
@@ -62,12 +62,12 @@ public class Persona {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "persona_id")
     
-    private List<Contacto> contactos = new ArrayList<>();
+    private List<Contact> contacts = new ArrayList<>();
 
     // Relación con Imagen (1 Persona -> 1..* Imagenes)
     //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "persona_id")
     
-    private List<Imagen> imagenes = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 }

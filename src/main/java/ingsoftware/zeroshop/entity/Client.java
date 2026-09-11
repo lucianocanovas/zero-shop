@@ -9,12 +9,9 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cliente extends Persona {
-
-    @Column(name = "direccion_estadia")
-    private String direccionEstadia;
+public class Client extends Person {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nacionalidad_id")
-    private Nacionalidad nacionalidad;
+    private Nationality nationality;
 }

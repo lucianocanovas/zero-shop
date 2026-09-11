@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.enums;
 
-public enum TipoDocumento {
+public enum DocumentType {
     DNI,
     PASAPORTE,
     CEDULA,

@@ -1,6 +1,6 @@
 package ingsoftware.zeroshop.enums;
 
-public enum TipoContacto {
+public enum ContactType {
     PERSONAL,
     LABORAL,
     EMPRESA,

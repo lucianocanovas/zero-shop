@@ -11,24 +11,24 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Localidad {
+public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String name;
 
     @Column(name = "codigo_postal")
-    private String codigoPostal;
+    private String postalCode;
 
     @ManyToOne(fetch = FetchType.LAZY)  
     @JoinColumn(name = "departamento_id") // Se junta con ID, Cada localidad tiene asignada directamente un departamento.
-    private Departamento departamento;
+    private Department department;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 }
 

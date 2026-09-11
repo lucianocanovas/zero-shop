@@ -6,26 +6,26 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "provincias")
+@Table(name = "departamentos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Provincia {
+public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pais_id")
-    private Pais pais;
+    @JoinColumn(name = "provincia_id")
+    private State state;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 }
 

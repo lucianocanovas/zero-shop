@@ -15,7 +15,7 @@ import ingsoftware.zeroshop.enums.TipoContacto;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class Contacto {
+public abstract class Contact {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,12 +23,12 @@ public abstract class Contacto {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_contacto")
-    private TipoContacto tipoContacto;
+    private TipoContacto contactType;
 
-    private String observacion;
+    private String observation;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 }
 

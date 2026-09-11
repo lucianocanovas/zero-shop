@@ -12,41 +12,41 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Producto {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false, unique = true)
-    private String codigo;
+    private String code;
 
     @Column(nullable = false)
-    private String nombre;
+    private String name;
 
     @Column(columnDefinition = "TEXT")
-    private String descripcion;
+    private String description;
 
     @Column(nullable = false)
-    private String talle;
+    private Size size;
 
     @Builder.Default
     @Column(name = "en_oferta", nullable = false)
-    private boolean enOferta = false;
+    private boolean discount = false;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean eliminado = false;
+    private boolean deleted = false;
 
     // Relación con Imagen (1 Producto -> 1..* Imagenes)
     //JPA configura OneToMany automaticamente en Lazy, para que asi, no se haga un left join gigante sobre la relacion, y se llene la memoria
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "producto_id")
     @Builder.Default
-    private List<Imagen> imagenes = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 
     // Relación con SubCategoria (* Productos -> 1 SubCategoria)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subcategoria_id")
-    private SubCategoria subCategoria;
+    private SubCategory subCategory;
 }
