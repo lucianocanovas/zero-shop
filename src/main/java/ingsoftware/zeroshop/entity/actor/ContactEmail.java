@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "contactos_correos_electronicos")
+@Table(name = "contact_emails")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -13,8 +13,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class ContactEmail extends Contact {
-
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 }
-

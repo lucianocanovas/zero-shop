@@ -1,54 +1,36 @@
 package ingsoftware.zeroshop.entity.catalog;
 
-import jakarta.persistence.*;
-import lombok.*;
 import java.util.UUID;
 
-import ingsoftware.zeroshop.entity.media.Image;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.List;
-import java.util.ArrayList;
+import ingsoftware.zeroshop.enums.Size;
 
 @Entity
-@Table(name = "productos")
+@Table(name = "products")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Id 
+    @Column(name = "id", nullable = false)
     private UUID id;
-
-    @Column(nullable = false, unique = true)
+    @Column(name = "code", nullable = false)
     private String code;
-
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "size", nullable = false)
     private Size size;
-
-    @Builder.Default
-    @Column(name = "en_oferta", nullable = false)
-    private boolean discount = false;
-
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean deleted = false;
-
-    // Relación con Imagen (1 Producto -> 1..* Imagenes)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "producto_id")
-    @Builder.Default
-    private List<Image> images = new ArrayList<>();
-
-    // A que subcategoria pertenece 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subcategoria_id")
+    @Column(name = "on_sale", nullable = false)
+    private Boolean onSale;
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id", referencedColumnName = "id")
     private SubCategory subCategory;
+
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 }

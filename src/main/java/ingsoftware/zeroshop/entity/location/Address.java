@@ -5,6 +5,8 @@ import java.util.UUID;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import ingsoftware.zeroshop.entity.actor.Person;
+
 @Entity
 @Table(name = "addresses")
 @Data
@@ -22,9 +24,13 @@ public class Address {
     private String apartment;
     @Column (name= "observations")
     private String observations;
+    
     @OneToOne
     @JoinColumn(name = "city_id", referencedColumnName = "id")
     private City city;
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    private Person person;
     
     @Column (name = "deleted", nullable = false)
     private Boolean deleted;

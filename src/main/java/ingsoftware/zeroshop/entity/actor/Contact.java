@@ -8,26 +8,26 @@ import lombok.experimental.SuperBuilder;
 import ingsoftware.zeroshop.enums.ContactType;
 
 @Entity
-@Table(name = "contactos")
-@Inheritance(strategy = InheritanceType.JOINED)
-@Data
+@Table(name = "contacts")
+@Data 
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class Contact {
-
+public class Contact {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false)
     private UUID id;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_contacto")
+    @Column(name = "contact_type", nullable = false)
     private ContactType contactType;
-
+    @Column(name = "observation")
     private String observation;
+    
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    private Person person;
 
     @Builder.Default
-    @Column(nullable = false)
+    @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 }
-

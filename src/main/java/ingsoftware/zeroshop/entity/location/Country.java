@@ -16,4 +16,7 @@ public class Country {
     private String name;
     @Column (name = "code", nullable = false)
     private String code;
+
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 }

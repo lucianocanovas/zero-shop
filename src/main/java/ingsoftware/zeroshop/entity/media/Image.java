@@ -1,37 +1,36 @@
 package ingsoftware.zeroshop.entity.media;
 
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
-import ingsoftware.zeroshop.enums.ImageType;
+
+import ingsoftware.zeroshop.entity.actor.Person;
+import ingsoftware.zeroshop.enums.IMGType;
 
 @Entity
-@Table(name = "imagenes")
+@Table (name = "images")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Image {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false)
     private UUID id;
-
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(nullable = false)
-    private String mime;
-
-    @Lob
-    @Column(columnDefinition = "LONGBLOB", nullable = false)
+    @Column(name = "mime_type", nullable = false)
+    private String mime_type;
+    @Column(name = "content", nullable = false)
     private byte[] content;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_imagen", nullable = false)
-    private ImageType ImageType;
+    @Column(name = "type", nullable = false)
+    private IMGType type;
+    
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    private Person person;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Column (name = "deleted", nullable = false)
+    private Boolean deleted;
 }

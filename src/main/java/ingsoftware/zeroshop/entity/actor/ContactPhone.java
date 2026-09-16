@@ -3,10 +3,11 @@ package ingsoftware.zeroshop.entity.actor;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
 import ingsoftware.zeroshop.enums.PhoneType;
 
 @Entity
-@Table(name = "contactos_telefonicos")
+@Table(name = "contact_phones")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -14,12 +15,9 @@ import ingsoftware.zeroshop.enums.PhoneType;
 @AllArgsConstructor
 @SuperBuilder
 public class ContactPhone extends Contact {
-
-    @Column(nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_telefono")
+    @Column(name = "phone_type", nullable = false)
     private PhoneType phoneType;
 }
-

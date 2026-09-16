@@ -3,15 +3,22 @@ package ingsoftware.zeroshop.entity.org;
 import jakarta.persistence.*;
 import lombok.*;
 
+import ingsoftware.zeroshop.enums.OfficeType;
+
 @Entity
-@Table(name = "company")
+@Table(name = "offices")
 @Data
-public class Company {
+public class Office {
     @Id
     @Column(name = "id", nullable = false)
     private String id;
     @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "cuit", nullable = false, unique = true)
+    private String cuit;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private OfficeType type;
 
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;

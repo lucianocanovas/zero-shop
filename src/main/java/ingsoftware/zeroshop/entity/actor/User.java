@@ -4,29 +4,24 @@ import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import ingsoftware.zeroshop.enums.Role;
 
 @Entity
-@Table(name = "user")
-@Data 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table (name = "users")
+@Data
 public class User {
-    @Id 
-    @GeneratedValue(strategy = GenerationType.UUID) 
+    @Id
+    @Column(name = "id", nullable = false)
     private UUID id;
-    @Column(nullable = false, unique = true) 
-    private String email;
-    @Column(nullable = false) 
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+    @Column(name = "password", nullable = false)
     private String password;
-    @Enumerated(EnumType.STRING) 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean deleted = false;
-    // Relación con Persona (pertenece a una Persona)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "persona_id")
-    private Person person;
+
+    @Column (name = "deleted", nullable = false)
+    private Boolean deleted = false;
 }

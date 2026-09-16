@@ -1,18 +1,20 @@
-package ingsoftware.zeroshop.entity.org;
+package ingsoftware.zeroshop.entity.actor;
+
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "company")
+@Table (name = "suppliers")
 @Data
-public class Company {
+public class Supplier {
     @Id
     @Column(name = "id", nullable = false)
-    private String id;
+    private UUID id;
     @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "deleted", nullable = false)
+    
+    @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;
 }

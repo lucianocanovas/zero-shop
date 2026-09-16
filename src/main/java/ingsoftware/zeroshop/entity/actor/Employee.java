@@ -1,23 +1,23 @@
 package ingsoftware.zeroshop.entity.actor;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 import lombok.*;
-import ingsoftware.zeroshop.entity.org.Company;
+
 import ingsoftware.zeroshop.enums.EmployeeType;
 
 @Entity
-@Table(name = "empleados")
+@Table(name = "employees")
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Employee extends Person {
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_empleado", nullable = false)
+    @Column(name = "employee_type", nullable = false)
     private EmployeeType employeeType;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id", nullable = false)
-    private Company company;
+    @Column(name = "hire_date")
+    private LocalDate hireDate;
 }

@@ -16,7 +16,11 @@ public class City {
     private String name;
     @Column (name = "code", nullable = false)
     private String code;
+
     @OneToOne
     @JoinColumn(name = "state_id", referencedColumnName = "id")
     private State state;
+
+    @Column (name = "deleted", nullable = false)
+    private Boolean deleted = false;
 }

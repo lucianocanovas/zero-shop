@@ -3,8 +3,6 @@
 ## Indicaciones generales del sistema
 
 - El carrito de compras se maneja del lado de la vista, no requiere un controlador ni un modelo en el backend. Se puede almacenar en la sesión del usuario o en el almacenamiento local del navegador.
-- El sistema no requiere redirigir a una pagina nueva para crear nuevos recursos, se desplegara un formulario sobre la misma pagina de listado de recursos. Esto aplica para la creacion de productos, categorias, proveedores y ordenes de compra.
-- El sistema no requiere redirigir a una pagina nueva para editar recursos existentes, se desplegara un formulario sobre la misma pagina de detalle del recurso. Esto aplica para la edicion de productos, categorias, proveedores y ordenes de compra.
 
 ## Comunicacion entre capas
 
@@ -19,3 +17,8 @@
 
 - Capa de repositorios (/repository): Se encarga de la persistencia de los datos y el acceso a la base de datos. Utiliza anotaciones de Spring Boot para definir repositorios y consultas personalizadas. Se comunica con la capa de servicios para realizar operaciones CRUD sobre las entidades.
   - La capa de repositorios se comunica con la capa de servicios mediante llamadas a métodos, devolviendo los resultados obtenidos o lanzando excepciones en caso de errores.
+
+## Modelado de datos
+
+- Se deben evitar las relaciones OneToMany y ManyToMany en las entidades, ya que pueden generar problemas de rendimiento y complejidad en la gestión de los datos. En su lugar, se recomienda utilizar relaciones OneToOne o ManyToOne, y manejar las colecciones de entidades relacionadas mediante consultas personalizadas en los repositorios.
+- Todos los modelos de datos deben tener un campo "deleted" de tipo booleano, que indique si el registro ha sido eliminado o no. Esto permite implementar un borrado lógico, evitando la pérdida de información y facilitando la recuperación de registros eliminados.

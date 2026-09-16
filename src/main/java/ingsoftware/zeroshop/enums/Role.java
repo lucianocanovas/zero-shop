@@ -1,6 +1,7 @@
 package ingsoftware.zeroshop.enums;
 
 public enum Role {
-    USER,
+    CLIENT,
+    EMPLOYEE,
     ADMIN
 }
