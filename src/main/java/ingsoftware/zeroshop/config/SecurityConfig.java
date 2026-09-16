@@ -45,7 +45,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
 
                         // Rutas públicas que no requieren autenticación
-                        .requestMatchers("/", "/products", "/login", "/register", "/register/**", "/logout", "/css/**", "/styles/**", "/assets/**", "/scripts/**").permitAll()
+                        .requestMatchers("/", "/products", "/products/**", "/categories", "/categories/**", "/offers", "/offers/**", "/contact", "/contact/**", "/verify", "/verify/**", "/login", "/register", "/register/**", "/logout", "/css/**", "/styles/**", "/assets/**", "/scripts/**").permitAll()
                         
                         // Rutas que requieren el rol de ADMIN para acceder
                         .requestMatchers("/admin/**", "/users", "/users/**").hasRole("ADMIN")

@@ -12,6 +12,7 @@ import ingsoftware.zeroshop.enums.Role;
 @Data
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
     @Column(name = "username", nullable = false, unique = true)
@@ -22,8 +23,8 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @ManyToOne
-    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id", referencedColumnName = "id", unique = true)
     private Person person;
 
     @Column (name = "deleted", nullable = false)

@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class State {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
     @Column (name = "name", nullable = false)

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Pedido - Zero Shop</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{common/fragments/header :: header}"></div>
+
+    <main class="container my-4 flex-grow-1">
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Inicio</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/orders}" class="text-decoration-none">Mis Pedidos</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Detalle #ORD-2026-8941</li>
+            </ol>
+        </nav>
+
+        <!-- Encabezado del Pedido -->
+        <div class="card border-0 shadow-sm p-4 bg-white mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <!-- PLACEHOLDER BACKEND: ID o código de la orden -->
+                        <h1 class="h4 fw-bold mb-0 text-dark">Pedido #ORD-2026-8941</h1>
+                        <span class="badge bg-warning text-dark"><i class="bi bi-box-seam me-1"></i>En Preparación</span>
+                    </div>
+                    <p class="text-muted small mb-0">Realizado el 14 de Septiembre de 2026 a las 18:32 hs.</p>
+                </div>
+                <div>
+                    <a th:href="@{/orders}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Volver al Historial
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===================================================================== -->
+            <!-- LÍNEA DE TIEMPO / ESTADO DEL ENVÍO (STEPPER BOOTSTRAP)                -->
+            <!-- ===================================================================== -->
+            <div class="mt-4 pt-3 border-top">
+                <h6 class="text-muted small fw-bold text-uppercase mb-3">Seguimiento del Envío</h6>
+                <div class="position-relative m-4">
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <button type="button" class="position-absolute top-0 start-0 translate-middle btn btn-sm btn-success rounded-pill" style="width: 2rem; height:2rem;"><i class="bi bi-check-lg"></i></button>
+                    <button type="button" class="position-absolute top-0 start-50 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;"><i class="bi bi-box-seam"></i></button>
+                    <button type="button" class="position-absolute top-0 start-100 translate-middle btn btn-sm btn-secondary rounded-pill" style="width: 2rem; height:2rem;"><i class="bi bi-house-check"></i></button>
+                </div>
+                <div class="d-flex justify-content-between text-center small text-muted px-2">
+                    <div class="text-start">
+                        <strong class="text-dark d-block">Pedido Confirmado</strong>
+                        <span>14/09/2026</span>
+                    </div>
+                    <div>
+                        <strong class="text-primary d-block">En Preparación</strong>
+                        <span>Armado de paquete</span>
+                    </div>
+                    <div class="text-end">
+                        <strong class="text-secondary d-block">Entregado</strong>
+                        <span>Estimado 18/09/2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ========================================================================= -->
+            <!-- COLUMNA IZQUIERDA: ARTÍCULOS DE LA ORDEN                                  -->
+            <!-- ========================================================================= -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h2 class="h5 fw-bold mb-3 pb-2 border-bottom">Productos en este pedido</h2>
+
+                    <!-- PLACEHOLDER BACKEND: Iterar con th:each="detail : ${order.orderDetails}" -->
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Talle</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-end">Precio Unitario</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Producto 1 Placeholder -->
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="/assets/product-placeholder.jpg" class="rounded me-3 border" width="50" height="50" alt="Zapatillas" style="object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-0 small fw-bold">Zapatillas Running Pro 2026</h6>
+                                                <small class="text-muted">SKU: RUN-PRO-001</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border">M</span></td>
+                                    <td class="text-center">1</td>
+                                    <td class="text-end small">$89.999</td>
+                                    <td class="text-end fw-bold">$89.999</td>
+                                </tr>
+
+                                <!-- Producto 2 Placeholder -->
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="/assets/product-placeholder.jpg" class="rounded me-3 border" width="50" height="50" alt="Camiseta" style="object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-0 small fw-bold">Camiseta Dry-Fit Entrenamiento</h6>
+                                                <small class="text-muted">SKU: TSH-DRY-002</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border">L</span></td>
+                                    <td class="text-center">1</td>
+                                    <td class="text-end small">$32.500</td>
+                                    <td class="text-end fw-bold">$32.500</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- COLUMNA DERECHA: DIRECCIÓN, PAGO Y RESUMEN                                -->
+            <!-- ========================================================================= -->
+            <div class="col-lg-4">
+
+                <!-- Datos de Envío -->
+                <div class="card border-0 shadow-sm p-4 bg-white mb-4">
+                    <h2 class="h6 fw-bold mb-3 pb-2 border-bottom"><i class="bi bi-geo-alt me-1 text-primary"></i>Datos de Entrega</h2>
+                    <!-- PLACEHOLDER BACKEND: Datos de dirección de envío -->
+                    <p class="small text-secondary mb-1"><strong>Destinatario:</strong> Juan Pérez</p>
+                    <p class="small text-secondary mb-1"><strong>Dirección:</strong> San Martín 1234, Piso 4 Depto B</p>
+                    <p class="small text-secondary mb-1"><strong>Ciudad:</strong> Posadas, Misiones (CP N3300)</p>
+                    <p class="small text-secondary mb-0"><strong>Teléfono:</strong> +54 9 376 400-0000</p>
+                </div>
+
+                <!-- Resumen Financiero -->
+                <div class="card border-0 shadow-sm p-4 bg-white mb-4">
+                    <h2 class="h6 fw-bold mb-3 pb-2 border-bottom"><i class="bi bi-receipt me-1 text-primary"></i>Resumen de Facturación</h2>
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Subtotal productos</span>
+                            <span>$122.499</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Costo de envío</span>
+                            <span class="text-success">Gratis</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Método de pago</span>
+                            <span class="fw-semibold">Tarjeta de Crédito</span>
+                        </div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between fs-5 fw-bold text-dark">
+                            <span>Total</span>
+                            <span>$122.499</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón Cancelar Pedido (Placeholder para acción deleteOrder) -->
+                <div class="d-grid">
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+                        <i class="bi bi-x-circle me-1"></i>Solicitar Cancelación
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal Cancelar Pedido -->
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelOrderModalLabel">¿Deseas cancelar este pedido?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body small text-muted">
+                    Si cancelas el pedido antes de que sea despachado, se realizará el reembolso automático por el mismo medio de pago utilizado.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Mantener pedido</button>
+                    <!-- Form para acción DELETE en OrderController -->
+                    <form th:action="@{/orders/00000000-0000-0000-0000-000000000001}" method="post">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="btn btn-danger btn-sm">Confirmar Cancelación</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{common/fragments/footer :: footer}"></div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

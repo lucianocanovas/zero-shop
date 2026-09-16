@@ -1,4 +1,4 @@
-package ingsoftware.zeroshop.repository.users;
+package ingsoftware.zeroshop.repository.actor;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

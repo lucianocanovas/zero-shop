@@ -1,4 +1,4 @@
-package ingsoftware.zeroshop.repository.users;
+package ingsoftware.zeroshop.repository.actor;
 
 import ingsoftware.zeroshop.entity.actor.Employee;
 import ingsoftware.zeroshop.enums.EmployeeType;

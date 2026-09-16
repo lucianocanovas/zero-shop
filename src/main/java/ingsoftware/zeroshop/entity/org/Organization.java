@@ -1,15 +1,18 @@
 package ingsoftware.zeroshop.entity.org;
 
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "company")
+@Table(name = "organization")
 @Data
-public class Company {
+public class Organization {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private String id;
+    private UUID id;
     @Column(name = "name", nullable = false)
     private String name;
 

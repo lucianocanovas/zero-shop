@@ -22,3 +22,4 @@
 
 - Se deben evitar las relaciones OneToMany y ManyToMany en las entidades, ya que pueden generar problemas de rendimiento y complejidad en la gestión de los datos. En su lugar, se recomienda utilizar relaciones OneToOne o ManyToOne, y manejar las colecciones de entidades relacionadas mediante consultas personalizadas en los repositorios.
 - Todos los modelos de datos deben tener un campo "deleted" de tipo booleano, que indique si el registro ha sido eliminado o no. Esto permite implementar un borrado lógico, evitando la pérdida de información y facilitando la recuperación de registros eliminados.
+- Se deben evitar las asociaciones con multiples entidades en una sola entidad, se deben realizar tablas intermedias para manejar las relaciones entre entidades, evitando la complejidad y mejorando la claridad del modelo de datos.

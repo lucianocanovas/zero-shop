@@ -1,28 +1,78 @@
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <footer class="footer" th:fragment="footer">
-        <div class="footer-left">
-            <div class="footer-logo">
-                <img class="footer-logo-image" src="/assets/logo-white.png" alt="Zero Deportes">
-                <h2>Zero Deportes</h2>
+
+    <!-- ========================================================================= -->
+    <!-- FRAGMENTO: FOOTER / PIE DE PÁGINA (Bootstrap 5)                           -->
+    <!-- ========================================================================= -->
+    <footer th:fragment="footer" class="bg-light text-muted border-top py-5 mt-auto">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <!-- Información de la Tienda -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="/assets/logo-black.png" alt="Zero Shop" height="32" class="me-2" onerror="this.src='https://placehold.co/100x30/000/fff?text=ZERO'">
+                        <span class="h5 mb-0 text-dark fw-bold">Zero Deportes</span>
+                    </div>
+                    <p class="small text-secondary mb-2">
+                        Tu tienda de indumentaria y equipamiento deportivo. Calidad, variedad y los mejores precios para tu rendimiento.
+                    </p>
+                    <p class="small text-muted mb-0">
+                        <i class="bi bi-info-circle me-1"></i>Proyecto universitario. Los productos exhibidos son de carácter demostrativo.
+                    </p>
+                </div>
+
+                <!-- Enlaces Rápidos -->
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h6 class="text-dark fw-bold text-uppercase mb-3 small">Navegación</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2"><a th:href="@{/}" class="text-decoration-none text-secondary">Inicio</a></li>
+                        <li class="mb-2"><a th:href="@{/products}" class="text-decoration-none text-secondary">Productos</a></li>
+                        <li class="mb-2"><a th:href="@{/categories}" class="text-decoration-none text-secondary">Categorías</a></li>
+                        <li class="mb-2"><a th:href="@{/offers}" class="text-decoration-none text-danger fw-semibold">Ofertas</a></li>
+                        <li class="mb-2"><a th:href="@{/contact}" class="text-decoration-none text-secondary">Contacto</a></li>
+                    </ul>
+                </div>
+
+                <!-- Usuario y Compras -->
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h6 class="text-dark fw-bold text-uppercase mb-3 small">Mi Cuenta</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2"><a th:href="@{/login}" class="text-decoration-none text-secondary">Iniciar sesión</a></li>
+                        <li class="mb-2"><a th:href="@{/register}" class="text-decoration-none text-secondary">Registrarse</a></li>
+                        <li class="mb-2"><a th:href="@{/orders}" class="text-decoration-none text-secondary">Mis Pedidos</a></li>
+                        <li class="mb-2"><a th:href="@{/profile}" class="text-decoration-none text-secondary">Mi Perfil</a></li>
+                        <li class="mb-2"><a th:href="@{/checkout}" class="text-decoration-none text-secondary">Ver Carrito</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto y Horarios (Placeholders) -->
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="text-dark fw-bold text-uppercase mb-3 small">Atención al Cliente</h6>
+                    <!-- PLACEHOLDER BACKEND: Reemplazar con datos reales de la empresa / sucursal -->
+                    <ul class="list-unstyled small text-secondary mb-3">
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i>Av. Siempre Viva 742, Posadas, Misiones</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2 text-primary"></i>contacto@zeroshop.com</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2 text-primary"></i>+54 (376) 400-0000</li>
+                        <li class="mb-2"><i class="bi bi-clock me-2 text-primary"></i>Lun a Vie: 09:00 - 19:00</li>
+                    </ul>
+                </div>
             </div>
-            <p>&copy; 2026 Zero Shop. Todos los derechos reservados.</p>
-            <p>Este proyecto es de caracter universitario, los productos mostrados en la tienda son de caracter ficticio.</p>
-        </div>
-        <div class="footer-right">
-            <div class="footer-sitemap">
-                <h3 class="footer-sitemap-title">Mapa del sitio</h3>
-                <ul class="footer-sitemap-list">
-                    <li class="footer-sitemap-list-item"><a th:href="@{/}">Inicio</a></li>
-                    <li class="footer-sitemap-list-item"><a th:href="@{/products}">Productos</a></li>
-                </ul>
-            </div>
-            <div class="footer-legal">
-                <h3 class="footer-legal-title">Legal</h3>
-                <p>Política de privacidad</p>
-                <p>Términos y condiciones</p>
+
+            <hr class="my-4 text-muted opacity-25">
+
+            <!-- Fila Inferior: Derechos y Políticas -->
+            <div class="row align-items-center small text-secondary">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    &copy; 2026 Zero Shop. Todos los derechos reservados.
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a th:href="@{/contact}" class="text-decoration-none text-secondary me-3">Términos y Condiciones</a>
+                    <a th:href="@{/contact}" class="text-decoration-none text-secondary">Política de Privacidad</a>
+                </div>
             </div>
         </div>
     </footer>
+
 </body>
 </html>

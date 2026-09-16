@@ -1,14 +1,101 @@
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
-    <header class="header" th:fragment="header">
-        <button class="header-nav-button"><i class="fa-solid fa-bars"></i></button>
-            <a th:href="@{/}"><img class="header-logo" src="/assets/logo-black.png"></a>
-        <button th:if="${!loggedIn}" class="header-account-button not-logged-in">
-            <i class="fa-solid fa-user"></i>
-        </button>
-        <button th:if="${loggedIn}" class="header-account-button logged-in">
-            <i class="fa-solid fa-user"></i>
-        </button>
+
+    <!-- ========================================================================= -->
+    <!-- FRAGMENTO: HEADER / NAVBAR PRINCIPAL (Bootstrap 5)                        -->
+    <!-- ========================================================================= -->
+    <header th:fragment="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top shadow-sm py-2">
+            <div class="container">
+                <!-- Logotipo -->
+                <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+                    <img src="/assets/logo-black.png" alt="Zero Shop" height="38" class="me-2" onerror="this.src='https://placehold.co/120x40/000/fff?text=ZERO+SHOP'">
+                </a>
+
+                <!-- Botón colapsable para dispositivos móviles -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMainContent" aria-controls="navbarMainContent" aria-expanded="false" aria-label="Abrir navegación">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Contenido colapsable -->
+                <div class="collapse navbar-collapse" id="navbarMainContent">
+                    <!-- Enlaces de navegación principales -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/}">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/products}">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/categories}">Categorías</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger fw-semibold" th:href="@{/offers}">
+                                <i class="bi bi-tag-fill me-1"></i>Ofertas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/contact}">Contacto</a>
+                        </li>
+                    </ul>
+
+                    <!-- Barra de búsqueda rápida de productos -->
+                    <form class="d-flex me-lg-3 my-2 my-lg-0" th:action="@{/products}" method="get" role="search">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control" type="search" name="search" placeholder="Buscar productos..." aria-label="Buscar" th:value="${param.search}">
+                            <button class="btn btn-outline-secondary" type="submit" title="Buscar">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Acciones de usuario y Carrito -->
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Carrito de compras -->
+                        <a th:href="@{/checkout}" class="btn btn-outline-dark btn-sm position-relative" title="Carrito de compras">
+                            <i class="bi bi-cart3 fs-6"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                  th:text="${cartCount != null ? cartCount : '2'}">
+                                <!-- PLACEHOLDER: Cantidad de items en el carrito (ej. 2) -->
+                                2
+                            </span>
+                        </a>
+
+                        <!-- Menú si el usuario ESTÁ autenticado -->
+                        <div class="dropdown" sec:authorize="isAuthenticated()">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-6"></i>
+                                <span sec:authentication="name" class="d-none d-md-inline">Mi Cuenta</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <li class="dropdown-header">Hola, <span sec:authentication="name">Usuario</span></li>
+                                <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                                <li><a class="dropdown-item" th:href="@{/orders}"><i class="bi bi-bag-check me-2"></i>Mis Pedidos</a></li>
+                                <li sec:authorize="hasRole('ADMIN')"><hr class="dropdown-divider"></li>
+                                <li sec:authorize="hasRole('ADMIN')">
+                                    <a class="dropdown-item text-primary" th:href="@{/admin}"><i class="bi bi-speedometer2 me-2"></i>Panel Admin</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form th:action="@{/logout}" method="post" class="m-0 p-0">
+                                        <button class="dropdown-item text-danger" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Botones si el usuario NO está autenticado -->
+                        <div class="d-flex gap-1" sec:authorize="!isAuthenticated()">
+                            <a th:href="@{/login}" class="btn btn-outline-primary btn-sm">Iniciar sesión</a>
+                            <a th:href="@{/register}" class="btn btn-primary btn-sm">Registrarse</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </header>
+
 </body>
 </html>

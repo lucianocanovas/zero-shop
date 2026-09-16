@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import ingsoftware.zeroshop.entity.actor.Employee;
 import ingsoftware.zeroshop.entity.actor.Supplier;
+import ingsoftware.zeroshop.entity.org.Office;
 
 @Entity
 @Table(name = "purchase_orders")
@@ -22,5 +23,8 @@ public class PurchaseOrder extends Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "office_id", nullable = false)
+    private Office office;
 }
 

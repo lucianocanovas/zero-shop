@@ -16,6 +16,7 @@ import ingsoftware.zeroshop.enums.ContactType;
 @SuperBuilder
 public class Contact {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
     @Enumerated(EnumType.STRING)
@@ -24,10 +25,6 @@ public class Contact {
     @Column(name = "observation")
     private String observation;
     
-    @ManyToOne
-    @JoinColumn(name = "person_id", referencedColumnName = "id")
-    private Person person;
-
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;

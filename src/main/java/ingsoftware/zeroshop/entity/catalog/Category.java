@@ -5,21 +5,21 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "categorias")
+@Table(name = "categories")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Category {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Builder.Default
-    @Column(nullable = false)
-    private boolean eliminado = false;
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 }

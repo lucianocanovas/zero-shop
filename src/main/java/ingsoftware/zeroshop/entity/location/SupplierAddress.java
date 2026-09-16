@@ -1,30 +1,33 @@
-package ingsoftware.zeroshop.entity.catalog;
+package ingsoftware.zeroshop.entity.location;
 
 import java.util.UUID;
-
 import jakarta.persistence.*;
 import lombok.*;
+import ingsoftware.zeroshop.entity.actor.Supplier;
 
 @Entity
-@Table(name = "subcategories", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "category_id"})})
+@Table(name = "supplier_addresses")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubCategory {
+public class SupplierAddress {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private Supplier supplier;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
-    private Category category;
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
 }
+

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import ingsoftware.zeroshop.enums.Gender;
 import ingsoftware.zeroshop.enums.IDType;
 
 @Entity 
@@ -27,6 +28,9 @@ public abstract class Person {
     private String lastName;
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", nullable = false)
+    private Gender gender;
     @Enumerated(EnumType.STRING)
     @Column(name = "id_type", nullable = false)
     private IDType idType;

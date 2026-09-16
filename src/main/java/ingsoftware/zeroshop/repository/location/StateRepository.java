@@ -1,4 +1,4 @@
-package ingsoftware.zeroshop.repository.geografic;
+package ingsoftware.zeroshop.repository.location;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

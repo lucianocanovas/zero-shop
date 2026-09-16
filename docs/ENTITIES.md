@@ -8,37 +8,46 @@
   - SubCategory
   - PriceHistory
 
-- location
+- location:
   - Country
   - State
   - City
   - Address
+  - PersonAddress
+  - OfficeAddress
+  - SupplierAddress
 
-- media
+- media:
   - Image
+  - ProductImage
+  - UserImage
 
-- org
-  - Company
+- org:
+  - Organization
   - Office
+  - OfficeAddress
+  - OfficeContact
+  - OfficeEmployee
+  - Stock
 
-- transaction
+- transaction:
   - Order
   - OrderDetail
   - PurchaseOrder
   - SaleOrder
   - Invoice
   - InvoiceDetail
-  - ClientInvoice
-  - SupplierInvoice
   - Payment
-  - PaymentMethod
-  
-- actor
+
+- actor:
   - Person
   - Client
   - Employee
   - Supplier
   - User
-  - ContactInfo
+  - Contact
   - ContactEmail
   - ContactPhone
+  - PersonContact
+  - SupplierContact
+  - SupplierProduct
