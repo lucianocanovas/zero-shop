@@ -9,6 +9,7 @@ import ingsoftware.zeroshop.enums.ContactType;
 
 @Entity
 @Table(name = "contacts")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data 
 @NoArgsConstructor
 @AllArgsConstructor

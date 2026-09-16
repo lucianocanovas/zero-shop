@@ -6,14 +6,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import ingsoftware.zeroshop.entity.actor.Person;
-import ingsoftware.zeroshop.enums.IMGType;
+import ingsoftware.zeroshop.enums.ImageType;
 
 @Entity
-@Table (name = "images")
+@Table (name = "user_images")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Image {
+public class UserImage {
     @Id
     @Column(name = "id", nullable = false)
     private UUID id;
@@ -25,8 +25,8 @@ public class Image {
     private byte[] content;
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private IMGType type;
-    
+    private ImageType type;
+
     @ManyToOne
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;

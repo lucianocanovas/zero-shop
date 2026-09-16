@@ -25,7 +25,7 @@ public class Address {
     @Column (name= "observations")
     private String observations;
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "city_id", referencedColumnName = "id")
     private City city;
     @ManyToOne

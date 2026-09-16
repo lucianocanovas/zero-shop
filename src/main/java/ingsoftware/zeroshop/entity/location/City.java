@@ -17,7 +17,7 @@ public class City {
     @Column (name = "code", nullable = false)
     private String code;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "state_id", referencedColumnName = "id")
     private State state;
 

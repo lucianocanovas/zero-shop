@@ -1,7 +1,5 @@
 package ingsoftware.zeroshop.entity.actor;
 
-import java.util.UUID;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client extends Person {
-    @Id 
-    @Column(name = "client_id", nullable = false)
-    private UUID clientId;
+    @Column(name = "client_number", nullable = false)
+    private String clientNumber;
 }

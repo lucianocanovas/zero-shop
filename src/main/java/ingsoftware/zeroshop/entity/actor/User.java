@@ -22,6 +22,10 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    private Person person;
+
     @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;
 }

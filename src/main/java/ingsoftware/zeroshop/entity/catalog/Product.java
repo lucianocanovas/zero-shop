@@ -27,6 +27,7 @@ public class Product {
     private Size size;
     @Column(name = "on_sale", nullable = false)
     private Boolean onSale;
+    
     @ManyToOne
     @JoinColumn(name = "subcategory_id", referencedColumnName = "id")
     private SubCategory subCategory;

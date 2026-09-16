@@ -16,12 +16,11 @@ import ingsoftware.zeroshop.entity.actor.Employee;
 @AllArgsConstructor
 @SuperBuilder
 public class SaleOrder extends Order {
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
 }
+
