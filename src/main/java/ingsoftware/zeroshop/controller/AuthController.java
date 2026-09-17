@@ -28,13 +28,6 @@ public class AuthController {
         return "login";
     }
 
-    // POST /login: Maneja el inicio de sesión del usuario
-    @PostMapping("/login")
-    public String login() {
-        // LOGICA DE INICIO DE SESION
-        return "redirect:/";
-    }
-
     // GET /register: Muestra la página de registro de usuario
     @GetMapping("/register")
     public String registerPage(Model model) {
