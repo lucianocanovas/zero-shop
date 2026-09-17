@@ -83,7 +83,20 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login") // Endpoint POST manejado por Spring Security
                 .usernameParameter("username") // Nombre del input de usuario/email en login.html
                 .passwordParameter("password") // Nombre del input de contraseña en login.html
-                .defaultSuccessUrl("/", false) // Redirección tras login exitoso
+                .successHandler((request, response, authentication) -> {
+                    boolean isAdmin = authentication.getAuthorities().stream()
+                        .anyMatch(authority -> authority.getAuthority().equals("ROLE_" + Role.ADMIN.name()));
+                    boolean isEmployee = authentication.getAuthorities().stream()
+                        .anyMatch(authority -> authority.getAuthority().equals("ROLE_" + Role.EMPLOYEE.name()));
+
+                    if (isAdmin) {
+                        response.sendRedirect("/");
+                    } else if (isEmployee) {
+                        response.sendRedirect("/dashboard/employee");
+                    } else {
+                        response.sendRedirect("/");
+                    }
+                })
                 .failureUrl("/login?error=true") // Redirección tras fallo en credenciales
                 .permitAll()
             )
