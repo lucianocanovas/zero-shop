@@ -17,14 +17,17 @@ import ingsoftware.zeroshop.entity.org.Office;
 @AllArgsConstructor
 @SuperBuilder
 public class PurchaseOrder extends Order {
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id", nullable = false)
     private Office office;
-}
 
+}

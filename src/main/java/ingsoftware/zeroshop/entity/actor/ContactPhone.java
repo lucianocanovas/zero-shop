@@ -15,9 +15,12 @@ import ingsoftware.zeroshop.enums.PhoneType;
 @AllArgsConstructor
 @SuperBuilder
 public class ContactPhone extends Contact {
+
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "phone_type", nullable = false)
     private PhoneType phoneType;
+    
 }

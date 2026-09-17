@@ -1,0 +1,25 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+
+    .header-navbar-button,
+    .header-user-button,
+    .header-auth-button {
+        padding: 0.5rem;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+    }
+
+    .header-logo {
+        height: 3rem;
+    }
+
+    .header-logo img {
+        height: 100%;
+        width: auto;
+    }
+
+}

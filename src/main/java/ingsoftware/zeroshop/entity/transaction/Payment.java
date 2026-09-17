@@ -16,6 +16,7 @@ import ingsoftware.zeroshop.enums.PaymentMethod;
 @AllArgsConstructor
 @Builder
 public class Payment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
@@ -38,4 +39,5 @@ public class Payment {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+    
 }

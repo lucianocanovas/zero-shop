@@ -30,5 +30,5 @@ public class OfficeEmployee {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
-}
 
+}

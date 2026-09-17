@@ -11,6 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client extends Person {
+
     @Column(name = "client_number", nullable = false)
     private String clientNumber;
+    
 }

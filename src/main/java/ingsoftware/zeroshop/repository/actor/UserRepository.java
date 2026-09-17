@@ -21,10 +21,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     }
 
     Optional<User> findByIdAndDeletedFalse(UUID id);
-    Optional<User> findByEmailIgnoreCase(String email);
-    Optional<User> findByEmailIgnoreCaseAndDeletedFalse(String email);
+    Optional<User> findByUsernameIgnoreCase(String username);
+    Optional<User> findByUsernameIgnoreCaseAndDeletedFalse(String username);
     List<User> findAllByDeletedFalse();
-    boolean existsByEmailIgnoreCase(String email);
-    boolean existsByEmailIgnoreCaseAndIdNot(String email, UUID id);
+    boolean existsByUsernameIgnoreCase(String username);
+    boolean existsByUsernameIgnoreCaseAndIdNot(String username, UUID id);
 
 }

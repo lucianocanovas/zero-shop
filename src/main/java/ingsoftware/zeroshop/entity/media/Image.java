@@ -16,18 +16,23 @@ import ingsoftware.zeroshop.enums.ImageType;
 @AllArgsConstructor
 @SuperBuilder
 public abstract class Image {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
+
     @Column(name = "name", nullable = false)
     private String name;
+
     @Column(name = "mime_type", nullable = false)
     private String mimeType;
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "content", nullable = false)
     private byte[] content;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private ImageType type;
@@ -39,5 +44,5 @@ public abstract class Image {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
-}
 
+}

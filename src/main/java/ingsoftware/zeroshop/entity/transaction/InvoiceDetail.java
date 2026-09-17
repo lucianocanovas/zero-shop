@@ -15,6 +15,7 @@ import ingsoftware.zeroshop.entity.catalog.Product;
 @AllArgsConstructor
 @Builder
 public class InvoiceDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
@@ -40,4 +41,5 @@ public class InvoiceDetail {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+    
 }

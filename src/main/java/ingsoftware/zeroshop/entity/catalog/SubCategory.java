@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class SubCategory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
@@ -27,4 +28,5 @@ public class SubCategory {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+    
 }

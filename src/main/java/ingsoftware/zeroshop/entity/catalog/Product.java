@@ -14,6 +14,7 @@ import ingsoftware.zeroshop.enums.Size;
 @AllArgsConstructor
 @Builder
 public class Product {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
@@ -43,4 +44,5 @@ public class Product {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+    
 }

@@ -15,16 +15,19 @@ import ingsoftware.zeroshop.enums.ContactType;
 @AllArgsConstructor
 @SuperBuilder
 public class Contact {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "contact_type", nullable = false)
     private ContactType contactType;
+
     @Column(name = "observation")
     private String observation;
-    
+
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;

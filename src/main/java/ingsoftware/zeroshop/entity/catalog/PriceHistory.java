@@ -14,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class PriceHistory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
@@ -35,4 +36,5 @@ public class PriceHistory {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+    
 }

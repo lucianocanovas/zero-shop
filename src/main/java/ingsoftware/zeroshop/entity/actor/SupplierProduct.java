@@ -20,20 +20,20 @@ public class SupplierProduct {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
-
+    
+    @Column(name = "cost_price", nullable = false, precision = 12, scale = 2)
+    private BigDecimal costPrice;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
-    @Column(name = "cost_price", nullable = false, precision = 12, scale = 2)
-    private BigDecimal costPrice;
-
+    
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
-}
 
+}

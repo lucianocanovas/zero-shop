@@ -16,6 +16,7 @@ import ingsoftware.zeroshop.enums.InvoiceStatus;
 @AllArgsConstructor
 @Builder
 public class Invoice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
@@ -41,4 +42,5 @@ public class Invoice {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+    
 }

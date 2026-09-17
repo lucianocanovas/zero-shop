@@ -29,5 +29,5 @@ public class PersonAddress {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
-}
 
+}

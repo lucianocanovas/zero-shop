@@ -15,8 +15,9 @@ import ingsoftware.zeroshop.entity.actor.User;
 @AllArgsConstructor
 @SuperBuilder
 public class UserImage extends Image {
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-}
 
+}

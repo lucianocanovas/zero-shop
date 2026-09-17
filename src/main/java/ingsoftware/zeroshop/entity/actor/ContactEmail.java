@@ -13,6 +13,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class ContactEmail extends Contact {
+
     @Column(name = "email", nullable = false)
     private String email;
+    
 }

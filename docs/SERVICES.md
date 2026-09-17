@@ -158,7 +158,7 @@
 
 ## Orquestación y flujos clave de negocio
 
-```
+```text
                [Registro de Cliente]
                         │
                   UserService ──(envía código)──> EmailService

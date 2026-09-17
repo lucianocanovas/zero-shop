@@ -9,12 +9,15 @@ import lombok.Data;
 @Table(name = "cities")
 @Data
 public class City {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
+
     @Column (name = "name", nullable = false)
     private String name;
+
     @Column (name = "code", nullable = false)
     private String code;
 
@@ -24,4 +27,5 @@ public class City {
 
     @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;
+    
 }

@@ -20,10 +20,6 @@ public class OrderDetail {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
-
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
@@ -32,6 +28,10 @@ public class OrderDetail {
 
     @Column(name = "total", nullable = false, precision = 12, scale = 2)
     private BigDecimal total;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
@@ -40,4 +40,5 @@ public class OrderDetail {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+    
 }

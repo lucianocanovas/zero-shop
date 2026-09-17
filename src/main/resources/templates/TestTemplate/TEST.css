@@ -1,0 +1,279 @@
+/* ==========================================================================
+   ESTILOS TESTTEMPLATE - NAVBAR ZERO SHOP
+   Diseño minimalista, mobile-first, sin excesos de sombras ni bordes exagerados
+   ========================================================================== */
+
+/* Variables base */
+:root {
+    --zs-primary: #111827;
+    --zs-border-color: #e5e7eb;
+    --zs-bg-hover: #f3f4f6;
+    --zs-text-muted: #6b7280;
+}
+
+/* Reset y base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f9fafb;
+    color: #1f2937;
+    min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   1. NAVBAR PRINCIPAL
+   -------------------------------------------------------------------------- */
+.zs-navbar {
+    height: 64px;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--zs-border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+.zs-navbar-container {
+    height: 100%;
+    position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   2. BOTÓN HAMBURGUESA ANIMADO (3 BARRAS -> X)
+   -------------------------------------------------------------------------- */
+.zs-hamburger-btn {
+    width: 42px;
+    height: 42px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.zs-hamburger-btn:hover {
+    background-color: var(--zs-bg-hover);
+}
+
+.zs-hamburger-btn:focus-visible {
+    outline: 2px solid #111827;
+    outline-offset: 2px;
+}
+
+/* Líneas de la hamburguesa */
+.zs-hamburger-btn .bar {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background-color: #1f2937;
+    border-radius: 1px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.2s ease,
+                width 0.2s ease;
+    transform-origin: center;
+}
+
+/* Estado activo: Animación a cruz (X) */
+.zs-hamburger-btn.is-active .top-bar {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.zs-hamburger-btn.is-active .middle-bar {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.zs-hamburger-btn.is-active .bottom-bar {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* --------------------------------------------------------------------------
+   3. LOGO CENTRADO
+   -------------------------------------------------------------------------- */
+.zs-brand-link {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 4px;
+}
+
+.zs-brand-logo {
+    max-height: 28px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .zs-brand-logo {
+        max-height: 32px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   4. USUARIO & SESIÓN (PERFIL / INICIAR SESIÓN)
+   -------------------------------------------------------------------------- */
+.zs-user-section {
+    display: flex;
+    align-items: center;
+}
+
+/* Avatar de usuario */
+.zs-avatar-btn {
+    padding: 2px;
+    border-radius: 50%;
+    border: 1px solid var(--zs-border-color);
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.zs-avatar-btn:hover,
+.zs-avatar-btn[aria-expanded="true"] {
+    border-color: #111827;
+}
+
+.zs-avatar-btn:focus-visible {
+    outline: 2px solid #111827;
+    outline-offset: 2px;
+}
+
+.zs-avatar-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Dropdown del usuario */
+.zs-user-dropdown {
+    min-width: 220px;
+    border: 1px solid var(--zs-border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 6px 0;
+    margin-top: 10px !important;
+}
+
+.zs-user-dropdown .dropdown-header {
+    padding: 10px 16px;
+    font-size: 0.8125rem;
+    color: var(--zs-text-muted);
+}
+
+.zs-user-dropdown .dropdown-item {
+    padding: 9px 16px;
+    font-size: 0.875rem;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.zs-user-dropdown .dropdown-item:hover,
+.zs-user-dropdown .dropdown-item:focus {
+    background-color: var(--zs-bg-hover);
+    color: #111827;
+}
+
+.zs-user-dropdown .dropdown-item.text-danger:hover,
+.zs-user-dropdown .dropdown-item.text-danger:focus {
+    background-color: #fef2f2;
+    color: #dc2626 !important;
+}
+
+.zs-user-dropdown .dropdown-divider {
+    margin: 4px 0;
+    border-top-color: var(--zs-border-color);
+}
+
+/* Botón Iniciar Sesión */
+.zs-btn-login {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid #111827;
+    color: #111827;
+    background-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.zs-btn-login:hover {
+    background-color: #111827;
+    color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   5. MENÚ LATERAL (OFFCANVAS)
+   -------------------------------------------------------------------------- */
+.zs-offcanvas {
+    max-width: 300px;
+    border-right: 1px solid var(--zs-border-color);
+}
+
+.zs-offcanvas .offcanvas-header {
+    border-bottom: 1px solid var(--zs-border-color);
+    padding: 16px 20px;
+}
+
+.zs-offcanvas-nav .nav-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #374151;
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin: 2px 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.zs-offcanvas-nav .nav-link:hover,
+.zs-offcanvas-nav .nav-link.active {
+    background-color: var(--zs-bg-hover);
+    color: #111827;
+}
+
+.zs-offcanvas-nav .nav-link i {
+    font-size: 1.1rem;
+    color: var(--zs-text-muted);
+}
+
+.zs-offcanvas-nav .nav-link:hover i,
+.zs-offcanvas-nav .nav-link.active i {
+    color: #111827;
+}
+
+/* --------------------------------------------------------------------------
+   6. PANEL DE CONTROL PARA TESTING
+   -------------------------------------------------------------------------- */
+.test-panel {
+    background-color: #ffffff;
+    border: 1px solid var(--zs-border-color);
+    border-radius: 8px;
+    padding: 18px 24px;
+    margin-top: 32px;
+}

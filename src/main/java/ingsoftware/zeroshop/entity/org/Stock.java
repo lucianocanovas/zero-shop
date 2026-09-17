@@ -14,6 +14,7 @@ import ingsoftware.zeroshop.entity.catalog.Product;
 @AllArgsConstructor
 @Builder
 public class Stock {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
@@ -33,4 +34,5 @@ public class Stock {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+
 }

@@ -21,7 +21,7 @@ public class OfficeContact {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id", nullable = false)
     private Office office;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contact_id", nullable = false)
     private Contact contact;
@@ -29,5 +29,5 @@ public class OfficeContact {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
-}
 
+}

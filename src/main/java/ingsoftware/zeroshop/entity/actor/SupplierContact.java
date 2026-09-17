@@ -28,5 +28,5 @@ public class SupplierContact {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
-}
 
+}

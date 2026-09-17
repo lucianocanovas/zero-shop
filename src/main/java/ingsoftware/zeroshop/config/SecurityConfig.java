@@ -95,14 +95,14 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
-            )
-
-            // 4. Configuración de "Recordarme" (Remember-me)
-            .rememberMe(remember -> remember
-                .key("zeroShopRememberMeSecretKey")
-                .tokenValiditySeconds(7 * 24 * 60 * 60) // 7 días de validez
-                .rememberMeParameter("remember-me") // Nombre del checkbox en login.html
             );
+
+            // 4. Configuración de "Recordarme" (Remember-me) - Requiere un bean UserDetailsService activo
+            // .rememberMe(remember -> remember
+            //     .key("zeroShopRememberMeSecretKey")
+            //     .tokenValiditySeconds(7 * 24 * 60 * 60)
+            //     .rememberMeParameter("remember-me")
+            // );
 
         return http.build();
     }
