@@ -2,6 +2,7 @@ package ingsoftware.zeroshop.controller;
 
 import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.enums.Role;
+import ingsoftware.zeroshop.service.actor.UserService;
 import lombok.Data;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,41 +30,21 @@ public class UserController {
     }
 
     // Método para listar todos los usuarios registrados (vista de administración)
-    @GetMapping({"/users", "/admin/users"})
+    @GetMapping("/users")
     public String listUsers(Authentication authentication, Model model) {
-        // Verificar si el usuario está autenticado y tiene el rol de administrador
-        if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
-            return "redirect:/login";
-        }
-
-        // Agregar atributos al modelo para la vista
-        model.addAttribute("loggedIn", true);
-        model.addAttribute("isAdmin", true);
-        model.addAttribute("userName", getUserName(authentication));
-        model.addAttribute("users", userService.findAll());
-        return "admin/users";
+        // Redirigir a la ruta oficial en el dashboard
+        return "redirect:/dashboard/admin/users";
     }
 
     // Método para mostrar el formulario de edición de un usuario específico por su ID
-    @GetMapping({"/users/{id}", "/users/{id}/edit", "/admin/users/{id}/edit"})
+    @GetMapping({"/users/{id}", "/users/{id}/edit"})
     public String editUser(@PathVariable UUID id, Authentication authentication, Model model) {
-        // Verificar si el usuario está autenticado y tiene el rol de administrador
-        if (!isAuthenticated(authentication) || !hasRole(authentication, "ADMIN")) {
-            return "redirect:/login";
-        }
-
-        // Obtener el usuario mediante el servicio
-        User user = userService.findById(id).orElse(null);
-        if (user == null) {
-            return "redirect:/users";
-        }
-
-        addProfileModel(model, user, true, "/users/" + id);
-        return "user";
+        // Redirigir a la ruta oficial en el dashboard
+        return "redirect:/dashboard/admin/users/" + id;
     }
 
     // Método para actualizar los datos de un usuario por su ID
-    @PostMapping({"/users/{id}", "/admin/users/{id}"})
+    @PostMapping("/users/{id}")
     public String updateUser(@PathVariable UUID id,
                              Authentication authentication,
                              @ModelAttribute ProfileForm form,
@@ -79,11 +60,11 @@ public class UserController {
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("error", exception.getMessage());
         }
-        return "redirect:/users";
+        return "redirect:/dashboard/admin/users";
     }
 
     // Método para eliminar un usuario por su ID
-    @PostMapping({"/users/{id}/delete", "/admin/users/{id}/delete"})
+    @PostMapping("/users/{id}/delete")
     public String deleteUser(@PathVariable UUID id,
                              Authentication authentication,
                              RedirectAttributes redirectAttributes) {
@@ -98,7 +79,7 @@ public class UserController {
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("error", exception.getMessage());
         }
-        return "redirect:/users";
+        return "redirect:/dashboard/admin/users";
     }
 
     // Método para mostrar la vista del perfil propio del usuario autenticado
@@ -143,13 +124,13 @@ public class UserController {
         model.addAttribute("formAction", formAction);
         model.addAttribute("loggedIn", true);
         model.addAttribute("isAdmin", user.getRole() == Role.ADMIN);
-        model.addAttribute("userName", user.getPersona() != null ? user.getPersona().getNombre() : user.getEmail());
+        model.addAttribute("userName", user.getPerson() != null ? user.getPerson().getFirstName() : user.getUsername());
     }
 
     // Método auxiliar para refrescar el contexto de seguridad tras actualizar datos del usuario
     private void refreshAuthentication(Authentication authentication, User user) {
         org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
+                user.getUsername(),
                 user.getPassword(),
                 authentication.getAuthorities()
         );

@@ -85,8 +85,9 @@ Al arrancar por primera vez, el sistema inicializa automáticamente dos usuarios
 
 | Rol | Correo | Contraseña | Acceso |
 | --- | --- | --- | --- |
-| **Administrador** | `admin@gmail.com` | `admin123` | Panel `/admin`, gestión de productos y usuarios |
-| **Cliente** | `client@gmail.com` | `client123` | Navegación, perfil y compras |
+| **Administrador** | `admin@gmail.com` | `admin123` | Panel `/dashboard`, zona `/dashboard/admin`, gestión de usuarios y sucursales |
+| **Empleado** | `employee@gmail.com` | `employee123` | Panel `/dashboard`, zona `/dashboard/employee`, stock, pedidos y compras |
+| **Cliente** | `client@gmail.com` | `client123` | Navegación, catálogo, perfil y compras |
 
 ---
 

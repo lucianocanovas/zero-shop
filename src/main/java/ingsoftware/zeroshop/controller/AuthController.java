@@ -1,6 +1,7 @@
 package ingsoftware.zeroshop.controller;
 
-import ingsoftware.zeroshop.service.EmailService;
+import ingsoftware.zeroshop.service.actor.UserService;
+import ingsoftware.zeroshop.service.notification.EmailService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

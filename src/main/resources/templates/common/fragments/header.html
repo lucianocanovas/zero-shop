@@ -73,9 +73,9 @@
                                 <li class="dropdown-header">Hola, <span sec:authentication="name">Usuario</span></li>
                                 <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
                                 <li><a class="dropdown-item" th:href="@{/orders}"><i class="bi bi-bag-check me-2"></i>Mis Pedidos</a></li>
-                                <li sec:authorize="hasRole('ADMIN')"><hr class="dropdown-divider"></li>
-                                <li sec:authorize="hasRole('ADMIN')">
-                                    <a class="dropdown-item text-primary" th:href="@{/admin}"><i class="bi bi-speedometer2 me-2"></i>Panel Admin</a>
+                                <li sec:authorize="hasAnyRole('ADMIN', 'EMPLOYEE')"><hr class="dropdown-divider"></li>
+                                <li sec:authorize="hasAnyRole('ADMIN', 'EMPLOYEE')">
+                                    <a class="dropdown-item text-primary" th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-2"></i>Panel de Control</a>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>

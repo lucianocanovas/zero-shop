@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/assets/logo-white.png">
+    <link rel="stylesheet" href="/styles/styles.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title th:text="${title}">Escritorio del Empleado - Zero Shop</title>
+</head>
+<body class="bg-light d-flex flex-column min-vh-100">
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center fw-bold" th:href="@{/dashboard}">
+                    <i class="bi bi-person-badge me-2 text-info"></i>ESCRITORIO EMPLEADO - ZERO SHOP
+                </a>
+                <div class="ms-auto d-flex gap-2">
+                    <a th:href="@{/dashboard}" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left me-1"></i>Volver al Dashboard</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4 flex-grow-1">
+        <div class="p-4 bg-white rounded shadow-sm mb-4">
+            <h1 class="h3 fw-bold text-dark mb-1" th:text="${title}">Escritorio del Empleado</h1>
+            <p class="text-muted mb-0">Espacio de trabajo operativo para el personal de sucursal.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-info"><i class="bi bi-boxes me-2"></i>Control y Ajuste de Stock</h5>
+                        <p class="card-text text-muted small">Consultar disponibilidad y realizar ajustes de inventario de tu sucursal.</p>
+                        <a th:href="@{/dashboard/stock}" class="btn btn-info text-white btn-sm">Ir a Stock</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-info"><i class="bi bi-cart-check me-2"></i>Recepción de Mercadería</h5>
+                        <p class="card-text text-muted small">Registrar la recepción de órdenes de compra y sumar existencias.</p>
+                        <a th:href="@{/dashboard/purchase-orders}" class="btn btn-info text-white btn-sm">Ir a Órdenes de Compra</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-info"><i class="bi bi-receipt me-2"></i>Despacho de Pedidos</h5>
+                        <p class="card-text text-muted small">Preparar y actualizar el estado de los pedidos asignados a despacho.</p>
+                        <a th:href="@{/dashboard/sale-orders}" class="btn btn-info text-white btn-sm">Ir a Pedidos de Venta</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-info"><i class="bi bi-shop me-2"></i>Catálogo de la Tienda</h5>
+                        <p class="card-text text-muted small">Consultar precios vigentes y características de los productos.</p>
+                        <a th:href="@{/dashboard/products}" class="btn btn-info text-white btn-sm">Ver Catálogo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+        <div class="container">&copy; 2026 Zero Shop - Panel Operativo de Empleados.</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

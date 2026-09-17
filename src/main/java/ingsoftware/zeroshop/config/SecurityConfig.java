@@ -1,72 +1,128 @@
 package ingsoftware.zeroshop.config;
 
+import ingsoftware.zeroshop.enums.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-// Clase de configuración de seguridad para la aplicación
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    // Bean para el codificador de contraseñas utilizando BCrypt
+    /**
+     * Configuración de la cadena de filtros de seguridad HTTP (SecurityFilterChain).
+     * Aquí se definen las reglas de autorización para las rutas, la configuración del formulario
+     * de inicio de sesión, el cierre de sesión, y la protección CSRF.
+     */
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            // 1. Reglas de autorización de solicitudes HTTP
+            .authorizeHttpRequests(authorize -> authorize
+                // Recursos estáticos públicos (CSS, JS, imágenes, webjars)
+                .requestMatchers(
+                    "/styles/**",
+                    "/scripts/**",
+                    "/assets/**",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/favicon.ico"
+                ).permitAll()
+
+                // Rutas públicas de navegación y catálogo
+                .requestMatchers(
+                    "/",
+                    "/contact",
+                    "/products/**",
+                    "/categories/**",
+                    "/offers"
+                ).permitAll()
+
+                // Rutas públicas de autenticación y registro
+                .requestMatchers(
+                    "/login",
+                    "/register",
+                    "/verify/**"
+                ).permitAll()
+
+                // Rutas exclusivas para administradores dentro del dashboard
+                .requestMatchers("/dashboard/admin/**").hasRole(Role.ADMIN.name())
+
+                // Rutas exclusivas para empleados dentro del dashboard
+                .requestMatchers("/dashboard/employee/**").hasRole(Role.EMPLOYEE.name())
+
+                // Rutas comunes del Dashboard (Staff: ADMIN y EMPLOYEE)
+                .requestMatchers("/dashboard/**", "/dashboard").hasAnyRole(
+                    Role.ADMIN.name(),
+                    Role.EMPLOYEE.name()
+                )
+
+                // Rutas para clientes y usuarios autenticados (perfil, pedidos, checkout)
+                .requestMatchers("/profile/**", "/orders/**", "/checkout/**").hasAnyRole(
+                    Role.CLIENT.name(),
+                    Role.ADMIN.name(),
+                    Role.EMPLOYEE.name()
+                )
+
+                // Cualquier otra solicitud requiere autenticación
+                .anyRequest().authenticated()
+            )
+
+            // 2. Configuración de Form Login (coincide con templates/login.html)
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login") // Endpoint POST manejado por Spring Security
+                .usernameParameter("username") // Nombre del input de usuario/email en login.html
+                .passwordParameter("password") // Nombre del input de contraseña en login.html
+                .defaultSuccessUrl("/", false) // Redirección tras login exitoso
+                .failureUrl("/login?error=true") // Redirección tras fallo en credenciales
+                .permitAll()
+            )
+
+            // 3. Configuración de Cierre de Sesión (Logout)
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            )
+
+            // 4. Configuración de "Recordarme" (Remember-me)
+            .rememberMe(remember -> remember
+                .key("zeroShopRememberMeSecretKey")
+                .tokenValiditySeconds(7 * 24 * 60 * 60) // 7 días de validez
+                .rememberMeParameter("remember-me") // Nombre del checkbox en login.html
+            );
+
+        return http.build();
+    }
+
+    /**
+     * Codificador de contraseñas recomendado (BCrypt).
+     * Se utiliza para encriptar contraseñas al registrar usuarios y verificar credenciales en el login.
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Bean para el servicio de detalles de usuario que carga los detalles del usuario a través de UserService
-    @Bean
-    UserDetailsService userDetailsService(UserService userService) {
-        return username -> userService.findByEmail(username)
-                .map(user -> org.springframework.security.core.userdetails.User
-                        .withUsername(user.getEmail())
-                        .password(user.getPassword())
-                        .roles(user.getRole().name())
-                        .build())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-    }
-
-    // Bean para el administrador de autenticación que se utiliza para autenticar a los usuarios
+    /**
+     * Expone el AuthenticationManager como un Bean de Spring.
+     * Requerido por componentes como AuthController para autenticación programática.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-    // Bean para la cadena de filtros de seguridad que define las reglas de autorización y autenticación
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize
-
-                        // Rutas públicas que no requieren autenticación
-                        .requestMatchers("/", "/products", "/products/**", "/categories", "/categories/**", "/offers", "/offers/**", "/contact", "/contact/**", "/verify", "/verify/**", "/login", "/register", "/register/**", "/logout", "/css/**", "/styles/**", "/assets/**", "/scripts/**").permitAll()
-                        
-                        // Rutas que requieren el rol de ADMIN para acceder
-                        .requestMatchers("/admin/**", "/users", "/users/**").hasRole("ADMIN")
-
-                        // Cualquier otra solicitud requiere autenticación (incluye /profile)
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error")
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll())
-                .sessionManagement(session -> session
-                        .sessionFixation(sessionFixation -> sessionFixation.migrateSession())
-                        .maximumSessions(1));
-        return http.build();
-    }
 }
+

@@ -39,45 +39,59 @@
   /orders
   /orders/:id
 
-## Vistas de administración
+## Vistas del Dashboard (/dashboard - ADMIN y EMPLOYEE)
 
-- Inicio:
-  /admin
+- Inicio del Dashboard:
+  /dashboard
 
 - Productos y Stock:
-  /admin/products
-  /admin/products/:id
-  /admin/products/:id/prices
-  /admin/stock
+  /dashboard/products
+  /dashboard/products/:id
+  /dashboard/products/:id/prices
+  /dashboard/stock
 
 - Categorías:
-  /admin/categories
+  /dashboard/categories
+  /dashboard/categories/new
+  /dashboard/categories/:id
 
 - Pedidos de Clientes:
-  /admin/sale-orders
-  /admin/sale-orders/:id
+  /dashboard/sale-orders
+  /dashboard/sale-orders/:id
 
 - Proveedores:
-  /admin/providers
-  /admin/providers/:id
+  /dashboard/providers
+  /dashboard/providers/:id
 
 - Órdenes de Compra a Proveedores:
-  /admin/purchase-orders
-  /admin/purchase-orders/:id
+  /dashboard/purchase-orders
+  /dashboard/purchase-orders/:id
+
+## Vistas exclusivas de administración (/dashboard/admin - SOLO ADMIN)
+
+- Panel de Administración:
+  /dashboard/admin
 
 - Sucursales:
-  /admin/offices
-  /admin/offices/:id
+  /dashboard/admin/offices
+  /dashboard/admin/offices/new
+  /dashboard/admin/offices/:id
 
 - Usuarios:
-  /admin/users
-  /admin/users/:id
+  /dashboard/admin/users
+  /dashboard/admin/users/:id
 
 - Reportes:
-  /admin/reports
-  /admin/reports/sales
-  /admin/reports/stock
-  /admin/reports/suppliers
+  /dashboard/admin/reports
+  /dashboard/admin/reports/sales
+  /dashboard/admin/reports/stock
+  /dashboard/admin/reports/suppliers
+
+## Vistas exclusivas de empleados (/dashboard/employee - SOLO EMPLOYEE)
+
+- Escritorio del Empleado / Sucursal Asignada:
+  /dashboard/employee
+  /dashboard/employee/desk
 
 ## Vistas de error
 

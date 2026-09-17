@@ -46,67 +46,80 @@
   - GET /orders/:id
   - DELETE /orders/:id
 
-## Controladores de administración
+## Controladores comunes del Dashboard (/dashboard - ADMIN y EMPLOYEE)
 
-- AdminController
-  - GET /admin/
+- DashboardController
+  - GET /dashboard
+  - GET /dashboard/
 
 - ProductController
-  - GET /admin/products
-  - GET /admin/products/:id
-  - POST /admin/products/
-  - PUT /admin/products/:id
-  - DELETE /admin/products/:id
-  - GET /admin/products/:id/prices
-  - POST /admin/products/:id/prices
-  - PUT /admin/products/:id/prices/:priceId
-  - DELETE /admin/products/:id/prices/:priceId
-  - GET /admin/stock
+  - GET /dashboard/products
+  - GET /dashboard/products/:id
+  - POST /dashboard/products/
+  - PUT /dashboard/products/:id
+  - DELETE /dashboard/products/:id
+  - GET /dashboard/products/:id/prices
+  - POST /dashboard/products/:id/prices
+  - PUT /dashboard/products/:id/prices/:priceId
+  - DELETE /dashboard/products/:id/prices/:priceId
+  - GET /dashboard/stock
+  - PUT /dashboard/stock/:id
 
 - CategoryController
-  - GET /admin/categories
-  - GET /admin/categories/:id
-  - POST /admin/categories/
-  - PUT /admin/categories/:id
-  - DELETE /admin/categories/:id
+  - GET /dashboard/categories
+  - GET /dashboard/categories/:id
+  - POST /dashboard/categories/
+  - PUT /dashboard/categories/:id
+  - DELETE /dashboard/categories/:id
 
 - OrderController
-  - GET /admin/sale-orders
-  - GET /admin/sale-orders/:id
-  - POST /admin/sale-orders/
-  - PUT /admin/sale-orders/:id
-  - DELETE /admin/sale-orders/:id
+  - GET /dashboard/sale-orders
+  - GET /dashboard/sale-orders/:id
+  - POST /dashboard/sale-orders/
+  - PUT /dashboard/sale-orders/:id
+  - PUT /dashboard/sale-orders/:id/status
+  - DELETE /dashboard/sale-orders/:id
 
 - ProviderController
-  - GET /admin/providers
-  - GET /admin/providers/:id
-  - POST /admin/providers
-  - PUT /admin/providers/:id
-  - DELETE /admin/providers/:id
+  - GET /dashboard/providers
+  - GET /dashboard/providers/:id
+  - POST /dashboard/providers
+  - PUT /dashboard/providers/:id
+  - DELETE /dashboard/providers/:id
 
 - PurchaseOrderController
-  - GET /admin/purchase-orders
-  - GET /admin/purchase-orders/:id
-  - POST /admin/purchase-orders
-  - PUT /admin/purchase-orders/:id
-  - DELETE /admin/purchase-orders/:id
+  - GET /dashboard/purchase-orders
+  - GET /dashboard/purchase-orders/:id
+  - POST /dashboard/purchase-orders
+  - PUT /dashboard/purchase-orders/:id
+  - POST /dashboard/purchase-orders/:id/receive
+  - DELETE /dashboard/purchase-orders/:id
 
-- OfficeController
-  - GET /admin/offices
-  - GET /admin/offices/:id
-  - POST /admin/offices
-  - PUT /admin/offices/:id
-  - DELETE /admin/offices/:id
+## Controladores exclusivos de administración (/dashboard/admin - SOLO ADMIN)
 
 - UserController
-  - GET /admin/users
-  - GET /admin/users/:id
-  - POST /admin/users
-  - PUT /admin/users/:id
-  - DELETE /admin/users/:id
+  - GET /dashboard/admin/users
+  - GET /dashboard/admin/users/:id
+  - POST /dashboard/admin/users
+  - PUT /dashboard/admin/users/:id
+  - DELETE /dashboard/admin/users/:id
+
+- OfficeController
+  - GET /dashboard/admin/offices
+  - GET /dashboard/admin/offices/new
+  - GET /dashboard/admin/offices/:id
+  - POST /dashboard/admin/offices
+  - PUT /dashboard/admin/offices/:id
+  - DELETE /dashboard/admin/offices/:id
 
 - ReportController
-  - GET /admin/reports
-  - GET /admin/reports/sales
-  - GET /admin/reports/stock
-  - GET /admin/reports/suppliers
+  - GET /dashboard/admin/reports
+  - GET /dashboard/admin/reports/sales
+  - GET /dashboard/admin/reports/stock
+  - GET /dashboard/admin/reports/suppliers
+
+## Controladores exclusivos de empleados (/dashboard/employee - SOLO EMPLOYEE)
+
+- EmployeeController
+  - GET /dashboard/employee
+  - GET /dashboard/employee/desk
