@@ -1,5 +1,6 @@
 package ingsoftware.zeroshop.entity.org;
 
+import java.util.UUID;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,8 +12,9 @@ import ingsoftware.zeroshop.enums.OfficeType;
 public class Office {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private String id;
+    private UUID id;
 
     @Column(name = "name", nullable = false)
     private String name;

@@ -1,12 +1,10 @@
 # Instrucciones para el desarrollo de componentes visuales
 
-- Se deben crear los componentes visuales en archivos HTML separados dentro de la carpeta `src/main/resources/templates/TestTemplate/`. Esto permite probar y desarrollar los componentes de manera aislada antes de integrarlos en la aplicación principal.
-
 - Los componentes utilizan Thymeleaf como motor de plantillas para renderizar dinámicamente los datos en el frontend. Se deben seguir las convenciones de Thymeleaf para enlazar los datos y manejar la lógica de presentación.
 
 - Se debe tener en cuenta el modelo de datos y las relaciones entre entidades al desarrollar los componentes visuales, asegurando que la información se muestre de manera coherente y precisa.
 
-- Se debe buscar un estilo visual minimalista y consistente con la estética general de la aplicación. Se recomienda utilizar Bootstrap 5 para facilitar el diseño y la maquetación de los componentes.
+- Se debe buscar un estilo visual minimalista y consistente con la estética general de la aplicación.
 
 - Se debe desarrollar con el principio de "mobile-first", asegurando que los componentes se vean y funcionen correctamente en dispositivos móviles antes de adaptarlos a pantallas más grandes.
 
