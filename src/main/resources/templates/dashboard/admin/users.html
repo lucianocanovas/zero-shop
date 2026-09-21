@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios</title>
+</head>
+<body>
+    <a href="/dashboard/admin">Volver al Panel de Admin</a>
+
+    <h1>Gestión de Usuarios</h1>
+
+    <p th:if="${success}" th:text="${success}"></p>
+    <p th:if="${error}" th:text="${error}"></p>
+
+    <h2>Crear Nuevo Usuario</h2>
+    <form method="post" action="/dashboard/admin/users">
+        <label for="username">Email / Usuario:</label>
+        <input type="email" id="username" name="username" required>
+
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="role">Rol:</label>
+        <select id="role" name="role" required>
+            <option value="CLIENT">CLIENT</option>
+            <option value="EMPLOYEE">EMPLOYEE</option>
+            <option value="ADMIN">ADMIN</option>
+        </select>
+
+        <button type="submit">Crear Usuario</button>
+    </form>
+
+    <h2>Usuarios del Sistema</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}">ID</td>
+                <td th:text="${user.username}">usuario@mail.com</td>
+                <td th:text="${user.role}">CLIENT</td>
+                <td th:text="${user.deleted ? 'Eliminado' : 'Activo'}">Activo</td>
+                <td>
+                    <a th:href="@{/dashboard/admin/users/{id}(id=${user.id})}">Editar</a>
+                    <form method="post" th:action="@{/dashboard/admin/users/{id}(id=${user.id})}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" onclick="return confirm('¿Eliminar usuario?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

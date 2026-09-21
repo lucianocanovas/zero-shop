@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Sucursal</title>
+</head>
+<body>
+    <a href="/dashboard/admin/offices">Volver a sucursales</a>
+
+    <h1>Formulario de Sucursal</h1>
+
+    <form method="post" th:action="${office?.id != null ? '/dashboard/admin/offices/' + office.id : '/dashboard/admin/offices'}">
+        <input type="hidden" name="_method" value="PUT" th:if="${office?.id != null}">
+
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" th:value="${office?.name}" required>
+
+        <label for="cuit">CUIT:</label>
+        <input type="text" id="cuit" name="cuit" th:value="${office?.cuit}" required>
+
+        <label for="type">Tipo de Sucursal:</label>
+        <select id="type" name="type" required>
+            <option value="HEADQUARTERS">Casa Central</option>
+            <option value="BRANCH">Sucursal</option>
+            <option value="WAREHOUSE">Depósito</option>
+            <option value="DISTRIBUTION_CENTER">Centro de Distribución</option>
+            <option value="OTHER">Otro</option>
+        </select>
+
+        <button type="submit">Guardar</button>
+        <a href="/dashboard/admin/offices">Cancelar</a>
+    </form>
+</body>
+</html>
+

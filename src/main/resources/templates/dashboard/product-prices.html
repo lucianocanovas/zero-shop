@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Precios</title>
+</head>
+<body>
+    <a href="/dashboard/products">Volver a productos</a>
+
+    <h1>Historial y Gestión de Precios</h1>
+    <h2 th:text="${product?.name}">Producto</h2>
+
+    <h3>Registrar Nuevo Precio</h3>
+    <form method="post" th:action="@{/dashboard/products/{id}/prices(id=${product?.id})}">
+        <label for="newPrice">Nuevo Precio:</label>
+        <input type="number" id="newPrice" name="price" step="0.01" required>
+
+        <label for="startDate">Fecha de Inicio:</label>
+        <input type="date" id="startDate" name="startDate">
+
+        <button type="submit">Agregar Precio</button>
+    </form>
+
+    <h3>Historial Registrado</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Precio</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="price : ${prices}">
+                <td th:text="${price.id}">1</td>
+                <td th:text="${price.price}">$0.00</td>
+                <td th:text="${price.startDate}">01/01/2026</td>
+                <td th:text="${price.endDate != null ? price.endDate : 'Vigente'}">Vigente</td>
+                <td>
+                    <form method="post" th:action="@{/dashboard/products/{id}/prices/{priceId}(id=${product?.id}, priceId=${price.id})}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" onclick="return confirm('¿Eliminar este registro de precio?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

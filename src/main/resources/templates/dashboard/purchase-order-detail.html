@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Orden de Compra</title>
+</head>
+<body>
+    <a href="/dashboard/purchase-orders">Volver a órdenes de compra</a>
+
+    <h1>Detalle de Orden de Compra</h1>
+
+    <p><strong>ID:</strong> <span th:text="${purchaseOrder?.id}">ID</span></p>
+    <p><strong>Proveedor:</strong> <span th:text="${purchaseOrder?.supplier?.name}">Proveedor</span></p>
+    <p><strong>Fecha:</strong> <span th:text="${purchaseOrder?.orderDate}">01/01/2026</span></p>
+    <p><strong>Estado:</strong> <span th:text="${purchaseOrder?.status}">PENDIENTE</span></p>
+
+    <div th:if="${purchaseOrder?.status != 'RECEIVED'}">
+        <form method="post" th:action="@{/dashboard/purchase-orders/{id}/receive(id=${purchaseOrder?.id})}">
+            <button type="submit" onclick="return confirm('¿Confirmar recepción e incrementar stock?')">Marcar como Recibida</button>
+        </form>
+    </div>
+
+    <h2>Productos de la Orden</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Costo Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="detail : ${purchaseOrder?.details}">
+                <td th:text="${detail.product?.name}">Producto</td>
+                <td th:text="${detail.quantity}">0</td>
+                <td th:text="${detail.unitPrice}">$0.00</td>
+                <td th:text="${detail.subtotal}">$0.00</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">Total:</th>
+                <td th:text="${purchaseOrder?.total}">$0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>
+

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import ingsoftware.zeroshop.entity.location.Address;
 import ingsoftware.zeroshop.enums.IDType;
 
 @Entity 
@@ -38,6 +39,22 @@ public abstract class Person {
 
     @Column(name = "id_number", nullable = false, unique = true)
     private String idNumber;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+        name = "person_contacts",
+        joinColumns = @JoinColumn(name = "person_id"),
+        inverseJoinColumns = @JoinColumn(name = "contact_id")
+    )
+    private java.util.Collection<Contact> contact;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+        name = "person_addresses",
+        joinColumns = @JoinColumn(name = "person_id"),
+        inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    private java.util.Collection<Address> address;
     
     @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;

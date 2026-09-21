@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Órdenes de Compra</title>
+</head>
+<body>
+    <a href="/dashboard">Volver al Dashboard</a>
+
+    <h1>Órdenes de Compra</h1>
+
+    <h2>Nueva Orden de Compra</h2>
+    <form method="post" action="/dashboard/purchase-orders">
+        <label for="supplier">Proveedor:</label>
+        <select id="supplier" name="supplierId" required>
+            <option value="">Seleccionar Proveedor</option>
+            <option th:each="sup : ${suppliers}" th:value="${sup.id}" th:text="${sup.name}">Proveedor</option>
+        </select>
+
+        <label for="office">Sucursal de destino:</label>
+        <select id="office" name="officeId" required>
+            <option value="">Seleccionar Sucursal</option>
+            <option th:each="off : ${offices}" th:value="${off.id}" th:text="${off.name}">Sucursal</option>
+        </select>
+
+        <button type="submit">Generar Orden</button>
+    </form>
+
+    <h2>Listado de Órdenes de Compra</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Proveedor</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="po : ${purchaseOrders}">
+                <td th:text="${po.id}">ID</td>
+                <td th:text="${po.supplier?.name}">Proveedor</td>
+                <td th:text="${po.orderDate}">01/01/2026</td>
+                <td th:text="${po.status}">PENDIENTE</td>
+                <td th:text="${po.total}">$0.00</td>
+                <td>
+                    <a th:href="@{/dashboard/purchase-orders/{id}(id=${po.id})}">Ver Detalle</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

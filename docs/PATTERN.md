@@ -20,6 +20,6 @@
 
 ## Modelado de datos
 
-- Se deben evitar las relaciones OneToMany y ManyToMany en las entidades, ya que pueden generar problemas de rendimiento y complejidad en la gestión de los datos. En su lugar, se recomienda utilizar relaciones OneToOne o ManyToOne, y manejar las colecciones de entidades relacionadas mediante consultas personalizadas en los repositorios.
+- Se deben evitar las relaciones OneToMany y ManyToMany en las entidades, ya que pueden generar problemas de rendimiento y complejidad en la gestión de los datos. En su lugar, se recomienda utilizar relaciones OneToOne o ManyToOne, y manejar las colecciones de entidades relacionadas mediante consultas personalizadas en los repositorios. En caso de tener que crear una tabla intermedia para manejar una relacion ManyToMany, implementar la relacion como OneToMany en una de las entidades y que JPA genere la tabla intermedia automaticamente. Esto permite un mejor control sobre las relaciones y evita problemas de sincronización y consistencia de los datos.
 - Todos los modelos de datos deben tener un campo "deleted" de tipo booleano, que indique si el registro ha sido eliminado o no. Esto permite implementar un borrado lógico, evitando la pérdida de información y facilitando la recuperación de registros eliminados.
 - Se deben evitar las asociaciones con multiples entidades en una sola entidad, se deben realizar tablas intermedias para manejar las relaciones entre entidades, evitando la complejidad y mejorando la claridad del modelo de datos.

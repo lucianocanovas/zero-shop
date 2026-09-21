@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Proveedor</title>
+</head>
+<body>
+    <a href="/dashboard/providers">Volver a proveedores</a>
+
+    <h1>Detalle de Proveedor</h1>
+
+    <form method="post" th:action="@{/dashboard/providers/{id}(id=${provider?.id})}">
+        <input type="hidden" name="_method" value="PUT">
+
+        <label for="name">Razón Social / Nombre:</label>
+        <input type="text" id="name" name="name" th:value="${provider?.name}" required>
+
+        <button type="submit">Actualizar</button>
+        <a href="/dashboard/providers">Cancelar</a>
+    </form>
+</body>
+</html>
+

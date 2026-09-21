@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Perfil</title>
+</head>
+<body>
+    <h1>Mi Perfil</h1>
+
+    <form method="post" action="/profile">
+        <label for="firstName">Nombre:</label>
+        <input type="text" id="firstName" name="firstName" th:value="${person?.firstName}">
+
+        <label for="lastName">Apellido:</label>
+        <input type="text" id="lastName" name="lastName" th:value="${person?.lastName}">
+
+        <label for="idNumber">DNI / Documento:</label>
+        <input type="text" id="idNumber" name="idNumber" th:value="${person?.idNumber}">
+
+        <label for="dateOfBirth">Fecha de Nacimiento:</label>
+        <input type="date" id="dateOfBirth" name="dateOfBirth" th:value="${person?.dateOfBirth}">
+
+        <label for="password">Nueva Contraseña (opcional):</label>
+        <input type="password" id="password" name="password">
+
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <a href="/orders">Ver mis órdenes</a>
+</body>
+</html>
+

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import jakarta.persistence.*;
 import lombok.*;
 
+import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.enums.EmployeeType;
 
 @Entity
@@ -22,5 +23,13 @@ public class Employee extends Person {
 
     @Column(name = "hire_date")
     private LocalDate hireDate;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+        name = "office_employees",
+        joinColumns = @JoinColumn(name = "employee_id"),
+        inverseJoinColumns = @JoinColumn(name = "office_id")
+    )
+    private java.util.Collection<Office> office;
 
 }

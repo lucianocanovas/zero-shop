@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Finalizar Compra</title>
+</head>
+<body>
+    <h1>Finalizar Compra</h1>
+
+    <h2>Resumen del Carrito</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${cartItems}">
+                <td th:text="${item.productName}">Producto</td>
+                <td th:text="${item.quantity}">1</td>
+                <td th:text="${item.price}">$0.00</td>
+                <td th:text="${item.subtotal}">$0.00</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">Total:</th>
+                <td th:text="${total}">$0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h2>Datos de Envío</h2>
+    <form method="post" action="/checkout">
+        <label for="street">Calle:</label>
+        <input type="text" id="street" name="street" required>
+
+        <label for="number">Número:</label>
+        <input type="text" id="number" name="number" required>
+
+        <label for="floor">Piso:</label>
+        <input type="text" id="floor" name="floor">
+
+        <label for="apartment">Departamento:</label>
+        <input type="text" id="apartment" name="apartment">
+
+        <label for="zipCode">Código Postal:</label>
+        <input type="text" id="zipCode" name="zipCode" required>
+
+        <label for="city">Ciudad:</label>
+        <input type="text" id="city" name="city" required>
+
+        <h2>Método de Pago</h2>
+        <input type="radio" id="cash" name="paymentMethod" value="CASH" checked>
+        <label for="cash">Efectivo contra entrega</label>
+
+        <input type="radio" id="credit" name="paymentMethod" value="CREDIT_CARD">
+        <label for="credit">Tarjeta de Crédito / Débito</label>
+
+        <input type="radio" id="transfer" name="paymentMethod" value="TRANSFER">
+        <label for="transfer">Transferencia Bancaria</label>
+
+        <br>
+        <button type="submit">Confirmar y Pagar</button>
+    </form>
+</body>
+</html>
+

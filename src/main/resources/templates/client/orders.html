@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Órdenes</title>
+</head>
+<body>
+    <h1>Historial de Mis Órdenes</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID Orden</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.id}">1234</td>
+                <td th:text="${order.orderDate}">01/01/2026</td>
+                <td th:text="${order.total}">$0.00</td>
+                <td th:text="${order.status}">PENDIENTE</td>
+                <td>
+                    <a th:href="@{/orders/{id}(id=${order.id})}">Ver detalle</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="/products">Ir a comprar</a>
+</body>
+</html>
+

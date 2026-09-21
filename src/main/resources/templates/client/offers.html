@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ofertas Especiales</title>
+</head>
+<body>
+    <h1>Ofertas Especiales</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio Anterior</th>
+                <th>Precio Oferta</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${offers}">
+                <td th:text="${product.name}">Producto Oferta</td>
+                <td><del th:text="${product.oldPrice}">$0.00</del></td>
+                <td th:text="${product.currentPrice}">$0.00</td>
+                <td>
+                    <a th:href="@{/products/{id}(id=${product.id})}">Ver detalle</a>
+                    <button type="button">Agregar al carrito</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="/products">Ver catálogo completo</a>
+</body>
+</html>
+

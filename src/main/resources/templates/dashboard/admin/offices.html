@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Sucursales</title>
+</head>
+<body>
+    <a href="/dashboard/admin">Volver al Panel de Admin</a>
+
+    <h1>Gestión de Sucursales</h1>
+
+    <a href="/dashboard/admin/offices/new">Crear Nueva Sucursal</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>CUIT</th>
+                <th>Tipo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="office : ${offices}">
+                <td th:text="${office.id}">ID</td>
+                <td th:text="${office.name}">Sucursal</td>
+                <td th:text="${office.cuit}">20-12345678-9</td>
+                <td th:text="${office.type}">BRANCH</td>
+                <td>
+                    <a th:href="@{/dashboard/admin/offices/{id}(id=${office.id})}">Editar</a>
+                    <form method="post" th:action="@{/dashboard/admin/offices/{id}(id=${office.id})}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" onclick="return confirm('¿Eliminar esta sucursal?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

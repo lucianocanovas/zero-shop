@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mostrador de Atención</title>
+</head>
+<body>
+    <a href="/dashboard/employee">Volver al panel de empleado</a>
+
+    <h1>Mostrador de Atención y Ventas</h1>
+
+    <h2>Buscar Producto</h2>
+    <form method="get" action="/dashboard/employee/desk">
+        <label for="query">Buscar por código o nombre:</label>
+        <input type="text" id="query" name="q">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <h2>Crear Venta en Mostrador</h2>
+    <form method="post" action="/dashboard/sale-orders/">
+        <label for="clientId">Cliente (DNI / Email):</label>
+        <input type="text" id="clientId" name="clientId" placeholder="Consumidor final o ID cliente">
+
+        <label for="productCode">Código Producto:</label>
+        <input type="text" id="productCode" name="productCode">
+
+        <label for="quantity">Cantidad:</label>
+        <input type="number" id="quantity" name="quantity" value="1" min="1">
+
+        <label for="paymentMethod">Medio de Pago:</label>
+        <select id="paymentMethod" name="paymentMethod">
+            <option value="CASH">Efectivo</option>
+            <option value="DEBIT">Tarjeta Débito</option>
+            <option value="CREDIT">Tarjeta Crédito</option>
+            <option value="QR">Transferencia / QR</option>
+        </select>
+
+        <button type="submit">Registrar Venta</button>
+    </form>
+</body>
+</html>
+

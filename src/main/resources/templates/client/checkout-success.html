@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Compra Exitosa</title>
+</head>
+<body>
+    <h1>¡Gracias por tu compra!</h1>
+    <p>Tu orden ha sido procesada con éxito.</p>
+
+    <p><strong>Número de Orden:</strong> <span th:text="${orderId}">#0000</span></p>
+
+    <a href="/orders">Ver mis órdenes</a>
+    <a href="/products">Seguir comprando</a>
+</body>
+</html>
+

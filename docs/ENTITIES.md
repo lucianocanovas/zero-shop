@@ -13,9 +13,6 @@
   - State
   - City
   - Address
-  - PersonAddress
-  - OfficeAddress
-  - SupplierAddress
 
 - media:
   - Image
@@ -25,9 +22,6 @@
 - org:
   - Organization
   - Office
-  - OfficeAddress
-  - OfficeContact
-  - OfficeEmployee
   - Stock
 
 - transaction:
@@ -48,6 +42,3 @@
   - Contact
   - ContactEmail
   - ContactPhone
-  - PersonContact
-  - SupplierContact
-  - SupplierProduct

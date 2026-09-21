@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Productos</title>
+</head>
+<body>
+    <a href="/dashboard">Volver al Dashboard</a>
+
+    <h1>Gestión de Productos</h1>
+
+    <a href="/dashboard/products/new">Crear Nuevo Producto</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.id}">ID</td>
+                <td th:text="${product.code}">PROD-001</td>
+                <td th:text="${product.name}">Producto</td>
+                <td th:text="${product.category?.name}">Categoría</td>
+                <td th:text="${product.currentPrice}">$0.00</td>
+                <td th:text="${product.stock}">0</td>
+                <td>
+                    <a th:href="@{/dashboard/products/{id}(id=${product.id})}">Editar</a>
+                    <a th:href="@{/dashboard/products/{id}/prices(id=${product.id})}">Precios</a>
+                    <form method="post" th:action="@{/dashboard/products/{id}(id=${product.id})}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" onclick="return confirm('¿Eliminar este producto?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

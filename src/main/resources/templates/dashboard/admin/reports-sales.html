@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Ventas</title>
+</head>
+<body>
+    <a href="/dashboard/admin/reports">Volver a reportes</a>
+
+    <h1>Reporte de Ventas</h1>
+
+    <form method="get" action="/dashboard/admin/reports/sales">
+        <label for="from">Fecha Desde:</label>
+        <input type="date" id="from" name="from">
+
+        <label for="to">Fecha Hasta:</label>
+        <input type="date" id="to" name="to">
+
+        <button type="submit">Generar Reporte</button>
+    </form>
+
+    <h2>Resumen</h2>
+    <p><strong>Total Facturado:</strong> <span th:text="${totalRevenue}">$0.00</span></p>
+    <p><strong>Total de Órdenes:</strong> <span th:text="${totalOrders}">0</span></p>
+
+    <h2>Detalle de Ventas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Órdenes</th>
+                <th>Total Facturado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="row : ${salesData}">
+                <td th:text="${row.date}">01/01/2026</td>
+                <td th:text="${row.count}">0</td>
+                <td th:text="${row.amount}">$0.00</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

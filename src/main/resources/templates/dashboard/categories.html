@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Categorías</title>
+</head>
+<body>
+    <a href="/dashboard">Volver al Dashboard</a>
+
+    <h1>Gestión de Categorías</h1>
+
+    <a href="/dashboard/categories/new">Crear Nueva Categoría</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="category : ${categories}">
+                <td th:text="${category.id}">ID</td>
+                <td th:text="${category.name}">Nombre</td>
+                <td th:text="${category.description}">Descripción</td>
+                <td>
+                    <a th:href="@{/dashboard/categories/{id}(id=${category.id})}">Editar</a>
+                    <form method="post" th:action="@{/dashboard/categories/{id}(id=${category.id})}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" onclick="return confirm('¿Eliminar categoría?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

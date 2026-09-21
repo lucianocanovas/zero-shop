@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Stock</title>
+</head>
+<body>
+    <a href="/dashboard">Volver al Dashboard</a>
+
+    <h1>Gestión de Stock por Sucursal</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Sucursal</th>
+                <th>Stock Actual</th>
+                <th>Stock Mínimo</th>
+                <th>Ajustar Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${stocks}">
+                <td th:text="${item.product?.name}">Producto</td>
+                <td th:text="${item.office?.name}">Sucursal Central</td>
+                <td th:text="${item.quantity}">0</td>
+                <td th:text="${item.minQuantity}">5</td>
+                <td>
+                    <form method="post" th:action="@{/dashboard/stock/{id}(id=${item.id})}">
+                        <input type="hidden" name="_method" value="PUT">
+                        <input type="number" name="quantity" th:value="${item.quantity}">
+                        <button type="submit">Actualizar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

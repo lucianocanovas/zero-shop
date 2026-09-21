@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Categoría</title>
+</head>
+<body>
+    <a href="/dashboard/categories">Volver a categorías</a>
+
+    <h1>Formulario de Categoría</h1>
+
+    <form method="post" th:action="${category?.id != null ? '/dashboard/categories/' + category.id : '/dashboard/categories/'}">
+        <input type="hidden" name="_method" value="PUT" th:if="${category?.id != null}">
+
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" th:value="${category?.name}" required>
+
+        <label for="description">Descripción:</label>
+        <textarea id="description" name="description" rows="3" th:text="${category?.description}"></textarea>
+
+        <label for="parentCategory">Categoría Padre (opcional):</label>
+        <select id="parentCategory" name="parentId">
+            <option value="">Ninguna (Categoría principal)</option>
+            <option th:each="parent : ${parentCategories}" th:value="${parent.id}" th:text="${parent.name}">Categoría</option>
+        </select>
+
+        <button type="submit">Guardar</button>
+        <a href="/dashboard/categories">Cancelar</a>
+    </form>
+</body>
+</html>
+

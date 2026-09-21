@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Stock</title>
+</head>
+<body>
+    <a href="/dashboard/admin/reports">Volver a reportes</a>
+
+    <h1>Reporte de Inventario y Stock</h1>
+
+    <h2>Productos con Stock Bajo o Crítico</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Sucursal</th>
+                <th>Stock Actual</th>
+                <th>Stock Mínimo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${lowStockItems}">
+                <td th:text="${item.product?.code}">COD</td>
+                <td th:text="${item.product?.name}">Producto</td>
+                <td th:text="${item.office?.name}">Sucursal</td>
+                <td th:text="${item.quantity}">0</td>
+                <td th:text="${item.minQuantity}">5</td>
+                <td>ALERTA DE REPOSICIÓN</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

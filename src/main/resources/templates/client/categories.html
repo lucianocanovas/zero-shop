@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Categorías</title>
+</head>
+<body>
+    <h1>Categorías de Productos</h1>
+
+    <ul>
+        <li th:each="category : ${categories}">
+            <h2 th:text="${category.name}">Nombre Categoría</h2>
+            <p th:text="${category.description}">Descripción de la categoría</p>
+            <a th:href="@{/products(categoryId=${category.id})}">Ver productos</a>
+            <ul th:if="${category.subCategories}">
+                <li th:each="sub : ${category.subCategories}">
+                    <a th:href="@{/products(subCategoryId=${sub.id})}" th:text="${sub.name}">Subcategoría</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <a href="/products">Ver todos los productos</a>
+</body>
+</html>
+

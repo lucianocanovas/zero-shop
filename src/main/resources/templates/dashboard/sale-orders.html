@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Órdenes de Venta</title>
+</head>
+<body>
+    <a href="/dashboard">Volver al Dashboard</a>
+
+    <h1>Órdenes de Venta</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.id}">ID</td>
+                <td th:text="${order.client?.person != null ? order.client.person.firstName + ' ' + order.client.person.lastName : 'Cliente'}">Cliente</td>
+                <td th:text="${order.date}">01/01/2026</td>
+                <td th:text="${order.total}">$0.00</td>
+                <td th:text="${order.status}">PENDIENTE</td>
+                <td>
+                    <a th:href="@{/dashboard/sale-orders/{id}(id=${order.id})}">Ver / Gestionar</a>
+                    <form method="post" th:action="@{/dashboard/sale-orders/{id}(id=${order.id})}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" onclick="return confirm('¿Eliminar orden?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuario</title>
+</head>
+<body>
+    <a href="/dashboard/admin/users">Volver a usuarios</a>
+
+    <h1>Editar Usuario</h1>
+
+    <form method="post" th:action="@{/dashboard/admin/users/{id}(id=${user?.id})}">
+        <input type="hidden" name="_method" value="PUT">
+
+        <label for="username">Usuario / Email:</label>
+        <input type="text" id="username" name="username" th:value="${user?.username}" required>
+
+        <label for="password">Contraseña (dejar en blanco para no cambiar):</label>
+        <input type="password" id="password" name="password">
+
+        <label for="role">Rol:</label>
+        <select id="role" name="role">
+            <option value="CLIENT" th:selected="${user?.role?.name() == 'CLIENT'}">CLIENT</option>
+            <option value="EMPLOYEE" th:selected="${user?.role?.name() == 'EMPLOYEE'}">EMPLOYEE</option>
+            <option value="ADMIN" th:selected="${user?.role?.name() == 'ADMIN'}">ADMIN</option>
+        </select>
+
+        <button type="submit">Actualizar</button>
+        <a href="/dashboard/admin/users">Cancelar</a>
+    </form>
+</body>
+</html>
+

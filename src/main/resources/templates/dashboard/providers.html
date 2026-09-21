@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Proveedores</title>
+</head>
+<body>
+    <a href="/dashboard">Volver al Dashboard</a>
+
+    <h1>Proveedores</h1>
+
+    <h2>Registrar Nuevo Proveedor</h2>
+    <form method="post" action="/dashboard/providers">
+        <label for="name">Razón Social / Nombre:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="cuit">CUIT:</label>
+        <input type="text" id="cuit" name="cuit">
+
+        <label for="email">Email de Contacto:</label>
+        <input type="email" id="email" name="email">
+
+        <label for="phone">Teléfono / WhatsApp:</label>
+        <input type="text" id="phone" name="phone">
+
+        <button type="submit">Guardar Proveedor</button>
+    </form>
+
+    <h2>Listado de Proveedores</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="provider : ${providers}">
+                <td th:text="${provider.id}">ID</td>
+                <td th:text="${provider.name}">Proveedor SA</td>
+                <td>
+                    <a th:href="@{/dashboard/providers/{id}(id=${provider.id})}">Detalle / Editar</a>
+                    <form method="post" th:action="@{/dashboard/providers/{id}(id=${provider.id})}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" onclick="return confirm('¿Eliminar proveedor?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

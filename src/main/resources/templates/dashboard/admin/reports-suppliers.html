@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Proveedores</title>
+</head>
+<body>
+    <a href="/dashboard/admin/reports">Volver a reportes</a>
+
+    <h1>Reporte de Compras y Proveedores</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Proveedor</th>
+                <th>Órdenes Emitidas</th>
+                <th>Total Comprado</th>
+                <th>Órdenes Pendientes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="sup : ${supplierStats}">
+                <td th:text="${sup.supplierName}">Proveedor</td>
+                <td th:text="${sup.totalOrders}">0</td>
+                <td th:text="${sup.totalAmount}">$0.00</td>
+                <td th:text="${sup.pendingOrders}">0</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

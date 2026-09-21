@@ -4,6 +4,8 @@ import java.util.UUID;
 import jakarta.persistence.*;
 import lombok.*;
 
+import ingsoftware.zeroshop.entity.actor.Contact;
+import ingsoftware.zeroshop.entity.location.Address;
 import ingsoftware.zeroshop.enums.OfficeType;
 
 @Entity
@@ -29,6 +31,22 @@ public class Office {
     @ManyToOne
     @JoinColumn(name = "org_id", referencedColumnName = "id")
     private Organization organization;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+        name = "office_contacts",
+        joinColumns = @JoinColumn(name = "office_id"),
+        inverseJoinColumns = @JoinColumn(name = "contact_id")
+    )
+    private java.util.Collection<Contact> contact;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+        name = "office_addresses",
+        joinColumns = @JoinColumn(name = "office_id"),
+        inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    private java.util.Collection<Address> address;
 
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
