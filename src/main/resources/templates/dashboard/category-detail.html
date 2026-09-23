@@ -2,31 +2,81 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Detalle de Categoría</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Categoría - Zero Shop Staff</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
-<body>
-    <a href="/dashboard/categories">Volver a categorías</a>
+<body class="bg-light">
 
-    <h1>Formulario de Categoría</h1>
+    <!-- Topbar -->
+    <div th:replace="~{common/fragments/dashboard-nav :: dashboard-topbar}"></div>
 
-    <form method="post" th:action="${category?.id != null ? '/dashboard/categories/' + category.id : '/dashboard/categories/'}">
-        <input type="hidden" name="_method" value="PUT" th:if="${category?.id != null}">
+    <!-- Offcanvas Móvil -->
+    <div th:replace="~{common/fragments/dashboard-nav :: dashboard-offcanvas('categories')}"></div>
 
-        <label for="name">Nombre:</label>
-        <input type="text" id="name" name="name" th:value="${category?.name}" required>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Desktop -->
+            <div class="col-md-3 col-lg-2 d-none d-md-block p-0">
+                <div th:replace="~{common/fragments/dashboard-nav :: dashboard-sidebar('categories')}"></div>
+            </div>
 
-        <label for="description">Descripción:</label>
-        <textarea id="description" name="description" rows="3" th:text="${category?.description}"></textarea>
+            <!-- Contenido Principal -->
+            <main class="col-12 col-md-9 col-lg-10 p-4">
+                <!-- Migas de pan y Título -->
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4 pb-2 border-bottom">
+                    <div>
+                        <h1 class="h4 fw-bold text-dark mb-0" th:text="${category?.id != null ? 'Editar Categoría' : 'Nueva Categoría'}">Formulario de Categoría</h1>
+                        <p class="text-muted small mb-0">Crea o modifica los segmentos de catálogo para clasificar los productos</p>
+                    </div>
+                    <a th:href="@{/dashboard/categories}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Volver a Categorías
+                    </a>
+                </div>
 
-        <label for="parentCategory">Categoría Padre (opcional):</label>
-        <select id="parentCategory" name="parentId">
-            <option value="">Ninguna (Categoría principal)</option>
-            <option th:each="parent : ${parentCategories}" th:value="${parent.id}" th:text="${parent.name}">Categoría</option>
-        </select>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-8">
+                        <div class="card border-0 shadow-sm p-4">
+                            <form method="post" th:action="${category?.id != null ? '/dashboard/categories/' + category.id : '/dashboard/categories/'}">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <input type="hidden" name="_method" value="PUT" th:if="${category?.id != null}">
 
-        <button type="submit">Guardar</button>
-        <a href="/dashboard/categories">Cancelar</a>
-    </form>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nombre de la Categoría</label>
+                                    <input type="text" id="name" name="name" class="form-control" th:value="${category?.name}" placeholder="Ej: Calzado Deportivo" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Descripción</label>
+                                    <textarea id="description" name="description" rows="3" class="form-control" placeholder="Breve resumen de los tipos de artículos agrupados..." th:text="${category?.description}"></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="parentId" class="form-label">Categoría Superior <span class="text-muted small fw-normal">(opcional para subcategorías)</span></label>
+                                    <select id="parentId" name="parentId" class="form-select">
+                                        <option value="">Ninguna (Es una categoría principal)</option>
+                                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Indumentaria</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                                    <a th:href="@{/dashboard/categories}" class="btn btn-outline-secondary">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="bi bi-check-lg me-1"></i>Guardar Categoría
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

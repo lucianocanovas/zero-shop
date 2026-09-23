@@ -2,34 +2,136 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Ofertas Especiales</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ofertas Exclusivas - Zero Shop</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
-<body>
-    <h1>Ofertas Especiales</h1>
+<body class="bg-light d-flex flex-column min-vh-100">
 
-    <table>
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Precio Anterior</th>
-                <th>Precio Oferta</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="product : ${offers}">
-                <td th:text="${product.name}">Producto Oferta</td>
-                <td><del th:text="${product.oldPrice}">$0.00</del></td>
-                <td th:text="${product.currentPrice}">$0.00</td>
-                <td>
-                    <a th:href="@{/products/{id}(id=${product.id})}">Ver detalle</a>
-                    <button type="button">Agregar al carrito</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Header Reutilizable -->
+    <div th:replace="~{common/fragments/header :: header}"></div>
 
-    <a href="/products">Ver catálogo completo</a>
+    <main class="container my-4 flex-grow-1">
+        <!-- Migas de pan -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Ofertas Especiales</li>
+            </ol>
+        </nav>
+
+        <!-- Banner de Ofertas -->
+        <div class="card border-0 bg-danger text-white p-4 p-md-5 rounded-4 shadow-sm mb-5 text-center text-md-start">
+            <div class="row align-items-center">
+                <div class="col-12 col-md-8">
+                    <span class="badge bg-white text-danger fw-bold px-3 py-1 mb-2 text-uppercase">Descuentos por tiempo limitado</span>
+                    <h1 class="display-6 fw-bold mb-2">¡Hasta 40% OFF en productos seleccionados!</h1>
+                    <p class="lead opacity-75 mb-0">Aprovecha precios exclusivos con envíos gratis y cuotas sin interés.</p>
+                </div>
+                <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
+                    <a th:href="@{/products}" class="btn btn-light btn-lg px-4 fw-bold text-danger">
+                        <i class="bi bi-fire me-1"></i>Ver Todo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="fw-bold mb-4">Promociones Destacadas</h3>
+
+        <!-- Grilla de Ofertas -->
+        <div class="row g-4">
+            <div class="col-12 col-sm-6 col-md-4 col-xl-3">
+                <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                    <div class="position-relative">
+                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Auriculares">
+                        <span class="position-absolute top-0 end-0 m-2 badge bg-danger fs-6">-30%</span>
+                    </div>
+                    <div class="card-body p-3 d-flex flex-column">
+                        <span class="badge bg-light text-muted border align-self-start mb-2">Tecnología</span>
+                        <h6 class="card-title fw-bold text-dark mb-1">Auriculares Pro Wireless</h6>
+                        <p class="card-text text-muted small text-truncate mb-3">Cancelación de ruido activa.</p>
+                        <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted text-decoration-line-through small d-block">$45.000</span>
+                                <span class="h5 fw-bold text-danger mb-0">$31.500</span>
+                            </div>
+                            <a th:href="@{/checkout}" class="btn btn-danger btn-sm"><i class="bi bi-cart-plus me-1"></i>Comprar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4 col-xl-3">
+                <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                    <div class="position-relative">
+                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Zapatillas">
+                        <span class="position-absolute top-0 end-0 m-2 badge bg-danger fs-6">-25%</span>
+                    </div>
+                    <div class="card-body p-3 d-flex flex-column">
+                        <span class="badge bg-light text-muted border align-self-start mb-2">Calzado</span>
+                        <h6 class="card-title fw-bold text-dark mb-1">Zapatillas Urbanas Zero</h6>
+                        <p class="card-text text-muted small text-truncate mb-3">Diseño ergonómico y suela amortiguada.</p>
+                        <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted text-decoration-line-through small d-block">$33.300</span>
+                                <span class="h5 fw-bold text-danger mb-0">$24.990</span>
+                            </div>
+                            <a th:href="@{/checkout}" class="btn btn-danger btn-sm"><i class="bi bi-cart-plus me-1"></i>Comprar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4 col-xl-3">
+                <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                    <div class="position-relative">
+                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Mochila">
+                        <span class="position-absolute top-0 end-0 m-2 badge bg-danger fs-6">-20%</span>
+                    </div>
+                    <div class="card-body p-3 d-flex flex-column">
+                        <span class="badge bg-light text-muted border align-self-start mb-2">Accesorios</span>
+                        <h6 class="card-title fw-bold text-dark mb-1">Mochila Porta Notebook</h6>
+                        <p class="card-text text-muted small text-truncate mb-3">Compartimento reforzado para portátiles.</p>
+                        <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted text-decoration-line-through small d-block">$23.125</span>
+                                <span class="h5 fw-bold text-danger mb-0">$18.500</span>
+                            </div>
+                            <a th:href="@{/checkout}" class="btn btn-danger btn-sm"><i class="bi bi-cart-plus me-1"></i>Comprar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4 col-xl-3">
+                <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                    <div class="position-relative">
+                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Smartwatch">
+                        <span class="position-absolute top-0 end-0 m-2 badge bg-danger fs-6">-35%</span>
+                    </div>
+                    <div class="card-body p-3 d-flex flex-column">
+                        <span class="badge bg-light text-muted border align-self-start mb-2">Tecnología</span>
+                        <h6 class="card-title fw-bold text-dark mb-1">Smartwatch Sport Fit</h6>
+                        <p class="card-text text-muted small text-truncate mb-3">Monitor de actividad física y pulsómetro.</p>
+                        <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted text-decoration-line-through small d-block">$46.000</span>
+                                <span class="h5 fw-bold text-danger mb-0">$29.900</span>
+                            </div>
+                            <a th:href="@{/checkout}" class="btn btn-danger btn-sm"><i class="bi bi-cart-plus me-1"></i>Comprar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Reutilizable -->
+    <div th:replace="~{common/fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

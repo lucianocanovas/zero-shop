@@ -1,42 +1,141 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Mostrador de Atención</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrador / POS - Zero Shop Staff</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
-<body>
-    <a href="/dashboard/employee">Volver al panel de empleado</a>
+<body class="bg-light">
 
-    <h1>Mostrador de Atención y Ventas</h1>
+    <!-- Topbar -->
+    <div th:replace="~{common/fragments/dashboard-nav :: dashboard-topbar}"></div>
 
-    <h2>Buscar Producto</h2>
-    <form method="get" action="/dashboard/employee/desk">
-        <label for="query">Buscar por código o nombre:</label>
-        <input type="text" id="query" name="q">
-        <button type="submit">Buscar</button>
-    </form>
+    <!-- Offcanvas Móvil -->
+    <div th:replace="~{common/fragments/dashboard-nav :: dashboard-offcanvas('desk')}"></div>
 
-    <h2>Crear Venta en Mostrador</h2>
-    <form method="post" action="/dashboard/sale-orders/">
-        <label for="clientId">Cliente (DNI / Email):</label>
-        <input type="text" id="clientId" name="clientId" placeholder="Consumidor final o ID cliente">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Desktop -->
+            <div class="col-md-3 col-lg-2 d-none d-md-block p-0">
+                <div th:replace="~{common/fragments/dashboard-nav :: dashboard-sidebar('desk')}"></div>
+            </div>
 
-        <label for="productCode">Código Producto:</label>
-        <input type="text" id="productCode" name="productCode">
+            <!-- Contenido Principal -->
+            <main class="col-12 col-md-9 col-lg-10 p-4">
+                <!-- Migas de pan y Título -->
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4 pb-2 border-bottom">
+                    <div>
+                        <h1 class="h4 fw-bold text-dark mb-0">Mostrador y Punto de Venta (POS)</h1>
+                        <p class="text-muted small mb-0">Venta rápida en tienda física - Sucursal Central</p>
+                    </div>
+                    <a th:href="@{/dashboard/employee}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Volver al Escritorio
+                    </a>
+                </div>
 
-        <label for="quantity">Cantidad:</label>
-        <input type="number" id="quantity" name="quantity" value="1" min="1">
+                <div class="row g-4">
+                    <!-- Columna Izquierda: Búsqueda y Carrito de Mostrador -->
+                    <div class="col-12 col-lg-8">
+                        <!-- Buscador de Artículos para Venta Rápida -->
+                        <div class="card border-0 shadow-sm p-3 mb-4">
+                            <label for="barcode" class="form-label">Escanear Código de Barras o Buscar Producto</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-upc-scan"></i></span>
+                                <input type="text" id="barcode" class="form-control" placeholder="Ingresa código SKU o nombre del producto..." autofocus>
+                                <button type="button" class="btn btn-primary">
+                                    <i class="bi bi-plus-lg me-1"></i>Agregar
+                                </button>
+                            </div>
+                        </div>
 
-        <label for="paymentMethod">Medio de Pago:</label>
-        <select id="paymentMethod" name="paymentMethod">
-            <option value="CASH">Efectivo</option>
-            <option value="DEBIT">Tarjeta Débito</option>
-            <option value="CREDIT">Tarjeta Crédito</option>
-            <option value="QR">Transferencia / QR</option>
-        </select>
+                        <!-- Tabla de Ítems en Mostrador -->
+                        <div class="card border-0 shadow-sm p-4">
+                            <h5 class="fw-bold mb-3">Artículos de la Venta</h5>
+                            <div class="table-responsive">
+                                <table class="table align-middle small mb-0">
+                                    <thead>
+                                        <tr class="text-muted">
+                                            <th>Producto</th>
+                                            <th>Precio</th>
+                                            <th class="text-center">Cant.</th>
+                                            <th class="text-end">Subtotal</th>
+                                            <th class="text-end"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <strong class="text-dark">Zapatillas Urbanas Zero</strong>
+                                                <div class="text-muted" style="font-size: 0.75rem;">SKU: ZR-1049</div>
+                                            </td>
+                                            <td>$24.990,00</td>
+                                            <td class="text-center" style="width: 100px;">
+                                                <input type="number" class="form-control form-control-sm text-center" value="1" min="1">
+                                            </td>
+                                            <td class="text-end fw-bold">$24.990,00</td>
+                                            <td class="text-end">
+                                                <button type="button" class="btn btn-outline-danger btn-sm border-0"><i class="bi bi-x-lg"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
-        <button type="submit">Registrar Venta</button>
-    </form>
+                    <!-- Columna Derecha: Cobro y Facturación -->
+                    <div class="col-12 col-lg-4">
+                        <div class="card border-0 shadow-sm p-4">
+                            <h5 class="fw-bold mb-3">Total a Cobrar</h5>
+
+                            <div class="bg-light rounded-3 p-3 text-center mb-4">
+                                <span class="text-muted small text-uppercase fw-semibold d-block">Monto Final</span>
+                                <span class="display-6 fw-bold text-primary mb-0">$24.990,00</span>
+                            </div>
+
+                            <form method="post" th:action="@{/dashboard/sale-orders/}">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                                <div class="mb-3">
+                                    <label class="form-label">Medio de Pago</label>
+                                    <div class="d-flex flex-column gap-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="posPayment" id="cashPos" value="CASH" checked>
+                                            <label class="form-check-label small" for="cashPos">
+                                                <i class="bi bi-cash me-1 text-success"></i>Efectivo
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="posPayment" id="cardPos" value="CREDIT_CARD">
+                                            <label class="form-check-label small" for="cardPos">
+                                                <i class="bi bi-credit-card me-1 text-primary"></i>Tarjeta (POSNet / Terminal)
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="posPayment" id="qrPos" value="QR">
+                                            <label class="form-check-label small" for="qrPos">
+                                                <i class="bi bi-qr-code me-1 text-info"></i>Cobro con QR / Transferencia
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-success btn-lg w-100 py-3 fw-bold shadow-sm">
+                                    <i class="bi bi-check2-circle me-1"></i>Registrar Cobro
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

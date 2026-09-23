@@ -1,5 +1,9 @@
 # VISTAS DEL SISTEMA
 
+## Plantilla de bootstrap
+
+[text](https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/)
+
 ## Vistas de autenticación y cuenta
 
 - Iniciar sesión:

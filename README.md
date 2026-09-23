@@ -56,7 +56,7 @@ El proyecto utiliza variables de entorno para servicios externos (como el envío
 cp .env.example .env
 ```
 
-Edita los valores en `.env` con tus credenciales de correo si deseas probar el servicio SMTP.
+Edita los valores en `.env` con tus credenciales de correo y de la SDK de MercadoPago si deseas probar el servicio SMTP o los pagos.
 
 ---
 

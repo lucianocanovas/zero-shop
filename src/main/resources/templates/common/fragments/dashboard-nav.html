@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!-- Topbar del Dashboard Reutilizable -->
+<header th:fragment="dashboard-topbar" class="navbar navbar-dark bg-dark sticky-top p-2 shadow-sm">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2">
+            <!-- Botón para abrir sidebar en móviles -->
+            <button class="btn btn-dark d-md-none p-1 border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#dashboardSidebarOffcanvas" aria-controls="dashboardSidebarOffcanvas">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <a class="navbar-brand d-flex align-items-center gap-2 m-0 fs-6 fw-bold" th:href="@{/dashboard}">
+                <img th:src="@{/assets/logo-white.png}" src="/assets/logo-white.png" alt="Zero Shop" height="26" onerror="this.src='https://placehold.co/100x25/ffffff/000000?text=ZERO'">
+                <span class="text-white-50 d-none d-sm-inline">| Panel Staff</span>
+            </a>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <!-- Acceso a la tienda pública -->
+            <a th:href="@{/}" class="btn btn-outline-light btn-sm text-decoration-none">
+                <i class="bi bi-shop me-1"></i><span class="d-none d-sm-inline">Ver Tienda</span>
+            </a>
+
+            <!-- Badge de Usuario y Rol -->
+            <div class="dropdown">
+                <button class="btn btn-dark btn-sm dropdown-toggle border-secondary" type="button" id="staffMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-badge me-1"></i>
+                    <span class="small fw-semibold" sec:authentication="name">Staff</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="staffMenu">
+                    <li><h6 class="dropdown-header">Sesión de Empleado</h6></li>
+                    <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="px-2 py-1">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm w-100 text-start">
+                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Sidebar del Dashboard (Menú lateral de navegación) -->
+<nav th:fragment="dashboard-sidebar(activeTab)" class="dashboard-sidebar p-3">
+    <div class="d-flex flex-column gap-1">
+        <!-- Panel General -->
+        <a th:href="@{/dashboard}" class="dashboard-nav-link" th:classappend="${activeTab == 'dashboard' ? 'active' : ''}">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- Grupo: Catálogo & Inventario -->
+        <div class="dashboard-nav-heading">Catálogo & Stock</div>
+        <a th:href="@{/dashboard/products}" class="dashboard-nav-link" th:classappend="${activeTab == 'products' ? 'active' : ''}">
+            <i class="bi bi-box-seam"></i>
+            <span>Productos</span>
+        </a>
+        <a th:href="@{/dashboard/categories}" class="dashboard-nav-link" th:classappend="${activeTab == 'categories' ? 'active' : ''}">
+            <i class="bi bi-tags"></i>
+            <span>Categorías</span>
+        </a>
+        <a th:href="@{/dashboard/stock}" class="dashboard-nav-link" th:classappend="${activeTab == 'stock' ? 'active' : ''}">
+            <i class="bi bi-boxes"></i>
+            <span>Control de Stock</span>
+        </a>
+
+        <!-- Grupo: Ventas -->
+        <div class="dashboard-nav-heading">Ventas</div>
+        <a th:href="@{/dashboard/sale-orders}" class="dashboard-nav-link" th:classappend="${activeTab == 'sale-orders' ? 'active' : ''}">
+            <i class="bi bi-receipt"></i>
+            <span>Órdenes de Venta</span>
+        </a>
+        <a th:href="@{/dashboard/employee/desk}" class="dashboard-nav-link" th:classappend="${activeTab == 'desk' ? 'active' : ''}">
+            <i class="bi bi-cash-coin"></i>
+            <span>Mostrador / POS</span>
+        </a>
+
+        <!-- Grupo: Compras & Proveedores -->
+        <div class="dashboard-nav-heading">Compras</div>
+        <a th:href="@{/dashboard/providers}" class="dashboard-nav-link" th:classappend="${activeTab == 'providers' ? 'active' : ''}">
+            <i class="bi bi-truck"></i>
+            <span>Proveedores</span>
+        </a>
+        <a th:href="@{/dashboard/purchase-orders}" class="dashboard-nav-link" th:classappend="${activeTab == 'purchase-orders' ? 'active' : ''}">
+            <i class="bi bi-cart-check"></i>
+            <span>Órdenes de Compra</span>
+        </a>
+
+        <!-- Grupo: Administración (Solo ADMIN) -->
+        <div sec:authorize="hasRole('ADMIN')">
+            <div class="dashboard-nav-heading text-primary">Administración</div>
+            <a th:href="@{/dashboard/admin/offices}" class="dashboard-nav-link" th:classappend="${activeTab == 'offices' ? 'active' : ''}">
+                <i class="bi bi-building"></i>
+                <span>Sucursales</span>
+            </a>
+            <a th:href="@{/dashboard/admin/users}" class="dashboard-nav-link" th:classappend="${activeTab == 'users' ? 'active' : ''}">
+                <i class="bi bi-people"></i>
+                <span>Usuarios</span>
+            </a>
+            <a th:href="@{/dashboard/admin/reports}" class="dashboard-nav-link" th:classappend="${activeTab == 'reports' ? 'active' : ''}">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>Reportes</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar Offcanvas para pantallas móviles -->
+<div th:fragment="dashboard-offcanvas(activeTab)" class="offcanvas offcanvas-start" tabindex="-1" id="dashboardSidebarOffcanvas" aria-labelledby="dashboardSidebarOffcanvasLabel">
+    <div class="offcanvas-header bg-dark text-white">
+        <h5 class="offcanvas-title" id="dashboardSidebarOffcanvasLabel">Menú de Gestión</h5>
+        <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div th:replace="~{common/fragments/dashboard-nav :: dashboard-sidebar(${activeTab})}"></div>
+    </div>
+</div>
+
+</body>
+</html>

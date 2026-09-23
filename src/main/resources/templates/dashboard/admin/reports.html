@@ -1,19 +1,91 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Reportes del Sistema</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Reportes - Zero Shop Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
-<body>
-    <a href="/dashboard/admin">Volver al Panel de Admin</a>
+<body class="bg-light">
 
-    <h1>Reportes y Estadísticas</h1>
+    <!-- Topbar -->
+    <div th:replace="~{common/fragments/dashboard-nav :: dashboard-topbar}"></div>
 
-    <ul>
-        <li><a href="/dashboard/admin/reports/sales">Reporte de Ventas</a></li>
-        <li><a href="/dashboard/admin/reports/stock">Reporte de Stock e Inventario</a></li>
-        <li><a href="/dashboard/admin/reports/suppliers">Reporte de Compras y Proveedores</a></li>
-    </ul>
+    <!-- Offcanvas Móvil -->
+    <div th:replace="~{common/fragments/dashboard-nav :: dashboard-offcanvas('reports')}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Desktop -->
+            <div class="col-md-3 col-lg-2 d-none d-md-block p-0">
+                <div th:replace="~{common/fragments/dashboard-nav :: dashboard-sidebar('reports')}"></div>
+            </div>
+
+            <!-- Contenido Principal -->
+            <main class="col-12 col-md-9 col-lg-10 p-4">
+                <!-- Migas de pan y Título -->
+                <div class="mb-4 pb-2 border-bottom">
+                    <h1 class="h4 fw-bold text-dark mb-0">Centro de Reportes y Estadísticas</h1>
+                    <p class="text-muted small mb-0">Informes analíticos para la toma de decisiones comerciales y logísticas</p>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Tarjeta Reporte de Ventas -->
+                    <div class="col-12 col-md-4">
+                        <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
+                            <div class="rounded-3 bg-primary-subtle text-primary p-3 fs-2 d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-2">Reporte de Ventas</h5>
+                            <p class="text-secondary small mb-4 flex-grow-1">
+                                Facturación por período, volumen de pedidos, ticket promedio y desglose por método de pago.
+                            </p>
+                            <a th:href="@{/dashboard/admin/reports/sales}" class="btn btn-primary w-100">
+                                Ver Reporte <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Reporte de Stock -->
+                    <div class="col-12 col-md-4">
+                        <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
+                            <div class="rounded-3 bg-warning-subtle text-warning-emphasis p-3 fs-2 d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-boxes"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-2">Reporte de Stock y Semáforo</h5>
+                            <p class="text-secondary small mb-4 flex-grow-1">
+                                Existencias críticas, alertas de rotura de stock y contacto directo vía WhatsApp con el proveedor.
+                            </p>
+                            <a th:href="@{/dashboard/admin/reports/stock}" class="btn btn-warning w-100 text-dark fw-semibold">
+                                Ver Reporte <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Reporte de Proveedores -->
+                    <div class="col-12 col-md-4">
+                        <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
+                            <div class="rounded-3 bg-success-subtle text-success p-3 fs-2 d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-tags-fill"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-2">Comparativa de Proveedores</h5>
+                            <p class="text-secondary small mb-4 flex-grow-1">
+                                Análisis de costos mayoristas por producto para optimizar compras al precio más económico.
+                            </p>
+                            <a th:href="@{/dashboard/admin/reports/suppliers}" class="btn btn-success w-100">
+                                Ver Reporte <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

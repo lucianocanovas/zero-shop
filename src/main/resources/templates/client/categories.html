@@ -2,25 +2,188 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Categorías</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías - Zero Shop Mendoza</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
-<body>
-    <h1>Categorías de Productos</h1>
+<body class="bg-light d-flex flex-column min-vh-100">
 
-    <ul>
-        <li th:each="category : ${categories}">
-            <h2 th:text="${category.name}">Nombre Categoría</h2>
-            <p th:text="${category.description}">Descripción de la categoría</p>
-            <a th:href="@{/products(categoryId=${category.id})}">Ver productos</a>
-            <ul th:if="${category.subCategories}">
-                <li th:each="sub : ${category.subCategories}">
-                    <a th:href="@{/products(subCategoryId=${sub.id})}" th:text="${sub.name}">Subcategoría</a>
-                </li>
-            </ul>
-        </li>
-    </ul>
+    <!-- Header Reutilizable -->
+    <div th:replace="~{common/fragments/header :: header}"></div>
 
-    <a href="/products">Ver todos los productos</a>
+    <main class="container my-4 flex-grow-1">
+        <!-- Migas de pan -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Categorías</li>
+            </ol>
+        </nav>
+
+        <div class="mb-4">
+            <span class="badge bg-primary-subtle text-primary fw-semibold text-uppercase px-2 py-1 mb-1">Indumentaria Deportiva Unisex</span>
+            <h1 class="h3 fw-bold text-dark mb-1">Categorías de Productos</h1>
+            <p class="text-muted small mb-0">Ropa, calzado y accesorios deportivos para toda la familia en Mendoza</p>
+        </div>
+
+        <!-- Grilla de las 4 Categorías Principales del Integrador -->
+        <div class="row g-4">
+            <!-- Iteración dinámica si existen categorías en la base de datos -->
+            <div class="col-12 col-md-6 col-lg-3" th:each="category : ${categories}" th:if="${categories != null and !categories.empty}">
+                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="rounded-3 bg-primary-subtle text-primary p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-tag-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0" th:text="${category.name}">Categoría</h5>
+                            <span class="text-muted small">Colección Zero</span>
+                        </div>
+                    </div>
+
+                    <p class="text-secondary small mb-3 flex-grow-1" th:text="${category.description != null ? category.description : 'Descubre los mejores artículos deportivos.'}">
+                        Descubre los mejores artículos deportivos.
+                    </p>
+
+                    <!-- Subcategorías oficiales: Ropa, Calzado, Accesorios -->
+                    <div class="mb-3" th:if="${category.subCategories != null and !category.subCategories.empty}">
+                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <a th:each="sub : ${category.subCategories}" th:href="@{/products(subCategoryId=${sub.id})}" th:text="${sub.name}" class="badge bg-light text-dark border text-decoration-none">
+                                Subcategoría
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto pt-3 border-top">
+                        <a th:href="@{/products(categoryId=${category.id})}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Productos
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demostración oficial según especificación del TP: Hombres, Mujeres, Niños, Niñas -->
+            <div class="col-12 col-md-6 col-lg-3" th:if="${categories == null or categories.empty}">
+                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="rounded-3 bg-primary-subtle text-primary p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-gender-male"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Hombres</h5>
+                            <span class="text-muted small">Línea Deportiva</span>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-3 flex-grow-1">Indumentaria deportiva, zapatillas de running y accesorios para entrenamiento masculino.</p>
+                    <div class="mb-3">
+                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <a th:href="@{/products(search='Ropa')}" class="badge bg-light text-dark border text-decoration-none">Ropa</a>
+                            <a th:href="@{/products(search='Calzado')}" class="badge bg-light text-dark border text-decoration-none">Calzado</a>
+                            <a th:href="@{/products(search='Accesorios')}" class="badge bg-light text-dark border text-decoration-none">Accesorios</a>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-3 border-top">
+                        <a th:href="@{/products(search='Hombres')}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Colección
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-3" th:if="${categories == null or categories.empty}">
+                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="rounded-3 bg-danger-subtle text-danger p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-gender-female"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Mujeres</h5>
+                            <span class="text-muted small">Línea Deportiva</span>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-3 flex-grow-1">Tops, calzas, zapatillas ultralivianas y accesorios funcionales de alto rendimiento.</p>
+                    <div class="mb-3">
+                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <a th:href="@{/products(search='Ropa')}" class="badge bg-light text-dark border text-decoration-none">Ropa</a>
+                            <a th:href="@{/products(search='Calzado')}" class="badge bg-light text-dark border text-decoration-none">Calzado</a>
+                            <a th:href="@{/products(search='Accesorios')}" class="badge bg-light text-dark border text-decoration-none">Accesorios</a>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-3 border-top">
+                        <a th:href="@{/products(search='Mujeres')}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Colección
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-3" th:if="${categories == null or categories.empty}">
+                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="rounded-3 bg-success-subtle text-success p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Niños</h5>
+                            <span class="text-muted small">Línea Infantil</span>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-3 flex-grow-1">Ropa deportiva resistente, zapatillas escolares y complementos para actividades físicas.</p>
+                    <div class="mb-3">
+                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <a th:href="@{/products(search='Ropa')}" class="badge bg-light text-dark border text-decoration-none">Ropa</a>
+                            <a th:href="@{/products(search='Calzado')}" class="badge bg-light text-dark border text-decoration-none">Calzado</a>
+                            <a th:href="@{/products(search='Accesorios')}" class="badge bg-light text-dark border text-decoration-none">Accesorios</a>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-3 border-top">
+                        <a th:href="@{/products(search='Niños')}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Colección
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-3" th:if="${categories == null or categories.empty}">
+                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="rounded-3 bg-warning-subtle text-warning-emphasis p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-person-heart"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Niñas</h5>
+                            <span class="text-muted small">Línea Infantil</span>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-3 flex-grow-1">Conjuntos deportivos, calzado cómodo y accesorios diseñados para el movimiento diario.</p>
+                    <div class="mb-3">
+                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <a th:href="@{/products(search='Ropa')}" class="badge bg-light text-dark border text-decoration-none">Ropa</a>
+                            <a th:href="@{/products(search='Calzado')}" class="badge bg-light text-dark border text-decoration-none">Calzado</a>
+                            <a th:href="@{/products(search='Accesorios')}" class="badge bg-light text-dark border text-decoration-none">Accesorios</a>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-3 border-top">
+                        <a th:href="@{/products(search='Niñas')}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Colección
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Reutilizable -->
+    <div th:replace="~{common/fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

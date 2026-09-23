@@ -2,30 +2,160 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Detalle del Producto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product?.name != null ? product.name + ' - Zero Shop' : 'Detalle del Producto - Zero Shop'}">Detalle del Producto - Zero Shop</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
-<body>
-    <a href="/products">Volver al catálogo</a>
+<body class="bg-light d-flex flex-column min-vh-100">
 
-    <h1 th:text="${product?.name}">Nombre del Producto</h1>
+    <!-- Header Reutilizable -->
+    <div th:replace="~{common/fragments/header :: header}"></div>
 
-    <div>
-        <img th:if="${product?.images != null and !product.images.empty}" th:src="${product.images[0].url}" alt="Foto del producto">
-    </div>
+    <main class="container my-4 flex-grow-1">
+        <!-- Migas de pan -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Inicio</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/products}" class="text-decoration-none">Catálogo</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${product?.name != null ? product.name : 'Zapatillas Urbanas Zero'}">Detalle</li>
+            </ol>
+        </nav>
 
-    <p><strong>Precio:</strong> <span th:text="${product?.currentPrice}">$0.00</span></p>
-    <p><strong>Descripción:</strong> <span th:text="${product?.description}">Descripción detallada del producto.</span></p>
-    <p><strong>Stock disponible:</strong> <span th:text="${product?.stock}">0</span> unidades</p>
+        <!-- Contenedor Principal del Producto -->
+        <div class="card border-0 shadow-sm p-4 mb-5">
+            <div class="row g-4 align-items-center">
+                <!-- Columna Izquierda: Imagen del Producto -->
+                <div class="col-12 col-md-6 text-center">
+                    <div class="bg-light rounded-3 p-3 d-flex align-items-center justify-content-center" style="min-height: 380px;">
+                        <img th:src="${product?.images != null and !product.images.empty ? product.images[0].url : '/assets/product-placeholder.jpg'}" src="/assets/product-placeholder.jpg" alt="Foto del Producto" class="img-fluid rounded-3" style="max-height: 340px; object-fit: contain;">
+                    </div>
+                </div>
 
-    <form method="post" action="/cart/add">
-        <input type="hidden" name="productId" th:value="${product?.id}">
-        
-        <label for="quantity">Cantidad:</label>
-        <input type="number" id="quantity" name="quantity" value="1" min="1">
+                <!-- Columna Derecha: Información y Compra -->
+                <div class="col-12 col-md-6">
+                    <div class="mb-2 d-flex align-items-center gap-2">
+                        <span class="badge bg-primary-subtle text-primary fw-semibold" th:text="${product?.subCategory?.name != null ? product.subCategory.name : 'Deportivo Unisex'}">Calzado Deportivo</span>
+                        <span class="badge bg-danger-subtle text-danger" th:if="${product?.onSale == true}">¡En Oferta!</span>
+                        <span class="badge bg-success-subtle text-success">Stock en Almacén</span>
+                    </div>
 
-        <button type="submit">Agregar al carrito</button>
-        <button type="button">Comprar ahora</button>
-    </form>
+                    <h1 class="h2 fw-bold text-dark mb-2" th:text="${product?.name != null ? product.name : 'Zapatillas Running Zero Pro'}">Zapatillas Running Zero Pro</h1>
+                    
+                    <p class="text-muted small mb-3">
+                        Código / SKU: <span class="fw-semibold text-dark" th:text="${product?.code != null ? product.code : 'ZR-1049'}">ZR-1049</span>
+                    </p>
+
+                    <!-- Precio Oficial -->
+                    <div class="d-flex align-items-baseline gap-2 mb-3">
+                        <span class="h1 fw-bold text-primary mb-0" th:text="'$' + ${#numbers.formatDecimal(product?.currentPrice != null ? product.currentPrice : 24990, 1, 2)}">$24.990,00</span>
+                        <span class="badge bg-light text-muted border">Precio Actualizado</span>
+                    </div>
+
+                    <!-- Descripción Corta -->
+                    <p class="text-secondary mb-4" th:text="${product?.description != null ? product.description : 'Artículo confeccionado con materiales ultralivianos y resistentes para entrenamiento de alto impacto y uso diario.'}">
+                        Artículo confeccionado con materiales ultralivianos y resistentes para entrenamiento de alto impacto y uso diario.
+                    </p>
+
+                    <!-- Formulario de Compra -->
+                    <form method="get" th:action="@{/checkout}" class="mb-4">
+                        <input type="hidden" name="productId" th:value="${product?.id}">
+
+                        <!-- Selector de Talle (Requisito del integrador: XS, S, M, L, XL, XXL) -->
+                        <div class="mb-3">
+                            <label for="size" class="form-label fw-semibold">Seleccionar Talle:</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <input type="radio" class="btn-check" name="size" id="size-xs" value="XS" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm px-3" for="size-xs">XS</label>
+
+                                <input type="radio" class="btn-check" name="size" id="size-s" value="S" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm px-3" for="size-s">S</label>
+
+                                <input type="radio" class="btn-check" name="size" id="size-m" value="M" autocomplete="off" checked>
+                                <label class="btn btn-outline-secondary btn-sm px-3" for="size-m">M</label>
+
+                                <input type="radio" class="btn-check" name="size" id="size-l" value="L" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm px-3" for="size-l">L</label>
+
+                                <input type="radio" class="btn-check" name="size" id="size-xl" value="XL" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm px-3" for="size-xl">XL</label>
+
+                                <input type="radio" class="btn-check" name="size" id="size-xxl" value="XXL" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm px-3" for="size-xxl">XXL</label>
+                            </div>
+                        </div>
+
+                        <!-- Selector de Cantidad y Stock Disponible -->
+                        <div class="row g-2 align-items-center mb-4">
+                            <div class="col-auto">
+                                <label for="quantity" class="form-label mb-0 fw-semibold">Cantidad:</label>
+                            </div>
+                            <div class="col-auto" style="width: 100px;">
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" max="100" class="form-control text-center">
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge bg-success-subtle text-success">
+                                    <i class="bi bi-boxes me-1"></i><span th:text="${product?.stock != null ? product.stock : 18}">18</span> unidades disponibles
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción de Compra -->
+                        <div class="d-flex flex-column flex-sm-row gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill py-3 fw-semibold">
+                                <i class="bi bi-bag-check-fill me-1"></i>Comprar Ahora
+                            </button>
+                            <a th:href="@{/checkout}" class="btn btn-outline-secondary btn-lg flex-fill py-3 fw-semibold">
+                                <i class="bi bi-cart-plus me-1"></i>Agregar al Carrito
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Beneficios Rápidos y Medios de Pago Mendoza -->
+                    <div class="border-top pt-3">
+                        <div class="d-flex flex-column gap-2 small text-muted">
+                            <div><i class="bi bi-wallet2 me-2 text-info"></i>Aceptamos <strong>Mercado Pago</strong> y <strong>Efectivo contra entrega</strong></div>
+                            <div><i class="bi bi-truck me-2 text-primary"></i>Envíos en Mendoza y a todo el país</div>
+                            <div><i class="bi bi-shield-check me-2 text-success"></i>Garantía oficial de fábrica</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pestañas de Especificaciones -->
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <h5 class="fw-bold mb-3">Detalles Técnicos del Producto</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered small mb-0">
+                    <tbody>
+                        <tr>
+                            <th class="bg-light w-25">Marca y Origen</th>
+                            <td>Zero Sports - Mendoza, Argentina</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Estilo</th>
+                            <td>Deportivo Unisex</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Talle</th>
+                            <td th:text="${product?.size != null ? product.size : 'M (Medium)'}">M (Medium)</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Estado de Oferta</th>
+                            <td><span th:text="${product?.onSale == true ? 'En promoción especial' : 'Precio regular'}">Precio regular</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Reutilizable -->
+    <div th:replace="~{common/fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

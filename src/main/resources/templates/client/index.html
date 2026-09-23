@@ -1,35 +1,283 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title != null ? title : 'Zero Shop - Tienda Online'}">Zero Shop - Tienda Online</title>
-    <link rel="stylesheet" th:href="@{/styles/styles.css}" href="../../static/styles/styles.css">
-    <!-- Bootstrap -->
+    <title>Zero Shop Mendoza - Ropa Deportiva Unisex</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
-<body>
+<body class="bg-light d-flex flex-column min-vh-100">
 
-    <header th:replace="~{common/fragments/header :: header}"></header>
+    <!-- Header Reutilizable -->
+    <div th:replace="~{common/fragments/header :: header}"></div>
 
-    <main>
-        <h1>Bienvenido a Zero Shop</h1>
-        <nav>
-            <ul>
-                <li><a href="/products">Ver Productos</a></li>
-                <li><a href="/categories">Ver Categorías</a></li>
-                <li><a href="/offers">Ver Ofertas</a></li>
-                <li><a href="/contact">Contacto</a></li>
-                <li><a href="/profile">Mi Perfil</a></li>
-                <li><a href="/dashboard">Panel de Control / Dashboard</a></li>
-            </ul>
-        </nav>
+    <main class="flex-grow-1">
+        <!-- 1. Hero Banner Principal -->
+        <section class="container my-4">
+            <div class="hero-banner p-4 p-md-5 text-white">
+                <div class="row align-items-center g-4">
+                    <div class="col-12 col-lg-7">
+                        <span class="badge bg-primary text-uppercase px-3 py-2 mb-3">Mendoza • Estilo Deportivo Unisex</span>
+                        <h1 class="display-5 fw-bold mb-3">Viste tu pasión con el mejor estilo deportivo</h1>
+                        <p class="lead text-light mb-4 opacity-75">
+                            Ropa, calzado y accesorios deportivos para hombres, mujeres, niños y niñas. Envíos a todo el país y pagos en cuotas con Mercado Pago y Efectivo.
+                        </p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a th:href="@{/products}" class="btn btn-primary btn-lg px-4">
+                                <i class="bi bi-bag-check me-2"></i>Ver Catálogo
+                            </a>
+                            <a th:href="@{/offers}" class="btn btn-outline-light btn-lg px-4">
+                                <i class="bi bi-fire me-2"></i>Ver Ofertas Especiales
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-5 text-center d-none d-lg-block">
+                        <img th:src="@{/assets/banner2.png}" src="/assets/banner2.png" alt="Promo Zero Shop" class="img-fluid rounded-3 shadow-sm" style="max-height: 280px;" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Beneficios / Confianza -->
+        <section class="container my-5">
+            <div class="row g-3">
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border-0 shadow-sm p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <div class="rounded-circle bg-primary-subtle text-primary p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Envíos a Todo el País</h6>
+                            <p class="text-muted small mb-0">Entregas rápidas y seguras</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border-0 shadow-sm p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <div class="rounded-circle bg-info-subtle text-info p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Mercado Pago y Efectivo</h6>
+                            <p class="text-muted small mb-0">Múltiples medios de pago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border-0 shadow-sm p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <div class="rounded-circle bg-warning-subtle text-warning-emphasis p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Seguimiento en Vivo</h6>
+                            <p class="text-muted small mb-0">Actualización paso a paso</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border-0 shadow-sm p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <div class="rounded-circle bg-success-subtle text-success p-3 fs-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Garantía Oficial Zero</h6>
+                            <p class="text-muted small mb-0">Atención personalizada en Mendoza</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Categorías Oficiales del Integrador -->
+        <section class="container my-5">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <span class="text-primary text-uppercase fw-semibold small">Líneas de Producto</span>
+                    <h2 class="h3 fw-bold mb-0">Categorías</h2>
+                </div>
+                <a th:href="@{/categories}" class="btn btn-outline-secondary btn-sm">
+                    Ver Todas <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/categories}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
+                        <div class="fs-1 text-primary mb-2"><i class="bi bi-gender-male"></i></div>
+                        <h6 class="fw-bold text-dark mb-1">Hombres</h6>
+                        <span class="text-muted small">Ropa, Calzado, Accesorios</span>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/categories}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
+                        <div class="fs-1 text-danger mb-2"><i class="bi bi-gender-female"></i></div>
+                        <h6 class="fw-bold text-dark mb-1">Mujeres</h6>
+                        <span class="text-muted small">Ropa, Calzado, Accesorios</span>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/categories}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
+                        <div class="fs-1 text-success mb-2"><i class="bi bi-person"></i></div>
+                        <h6 class="fw-bold text-dark mb-1">Niños</h6>
+                        <span class="text-muted small">Ropa, Calzado, Accesorios</span>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/categories}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
+                        <div class="fs-1 text-warning mb-2"><i class="bi bi-person-heart"></i></div>
+                        <h6 class="fw-bold text-dark mb-1">Niñas</h6>
+                        <span class="text-muted small">Ropa, Calzado, Accesorios</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Productos Destacados -->
+        <section class="container my-5">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <span class="text-primary text-uppercase fw-semibold small">Stock Disponible</span>
+                    <h2 class="h3 fw-bold mb-0">Novedades Deportivas</h2>
+                </div>
+                <a th:href="@{/products}" class="btn btn-outline-secondary btn-sm">
+                    Ir al Catálogo Completo <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <!-- Grilla Responsiva de Productos -->
+            <div class="row g-4">
+                <!-- Iteración real si vienen productos del controlador -->
+                <div class="col-12 col-sm-6 col-lg-3" th:each="product : ${products}" th:if="${products != null and !products.empty}">
+                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                        <img th:src="${product.images != null and !product.images.empty ? product.images[0].url : '/assets/product-placeholder.jpg'}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Producto">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-light text-muted border" th:text="${product.subCategory?.name != null ? product.subCategory.name : 'Deportivo'}">Subcategoría</span>
+                                <span class="badge bg-danger-subtle text-danger" th:if="${product.onSale}">Oferta</span>
+                            </div>
+                            <h6 class="card-title fw-bold text-dark mb-1 text-truncate" th:text="${product.name}">Nombre del Producto</h6>
+                            <p class="card-text text-muted small text-truncate mb-2" th:text="${product.description}">Descripción breve del producto.</p>
+                            <span class="small text-muted mb-2">Talle: <strong th:text="${product.size != null ? product.size : 'M'}">M</strong></span>
+                            
+                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold text-primary mb-0" th:text="'$' + ${#numbers.formatDecimal(product.currentPrice != null ? product.currentPrice : 0, 1, 2)}">$0.00</span>
+                                <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Detalle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fallbacks ajustados al integrador (ropa deportiva unisex) -->
+                <div class="col-12 col-sm-6 col-lg-3" th:if="${products == null or products.empty}">
+                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Zapatillas Deportivas">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-light text-muted border">Calzado • Hombres</span>
+                                <span class="badge bg-success-subtle text-success">Stock Disponible</span>
+                            </div>
+                            <h6 class="card-title fw-bold text-dark mb-1">Zapatillas Running Zero Pro</h6>
+                            <p class="card-text text-muted small text-truncate mb-2">Amortiguación superior y suela antideslizante.</p>
+                            <span class="small text-muted mb-2">Talles: <strong>39 al 45</strong></span>
+                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold text-primary mb-0">$24.990</span>
+                                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> Detalle</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-lg-3" th:if="${products == null or products.empty}">
+                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Campera Deportiva">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-light text-muted border">Ropa • Unisex</span>
+                                <span class="badge bg-danger-subtle text-danger">En Oferta</span>
+                            </div>
+                            <h6 class="card-title fw-bold text-dark mb-1">Campera Deportiva Rompeviento</h6>
+                            <p class="card-text text-muted small text-truncate mb-2">Tela térmica transpirable con cierre termosellado.</p>
+                            <span class="small text-muted mb-2">Talle: <strong>M, L, XL</strong></span>
+                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold text-primary mb-0">$18.500</span>
+                                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> Detalle</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-lg-3" th:if="${products == null or products.empty}">
+                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Calza Mujer">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-light text-muted border">Ropa • Mujeres</span>
+                                <span class="badge bg-success-subtle text-success">Stock Disponible</span>
+                            </div>
+                            <h6 class="card-title fw-bold text-dark mb-1">Calza Deportiva Tiro Alto</h6>
+                            <p class="card-text text-muted small text-truncate mb-2">Compresión anatómica con bolsillo lateral.</p>
+                            <span class="small text-muted mb-2">Talle: <strong>S, M, L</strong></span>
+                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold text-primary mb-0">$14.200</span>
+                                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> Detalle</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-lg-3" th:if="${products == null or products.empty}">
+                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
+                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Mochila Deportiva">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-light text-muted border">Accesorios • Unisex</span>
+                                <span class="badge bg-success-subtle text-success">Stock Disponible</span>
+                            </div>
+                            <h6 class="card-title fw-bold text-dark mb-1">Mochila Sport Backpack Zero</h6>
+                            <p class="card-text text-muted small text-truncate mb-2">Impermeable con compartimento para calzado.</p>
+                            <span class="small text-muted mb-2">Capacidad: <strong>25 Litros</strong></span>
+                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                <span class="h5 fw-bold text-primary mb-0">$16.800</span>
+                                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> Detalle</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Boletín de Ofertas (Requisito Newsletter cada 10 días) -->
+        <section class="container my-5">
+            <div class="card border-0 bg-dark text-white p-4 p-md-5 rounded-4 shadow-sm">
+                <div class="row align-items-center g-3">
+                    <div class="col-12 col-md-7">
+                        <span class="badge bg-danger text-uppercase px-2 py-1 mb-2">Boletín Exclusivo</span>
+                        <h3 class="fw-bold mb-1">Recibe nuestras ofertas cada 10 días</h3>
+                        <p class="text-light opacity-75 mb-0">
+                            Te enviamos a tu correo un resumen con los productos deportivos en descuento y promociones especiales de temporada.
+                        </p>
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <form class="d-flex gap-2">
+                            <input type="email" class="form-control" placeholder="Ingresa tu correo personal..." required>
+                            <button type="submit" class="btn btn-primary fw-semibold text-nowrap">
+                                <i class="bi bi-envelope-check me-1"></i>Suscribirme
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer th:replace="~{common/fragments/footer :: footer}"></footer>
+    <!-- Footer Reutilizable -->
+    <div th:replace="~{common/fragments/footer :: footer}"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
