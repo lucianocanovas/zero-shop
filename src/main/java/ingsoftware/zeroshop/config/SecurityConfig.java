@@ -55,7 +55,11 @@ public class SecurityConfig {
                 ).permitAll()
 
                 // Rutas exclusivas para administradores dentro del dashboard
-                .requestMatchers("/dashboard/admin/**").hasRole(Role.ADMIN.name())
+                .requestMatchers(
+                    "/dashboard/admin/**",
+                    "/dashboard/users/**",
+                    "/dashboard/offices/**"
+                ).hasRole(Role.ADMIN.name())
 
                 // Rutas exclusivas para empleados dentro del dashboard
                 .requestMatchers("/dashboard/employee/**").hasRole(Role.EMPLOYEE.name())

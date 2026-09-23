@@ -32,9 +32,14 @@
                         <h1 class="h4 fw-bold text-dark mb-0">Órdenes de Compra</h1>
                         <p class="text-muted small mb-0">Reabastecimiento de mercadería con proveedores e ingreso automático a inventario</p>
                     </div>
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newPurchaseOrderModal">
-                        <i class="bi bi-plus-lg me-1"></i>Nueva Orden de Compra
-                    </button>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/dashboard/purchase-orders/new}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-file-earmark-plus me-1"></i>Formulario Completo
+                        </a>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newPurchaseOrderModal">
+                            <i class="bi bi-plus-lg me-1"></i>Nueva Orden
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Tabla de Órdenes de Compra -->

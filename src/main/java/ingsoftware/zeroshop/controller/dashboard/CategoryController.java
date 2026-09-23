@@ -22,18 +22,18 @@ public class CategoryController {
     @GetMapping("/dashboard/categories/new")
     public String newCategoryForm() {
         // LOGICA PARA MOSTRAR FORMULARIO DE ALTA DE CATEGORIA
-        return "dashboard/category-detail";
+        return "dashboard/category-new";
     }
 
-    // GET /dashboard/categories/:id: Muestra el detalle o edición de una categoría
+    // GET /dashboard/categories/:id: Muestra la vista para editar una categoría existente
     @GetMapping("/dashboard/categories/{id}")
     public String getCategoryDetail(@PathVariable("id") UUID id) {
-        // LOGICA PARA OBTENER DETALLE DE CATEGORIA
-        return "dashboard/category-detail";
+        // LOGICA PARA OBTENER EDICION DE CATEGORIA
+        return "dashboard/category-edit";
     }
 
-    // POST /dashboard/categories/: Crea una nueva categoría o subcategoría
-    @PostMapping("/dashboard/categories/")
+    // POST /dashboard/categories: Crea una nueva categoría o subcategoría
+    @PostMapping({"/dashboard/categories", "/dashboard/categories/"})
     public String createCategory() {
         // LOGICA PARA CREAR CATEGORIA
         return "redirect:/dashboard/categories";

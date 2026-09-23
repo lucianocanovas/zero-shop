@@ -18,11 +18,18 @@ public class ProviderController {
         return "dashboard/providers";
     }
 
-    // GET /dashboard/providers/:id: Muestra el detalle o edición de un proveedor
+    // GET /dashboard/providers/new: Muestra el formulario para crear un nuevo proveedor
+    @GetMapping("/dashboard/providers/new")
+    public String newProviderForm() {
+        // LOGICA PARA MOSTRAR FORMULARIO DE ALTA DE PROVEEDOR
+        return "dashboard/provider-new";
+    }
+
+    // GET /dashboard/providers/:id: Muestra la vista para editar un proveedor existente
     @GetMapping("/dashboard/providers/{id}")
     public String getProviderDetail(@PathVariable("id") UUID id) {
-        // LOGICA PARA OBTENER DETALLE DE PROVEEDOR
-        return "dashboard/provider-detail";
+        // LOGICA PARA OBTENER EDICION DE PROVEEDOR
+        return "dashboard/provider-edit";
     }
 
     // POST /dashboard/providers: Registra un nuevo proveedor

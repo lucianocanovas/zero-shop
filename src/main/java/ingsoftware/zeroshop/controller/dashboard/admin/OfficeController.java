@@ -11,43 +11,43 @@ import org.springframework.web.bind.annotation.PutMapping;
 @Controller("dashboardAdminOfficeController")
 public class OfficeController {
 
-    // GET /dashboard/admin/offices: Lista todas las sucursales
-    @GetMapping("/dashboard/admin/offices")
+    // GET /dashboard/offices o /dashboard/admin/offices: Lista todas las sucursales
+    @GetMapping({"/dashboard/offices", "/dashboard/admin/offices"})
     public String listOffices() {
         // LOGICA PARA LISTAR SUCURSALES
         return "dashboard/admin/offices";
     }
 
-    // GET /dashboard/admin/offices/new: Muestra el formulario para crear una nueva sucursal
-    @GetMapping("/dashboard/admin/offices/new")
+    // GET /dashboard/offices/new o /dashboard/admin/offices/new: Muestra el formulario para crear una nueva sucursal
+    @GetMapping({"/dashboard/offices/new", "/dashboard/admin/offices/new"})
     public String newOfficeForm() {
         // LOGICA PARA MOSTRAR FORMULARIO DE ALTA DE SUCURSAL
-        return "dashboard/admin/office-detail";
+        return "dashboard/admin/office-new";
     }
 
-    // GET /dashboard/admin/offices/:id: Muestra el detalle o edición de una sucursal
-    @GetMapping("/dashboard/admin/offices/{id}")
+    // GET /dashboard/offices/:id o /dashboard/admin/offices/:id: Muestra la vista para editar una sucursal existente
+    @GetMapping({"/dashboard/offices/{id}", "/dashboard/admin/offices/{id}"})
     public String getOfficeDetail(@PathVariable("id") UUID id) {
-        // LOGICA PARA OBTENER DETALLE DE SUCURSAL
-        return "dashboard/admin/office-detail";
+        // LOGICA PARA OBTENER EDICION DE SUCURSAL
+        return "dashboard/admin/office-edit";
     }
 
-    // POST /dashboard/admin/offices: Registra una nueva sucursal
-    @PostMapping("/dashboard/admin/offices")
+    // POST /dashboard/offices o /dashboard/admin/offices: Registra una nueva sucursal
+    @PostMapping({"/dashboard/offices", "/dashboard/admin/offices"})
     public String createOffice() {
         // LOGICA PARA REGISTRAR SUCURSAL
         return "redirect:/dashboard/admin/offices";
     }
 
-    // PUT /dashboard/admin/offices/:id: Actualiza los datos de una sucursal
-    @PutMapping("/dashboard/admin/offices/{id}")
+    // PUT /dashboard/offices/:id o /dashboard/admin/offices/:id: Actualiza los datos de una sucursal
+    @PutMapping({"/dashboard/offices/{id}", "/dashboard/admin/offices/{id}"})
     public String updateOffice(@PathVariable("id") UUID id) {
         // LOGICA PARA ACTUALIZAR SUCURSAL
         return "redirect:/dashboard/admin/offices";
     }
 
-    // DELETE /dashboard/admin/offices/:id: Elimina una sucursal
-    @DeleteMapping("/dashboard/admin/offices/{id}")
+    // DELETE /dashboard/offices/:id o /dashboard/admin/offices/:id: Elimina una sucursal
+    @DeleteMapping({"/dashboard/offices/{id}", "/dashboard/admin/offices/{id}"})
     public String deleteOffice(@PathVariable("id") UUID id) {
         // LOGICA PARA ELIMINAR SUCURSAL
         return "redirect:/dashboard/admin/offices";

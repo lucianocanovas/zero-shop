@@ -18,15 +18,22 @@ public class ProductController {
         return "dashboard/products";
     }
 
-    // GET /dashboard/products/:id: Muestra el detalle o edición de un producto
-    @GetMapping("/dashboard/products/{id}")
-    public String getProductDetail(@PathVariable("id") UUID id) {
-        // LOGICA PARA OBTENER DETALLE DEL PRODUCTO
-        return "dashboard/product-detail";
+    // GET /dashboard/products/new: Muestra el formulario para crear un nuevo producto
+    @GetMapping("/dashboard/products/new")
+    public String newProductForm() {
+        // LOGICA PARA MOSTRAR FORMULARIO DE ALTA DE PRODUCTO
+        return "dashboard/product-new";
     }
 
-    // POST /dashboard/products/: Guarda un nuevo producto
-    @PostMapping("/dashboard/products/")
+    // GET /dashboard/products/:id: Muestra la vista para editar un producto existente
+    @GetMapping("/dashboard/products/{id}")
+    public String getProductDetail(@PathVariable("id") UUID id) {
+        // LOGICA PARA OBTENER EDICION DEL PRODUCTO
+        return "dashboard/product-edit";
+    }
+
+    // POST /dashboard/products: Guarda un nuevo producto
+    @PostMapping({"/dashboard/products", "/dashboard/products/"})
     public String createProduct() {
         // LOGICA PARA GUARDAR NUEVO PRODUCTO
         return "redirect:/dashboard/products";

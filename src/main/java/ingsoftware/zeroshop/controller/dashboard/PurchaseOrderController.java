@@ -18,6 +18,13 @@ public class PurchaseOrderController {
         return "dashboard/purchase-orders";
     }
 
+    // GET /dashboard/purchase-orders/new: Muestra el formulario para emitir una nueva orden de compra
+    @GetMapping("/dashboard/purchase-orders/new")
+    public String newPurchaseOrderForm() {
+        // LOGICA PARA MOSTRAR FORMULARIO DE ALTA DE ORDEN DE COMPRA
+        return "dashboard/purchase-order-new";
+    }
+
     // GET /dashboard/purchase-orders/:id: Muestra el detalle de una orden de compra
     @GetMapping("/dashboard/purchase-orders/{id}")
     public String getPurchaseOrderDetail(@PathVariable("id") UUID id) {
