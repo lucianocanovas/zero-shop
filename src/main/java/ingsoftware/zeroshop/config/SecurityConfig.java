@@ -44,7 +44,8 @@ public class SecurityConfig {
                     "/contact",
                     "/products/**",
                     "/categories/**",
-                    "/offers"
+                    "/offers",
+                    "/checkout/mp/**"
                 ).permitAll()
 
                 // Rutas públicas de autenticación y registro

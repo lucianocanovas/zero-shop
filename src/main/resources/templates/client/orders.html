@@ -23,10 +23,20 @@
             </ol>
         </nav>
 
+        <!-- Mensajes Flash -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}">Éxito</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="h3 fw-bold text-dark mb-1">Mis Compras y Pedidos</h1>
-                <p class="text-muted small mb-0">Seguimiento de compras y estado de entrega en tiempo real</p>
+                <p class="text-muted small mb-0">Seguimiento de compras y estado de entrega en tiempo real (Mendoza)</p>
             </div>
             <a th:href="@{/products}" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-cart-plus me-1"></i>Seguir Comprando
@@ -40,89 +50,51 @@
                         <tr>
                             <th>Nº Pedido</th>
                             <th>Fecha</th>
-                            <th>Artículos</th>
-                            <th>Medio de Pago</th>
+                            <th>Sucursal</th>
                             <th>Total</th>
-                            <th>Estado de Seguimiento</th>
+                            <th>Estado Oficial</th>
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Iteración si existen órdenes en el modelo -->
                         <tr th:each="order : ${orders}" th:if="${orders != null and !orders.empty}">
-                            <td class="fw-bold" th:text="${'#ZR-' + order.id}">#ZR-1001</td>
-                            <td class="text-muted small" th:text="${order.date}">22/09/2026</td>
-                            <td th:text="${order.itemCount != null ? order.itemCount + ' artículos' : 'Indumentaria Deportiva'}">1 artículo</td>
-                            <td>Mercado Pago</td>
-                            <td class="fw-bold text-primary" th:text="'$' + ${order.total}">$24.990,00</td>
+                            <td class="fw-bold" th:text="'#' + ${#strings.substring(order.id.toString(), 0, 8)}">#ZR-1001</td>
+                            <td class="text-muted small" th:text="${order.date != null ? #temporals.format(order.date, 'dd/MM/yyyy HH:mm') : '-'}">22/09/2026</td>
+                            <td th:text="${order.office != null ? order.office.name : 'Casa Central Mendoza'}">Sucursal Mendoza</td>
+                            <td class="fw-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$24.990,00</td>
                             <td>
-                                <!-- Estados oficiales del TP Integrador -->
-                                <span class="badge bg-primary-subtle text-primary">PENDIENTE DE ENVIO</span>
+                                <span class="badge"
+                                      th:classappend="${order.status.name() == 'PENDING_PAYMENT' ? 'bg-warning text-dark' : 
+                                                      (order.status.name() == 'PAID' ? 'bg-success' : 
+                                                      (order.status.name() == 'PENDING_SHIPPING' ? 'bg-primary' : 
+                                                      (order.status.name() == 'PENDING_DELIVERY' ? 'bg-info text-dark' : 
+                                                      (order.status.name() == 'DELIVERED' ? 'bg-secondary' : 'bg-danger'))))}"
+                                      th:text="${order.status.displayName}">
+                                    PAGO REALIZADO
+                                </span>
                             </td>
                             <td class="text-end">
                                 <div class="btn-group btn-group-sm">
-                                    <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-outline-secondary">
+                                    <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-outline-primary">
                                         <i class="bi bi-eye me-1"></i>Seguimiento
                                     </a>
+                                    <form th:if="${order.status.name() != 'DELIVERED' and order.status.name() != 'CANCELLED'}"
+                                          method="post" th:action="@{/orders/{id}/cancel(id=${order.id})}" class="d-inline ms-1">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button type="submit" class="btn btn-outline-danger" title="Anular Compra" onclick="return confirm('¿Estás seguro de anular esta compra?')">
+                                            Anular
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
 
-                        <!-- Demostración oficial con los estados del TP Integrador -->
                         <tr th:if="${orders == null or orders.empty}">
-                            <td class="fw-bold text-dark">#ZR-89312</td>
-                            <td class="text-muted small">22 Sep 2026</td>
-                            <td>Zapatillas Running Zero Pro (x1)</td>
-                            <td><i class="bi bi-wallet-fill text-info me-1"></i>Mercado Pago</td>
-                            <td class="fw-bold text-primary">$24.990,00</td>
-                            <td><span class="badge bg-primary-subtle text-primary">PENDIENTE DE ENVIO</span></td>
-                            <td class="text-end">
-                                <div class="btn-group btn-group-sm">
-                                    <a th:href="@{/orders/00000000-0000-0000-0000-000000000001}" class="btn btn-outline-secondary">
-                                        <i class="bi bi-eye me-1"></i>Seguimiento
-                                    </a>
-                                    <form method="post" th:action="@{/orders/00000000-0000-0000-0000-000000000001}" class="d-inline">
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-outline-danger" title="Anular Compra" onclick="return confirm('¿Deseas anular esta compra?')">
-                                            Anular
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr th:if="${orders == null or orders.empty}">
-                            <td class="fw-bold text-dark">#ZR-88401</td>
-                            <td class="text-muted small">15 Ago 2026</td>
-                            <td>Campera Deportiva Rompeviento (x1)</td>
-                            <td><i class="bi bi-cash me-1 text-success"></i>Efectivo</td>
-                            <td class="fw-bold text-primary">$18.500,00</td>
-                            <td><span class="badge bg-success-subtle text-success">ENTREGADO</span></td>
-                            <td class="text-end">
-                                <a th:href="@{/orders/00000000-0000-0000-0000-000000000001}" class="btn btn-outline-secondary btn-sm">
-                                    <i class="bi bi-eye me-1"></i>Ver Detalle
-                                </a>
-                            </td>
-                        </tr>
-                        <tr th:if="${orders == null or orders.empty}">
-                            <td class="fw-bold text-dark">#ZR-87319</td>
-                            <td class="text-muted small">01 Jul 2026</td>
-                            <td>Calza Deportiva Tiro Alto (x1)</td>
-                            <td><i class="bi bi-credit-card me-1 text-primary"></i>Tarjeta</td>
-                            <td class="fw-bold text-primary">$14.200,00</td>
-                            <td><span class="badge bg-warning-subtle text-warning-emphasis">PENDIENTE DE PAGO</span></td>
-                            <td class="text-end">
-                                <div class="btn-group btn-group-sm">
-                                    <a th:href="@{/orders/00000000-0000-0000-0000-000000000001}" class="btn btn-outline-secondary">
-                                        <i class="bi bi-eye me-1"></i>Pagar
-                                    </a>
-                                    <form method="post" th:action="@{/orders/00000000-0000-0000-0000-000000000001}" class="d-inline">
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-outline-danger" title="Anular Compra" onclick="return confirm('¿Deseas anular esta compra?')">
-                                            Anular
-                                        </button>
-                                    </form>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-bag-x fs-1 d-block mb-2 text-secondary"></i>
+                                Todavía no has realizado ninguna compra.
+                                <div class="mt-3">
+                                    <a th:href="@{/products}" class="btn btn-primary btn-sm">Explorar Catálogo de Productos</a>
                                 </div>
                             </td>
                         </tr>

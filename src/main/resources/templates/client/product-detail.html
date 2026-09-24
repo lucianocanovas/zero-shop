@@ -60,7 +60,8 @@
                     </p>
 
                     <!-- Formulario de Compra -->
-                    <form method="get" th:action="@{/checkout}" class="mb-4">
+                    <form method="post" th:action="@{/checkout/add}" class="mb-4">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <input type="hidden" name="productId" th:value="${product?.id}">
 
                         <!-- Selector de Talle (Requisito del integrador: XS, S, M, L, XL, XXL) -->
@@ -105,10 +106,10 @@
                         <!-- Botones de Acción de Compra -->
                         <div class="d-flex flex-column flex-sm-row gap-2">
                             <button type="submit" class="btn btn-primary btn-lg flex-fill py-3 fw-semibold">
-                                <i class="bi bi-bag-check-fill me-1"></i>Comprar Ahora
+                                <i class="bi bi-cart-plus-fill me-1"></i>Agregar al Carrito
                             </button>
                             <a th:href="@{/checkout}" class="btn btn-outline-secondary btn-lg flex-fill py-3 fw-semibold">
-                                <i class="bi bi-cart-plus me-1"></i>Agregar al Carrito
+                                <i class="bi bi-bag-check me-1"></i>Ver Carrito y Pagar
                             </a>
                         </div>
                     </form>

@@ -23,8 +23,11 @@ public interface SaleOrderRepository extends JpaRepository<SaleOrder, UUID> {
     }
 
     Optional<SaleOrder> findByIdAndDeletedFalse(UUID id);
+    Optional<SaleOrder> findByClientIdAndStatusAndDeletedFalse(UUID clientId, OrderStatus status);
     List<SaleOrder> findByClientIdAndDeletedFalseOrderByDateDesc(UUID clientId);
+    List<SaleOrder> findByClientIdAndStatusNotAndDeletedFalseOrderByDateDesc(UUID clientId, OrderStatus status);
     List<SaleOrder> findByStatusAndDeletedFalse(OrderStatus status);
+    List<SaleOrder> findByStatusNotAndDeletedFalseOrderByDateDesc(OrderStatus status);
     List<SaleOrder> findByDateBetweenAndDeletedFalse(LocalDateTime start, LocalDateTime end);
     List<SaleOrder> findByOfficeIdAndDeletedFalse(UUID officeId);
     List<SaleOrder> findAllByDeletedFalse();
