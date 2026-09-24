@@ -791,3 +791,392 @@ org.hibernate.loader.MultipleBagFetchException: cannot simultaneously fetch mult
 2026-09-23T22:48:01.099-03:00  INFO 90341 --- [zeroshop] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
 2026-09-23T22:48:01.099-03:00  INFO 90341 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2026-09-23T22:48:01.102-03:00  INFO 90341 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2026-09-24T11:52:20.621-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 39660 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:52:20.623-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:52:20.651-03:00  INFO 39660 --- [zeroshop] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24T11:52:20.651-03:00  INFO 39660 --- [zeroshop] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24T11:52:21.129-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:52:21.243-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 108 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:52:21.726-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:52:21.736-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:52:21.736-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:52:21.764-03:00  INFO 39660 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1112 ms
+2026-09-24T11:52:21.913-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:52:21.939-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-09-24T11:52:22.202-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:52:22.218-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-24T11:52:22.412-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@15a742da
+2026-09-24T11:52:22.413-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-24T11:52:22.430-03:00  WARN 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:52:22.444-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:52:23.150-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:52:23.209-03:00  INFO 39660 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:52:23.249-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-24T11:52:23.568-03:00  INFO 39660 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:52:24.262-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-24T11:52:24.291-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-24T11:52:24.295-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 3.911 seconds (process running for 4.171)
+2026-09-24T11:53:39.420-03:00  INFO 28556 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 28556 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:53:39.422-03:00  INFO 28556 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:53:39.450-03:00  INFO 28556 --- [zeroshop] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24T11:53:39.450-03:00  INFO 28556 --- [zeroshop] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24T11:53:39.938-03:00  INFO 28556 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:53:40.044-03:00  INFO 28556 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 101 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:53:40.504-03:00  INFO 28556 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:53:40.513-03:00  INFO 28556 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:53:40.513-03:00  INFO 28556 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:53:40.541-03:00  INFO 28556 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1090 ms
+2026-09-24T11:53:40.670-03:00  INFO 28556 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:53:40.695-03:00  INFO 28556 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-09-24T11:53:40.917-03:00  INFO 28556 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:53:40.933-03:00  INFO 28556 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-24T11:53:41.024-03:00  INFO 28556 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@69a27344
+2026-09-24T11:53:41.025-03:00  INFO 28556 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-24T11:53:41.042-03:00  WARN 28556 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:53:41.057-03:00  INFO 28556 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:53:41.888-03:00  INFO 28556 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:53:41.954-03:00  INFO 28556 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:53:42.007-03:00  INFO 28556 --- [zeroshop] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-24T11:53:42.332-03:00  INFO 28556 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:53:42.978-03:00  WARN 28556 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : Unable to start LiveReload server
+2026-09-24T11:53:43.000-03:00  WARN 28556 --- [zeroshop] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-09-24T11:53:43.003-03:00  INFO 28556 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:53:43.006-03:00  INFO 28556 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-09-24T11:53:43.008-03:00  INFO 28556 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-09-24T11:53:43.019-03:00  INFO 28556 --- [zeroshop] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-24T11:53:43.029-03:00 ERROR 28556 --- [zeroshop] [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-09-24T11:54:51.152-03:00  INFO 20120 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 20120 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:54:51.155-03:00  INFO 20120 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:54:51.183-03:00  INFO 20120 --- [zeroshop] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24T11:54:51.184-03:00  INFO 20120 --- [zeroshop] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24T11:54:51.638-03:00  INFO 20120 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:54:51.758-03:00  INFO 20120 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 114 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:54:52.274-03:00  INFO 20120 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:54:52.283-03:00  INFO 20120 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:54:52.284-03:00  INFO 20120 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:54:52.315-03:00  INFO 20120 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1131 ms
+2026-09-24T11:54:52.470-03:00  INFO 20120 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:54:52.494-03:00  INFO 20120 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-09-24T11:54:52.753-03:00  INFO 20120 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:54:52.767-03:00  INFO 20120 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-24T11:54:52.857-03:00  INFO 20120 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@302d72e3
+2026-09-24T11:54:52.858-03:00  INFO 20120 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-24T11:54:52.874-03:00  WARN 20120 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:54:52.890-03:00  INFO 20120 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:54:53.223-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-24T11:54:53.224-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-24T11:54:53.224-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-09-24T11:54:53.711-03:00  INFO 20120 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:54:53.777-03:00  INFO 20120 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:54:53.831-03:00  INFO 20120 --- [zeroshop] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-24T11:54:54.198-03:00  INFO 20120 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:54:54.932-03:00  WARN 20120 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : Unable to start LiveReload server
+2026-09-24T11:54:54.954-03:00  WARN 20120 --- [zeroshop] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-09-24T11:54:54.958-03:00  INFO 20120 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:54:54.960-03:00  INFO 20120 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-09-24T11:54:54.962-03:00  INFO 20120 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-09-24T11:54:54.971-03:00  INFO 20120 --- [zeroshop] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-24T11:54:54.980-03:00 ERROR 20120 --- [zeroshop] [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-09-24T11:56:01.917-03:00  INFO 39660 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-09-24T11:56:01.920-03:00  INFO 39660 --- [zeroshop] [Thread-5] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-24T11:56:01.924-03:00  INFO 39660 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-24T11:56:01.927-03:00  INFO 39660 --- [zeroshop] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:56:01.929-03:00  INFO 39660 --- [zeroshop] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-09-24T11:56:01.930-03:00  INFO 39660 --- [zeroshop] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-09-24T11:56:01.999-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 39660 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:56:02.000-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:56:02.163-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:56:02.223-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 58 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:56:02.278-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:56:02.279-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:56:02.279-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:56:02.295-03:00  INFO 39660 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 295 ms
+2026-09-24T11:56:02.325-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:56:02.339-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:56:02.340-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-09-24T11:56:02.362-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@1f505ef
+2026-09-24T11:56:02.362-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-09-24T11:56:02.367-03:00  WARN 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:56:02.370-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:56:02.578-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:56:02.613-03:00  INFO 39660 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:56:02.662-03:00  INFO 39660 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:56:02.920-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-24T11:56:02.929-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-24T11:56:02.931-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 0.947 seconds (process running for 222.807)
+2026-09-24T11:56:02.960-03:00  INFO 39660 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-24T11:56:03.119-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-24T11:56:03.119-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-24T11:56:03.120-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-24T11:56:48.958-03:00  INFO 39660 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-09-24T11:56:48.959-03:00  INFO 39660 --- [zeroshop] [Thread-7] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-24T11:56:48.963-03:00  INFO 39660 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-24T11:56:48.965-03:00  INFO 39660 --- [zeroshop] [Thread-7] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:56:48.966-03:00  INFO 39660 --- [zeroshop] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2026-09-24T11:56:48.968-03:00  INFO 39660 --- [zeroshop] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2026-09-24T11:56:49.038-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 39660 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:56:49.038-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:56:49.175-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:56:49.239-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 62 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:56:49.278-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:56:49.279-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:56:49.279-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:56:49.290-03:00  INFO 39660 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 251 ms
+2026-09-24T11:56:49.308-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:56:49.321-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:56:49.321-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-09-24T11:56:49.347-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@6d082859
+2026-09-24T11:56:49.347-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-09-24T11:56:49.352-03:00  WARN 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:56:49.357-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:56:49.514-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:56:49.545-03:00  INFO 39660 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:56:49.583-03:00  INFO 39660 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:56:49.744-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-24T11:56:49.750-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-24T11:56:49.751-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 0.725 seconds (process running for 269.627)
+2026-09-24T11:56:49.768-03:00  INFO 39660 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-24T11:56:52.653-03:00  INFO 39660 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-09-24T11:56:52.654-03:00  INFO 39660 --- [zeroshop] [Thread-11] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-24T11:56:52.657-03:00  INFO 39660 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-24T11:56:52.658-03:00  INFO 39660 --- [zeroshop] [Thread-11] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:56:52.659-03:00  INFO 39660 --- [zeroshop] [Thread-11] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2026-09-24T11:56:52.660-03:00  INFO 39660 --- [zeroshop] [Thread-11] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+2026-09-24T11:56:52.716-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 39660 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:56:52.717-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:56:52.825-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:56:52.888-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 61 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:56:52.937-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:56:52.938-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:56:52.938-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:56:52.953-03:00  INFO 39660 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 235 ms
+2026-09-24T11:56:52.976-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:56:52.991-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:56:52.992-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2026-09-24T11:56:53.017-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@191b49fa
+2026-09-24T11:56:53.017-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2026-09-24T11:56:53.021-03:00  WARN 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:56:53.027-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:56:53.186-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:56:53.220-03:00  INFO 39660 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:56:53.257-03:00  INFO 39660 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:56:53.447-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-24T11:56:53.454-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-24T11:56:53.455-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 0.751 seconds (process running for 273.331)
+2026-09-24T11:56:53.474-03:00  INFO 39660 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-24T11:56:58.833-03:00  INFO 39660 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-09-24T11:56:58.834-03:00  INFO 39660 --- [zeroshop] [Thread-15] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-24T11:56:58.837-03:00  INFO 39660 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-24T11:56:58.838-03:00  INFO 39660 --- [zeroshop] [Thread-15] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:56:58.838-03:00  INFO 39660 --- [zeroshop] [Thread-15] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2026-09-24T11:56:58.839-03:00  INFO 39660 --- [zeroshop] [Thread-15] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.
+2026-09-24T11:56:58.894-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 39660 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:56:58.895-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:56:59.013-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:56:59.074-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 60 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:56:59.113-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:56:59.113-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:56:59.114-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:56:59.125-03:00  INFO 39660 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 230 ms
+2026-09-24T11:56:59.141-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:56:59.151-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:56:59.152-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2026-09-24T11:56:59.173-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@2f44ea11
+2026-09-24T11:56:59.173-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2026-09-24T11:56:59.177-03:00  WARN 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:56:59.181-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:56:59.327-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:56:59.364-03:00  INFO 39660 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:56:59.396-03:00  INFO 39660 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:56:59.543-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-24T11:56:59.548-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-24T11:56:59.549-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 0.665 seconds (process running for 279.425)
+2026-09-24T11:56:59.568-03:00  INFO 39660 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-24T11:57:08.185-03:00  INFO 39660 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-09-24T11:57:08.186-03:00  INFO 39660 --- [zeroshop] [Thread-19] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-24T11:57:08.189-03:00  INFO 39660 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-24T11:57:08.191-03:00  INFO 39660 --- [zeroshop] [Thread-19] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:57:08.191-03:00  INFO 39660 --- [zeroshop] [Thread-19] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Shutdown initiated...
+2026-09-24T11:57:08.191-03:00  INFO 39660 --- [zeroshop] [Thread-19] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Shutdown completed.
+2026-09-24T11:57:08.248-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 39660 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:57:08.248-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:57:08.375-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:57:08.420-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 44 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:57:08.453-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:57:08.454-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:57:08.454-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:57:08.465-03:00  INFO 39660 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 216 ms
+2026-09-24T11:57:08.483-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:57:08.501-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:57:08.501-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Starting...
+2026-09-24T11:57:08.528-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@b99005f
+2026-09-24T11:57:08.528-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Start completed.
+2026-09-24T11:57:08.534-03:00  WARN 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:57:08.539-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:57:08.667-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:57:08.705-03:00  INFO 39660 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:57:08.746-03:00  INFO 39660 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:57:08.896-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-24T11:57:08.901-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-24T11:57:08.903-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 0.666 seconds (process running for 288.779)
+2026-09-24T11:57:08.922-03:00  INFO 39660 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-24T11:57:32.338-03:00  INFO 39660 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-09-24T11:57:32.339-03:00  INFO 39660 --- [zeroshop] [Thread-23] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-24T11:57:32.343-03:00  INFO 39660 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-24T11:57:32.344-03:00  INFO 39660 --- [zeroshop] [Thread-23] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:57:32.344-03:00  INFO 39660 --- [zeroshop] [Thread-23] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Shutdown initiated...
+2026-09-24T11:57:32.345-03:00  INFO 39660 --- [zeroshop] [Thread-23] com.zaxxer.hikari.HikariDataSource       : HikariPool-6 - Shutdown completed.
+2026-09-24T11:57:32.407-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 26.0.2.1 with PID 39660 (C:\Users\Lucho\Desktop\zero-shop\target\classes started by Lucho in C:\Users\Lucho\Desktop\zero-shop)
+2026-09-24T11:57:32.407-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-24T11:57:32.502-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-24T11:57:32.558-03:00  INFO 39660 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 55 ms. Found 28 JPA repository interfaces.
+2026-09-24T11:57:32.597-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-24T11:57:32.598-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-24T11:57:32.598-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-24T11:57:32.609-03:00  INFO 39660 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 201 ms
+2026-09-24T11:57:32.626-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-24T11:57:32.638-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-24T11:57:32.639-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Starting...
+2026-09-24T11:57:32.780-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-7 - Added connection org.postgresql.jdbc.PgConnection@40650672
+2026-09-24T11:57:32.780-03:00  INFO 39660 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Start completed.
+2026-09-24T11:57:32.784-03:00  WARN 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-24T11:57:32.788-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.6
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-24T11:57:32.935-03:00  INFO 39660 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-24T11:57:32.970-03:00  INFO 39660 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-24T11:57:33.002-03:00  INFO 39660 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-24T11:57:33.138-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-24T11:57:33.143-03:00  INFO 39660 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-24T11:57:33.144-03:00  INFO 39660 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 0.75 seconds (process running for 313.02)
+2026-09-24T11:57:33.162-03:00  INFO 39660 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-24T11:57:35.511-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-24T11:57:35.511-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-24T11:57:35.512-03:00  INFO 39660 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
