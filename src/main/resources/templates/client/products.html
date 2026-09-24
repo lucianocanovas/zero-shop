@@ -51,12 +51,8 @@
                 <div class="col-6 col-md-3">
                     <label for="categoryId" class="form-label">Categoría</label>
                     <select id="categoryId" name="categoryId" class="form-select">
-                        <option value="">Todas (Hombres, Mujeres, Niños, Niñas)</option>
-                        <option value="hombres">Hombres</option>
-                        <option value="mujeres">Mujeres</option>
-                        <option value="ninos">Niños</option>
-                        <option value="ninas">Niñas</option>
-                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Categoría</option>
+                        <option value="">Todas</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${categoryId != null and (categoryId == cat.id.toString() or categoryId == cat.name.toLowerCase())}">Categoría</option>
                     </select>
                 </div>
 
@@ -65,16 +61,16 @@
                     <label for="subCategory" class="form-label">Subcategoría</label>
                     <select id="subCategory" name="subCategory" class="form-select">
                         <option value="">Todas</option>
-                        <option value="ropa">Ropa</option>
-                        <option value="calzado">Calzado</option>
-                        <option value="accesorios">Accesorios</option>
+                        <option value="calzado" th:selected="${subCategory == 'calzado'}">Calzado</option>
+                        <option value="ropa" th:selected="${subCategory == 'ropa' or subCategory == 'indumentaria'}">Indumentaria / Ropa</option>
+                        <option value="accesorios" th:selected="${subCategory == 'accesorios'}">Accesorios</option>
                     </select>
                 </div>
 
                 <!-- Rango de Precios -->
                 <div class="col-6 col-md-2">
                     <label for="maxPrice" class="form-label">Precio Máx ($)</label>
-                    <input type="number" class="form-control" id="maxPrice" name="maxPrice" placeholder="50000" step="500">
+                    <input type="number" class="form-control" id="maxPrice" name="maxPrice" th:value="${maxPrice}" placeholder="50000" step="500">
                 </div>
 
                 <!-- Botones de Acción -->
@@ -94,10 +90,10 @@
             <!-- Si existen productos en el modelo -->
             <div class="col-12 col-sm-6 col-md-4 col-xl-3" th:each="product : ${products}" th:if="${products != null and !products.empty}">
                 <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
-                    <img th:src="${product.images != null and !product.images.empty ? product.images[0].url : '/assets/product-placeholder.jpg'}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Producto">
+                    <img th:src="${product.images != null and !product.images.empty ? product.images[0].url : (product.imageUrl != null and !product.imageUrl.blank ? product.imageUrl : '/assets/product-placeholder.jpg')}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Producto">
                     <div class="card-body p-3 d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-light text-muted border" th:text="${product.subCategory?.name != null ? product.subCategory.name : 'Deportivo'}">Subcategoría</span>
+                            <span class="badge bg-light text-muted border" th:text="${product.subCategory != null ? (product.category != null ? product.category.name + ' • ' + product.subCategory.name : product.subCategory.name) : 'Deportivo'}">Subcategoría</span>
                             <span class="badge bg-danger-subtle text-danger" th:if="${product.onSale}">Oferta</span>
                             <span class="badge bg-success-subtle text-success" th:unless="${product.onSale}">En Stock</span>
                         </div>

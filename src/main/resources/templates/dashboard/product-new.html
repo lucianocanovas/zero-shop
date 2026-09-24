@@ -39,6 +39,11 @@
 
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-9">
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
                         <div class="card border-0 shadow-sm p-4">
                             <form method="post" th:action="@{/dashboard/products}">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
@@ -56,40 +61,31 @@
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-sm-6">
-                                        <label for="category" class="form-label">Categoría Principal</label>
-                                        <select id="category" name="categoryId" class="form-select" required>
-                                            <option value="" selected>Seleccione Categoría</option>
-                                            <option value="HOMBRES">Hombres</option>
-                                            <option value="MUJERES">Mujeres</option>
-                                            <option value="NINOS">Niños</option>
-                                            <option value="NINAS">Niñas</option>
-                                            <option value="UNISEX">Unisex</option>
+                                        <label for="subCategoryId" class="form-label">Categoría / Subcategoría</label>
+                                        <select id="subCategoryId" name="subCategoryId" class="form-select" required>
+                                            <option value="" selected>Seleccione Subcategoría...</option>
+                                            <option th:each="sub : ${subCategories}" 
+                                                    th:value="${sub.id}" 
+                                                    th:text="${(sub.category != null ? sub.category.name + ' - ' : '') + sub.name}">
+                                                Hombres - Calzado
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="subCategory" class="form-label">Subcategoría</label>
-                                        <select id="subCategory" name="subCategoryId" class="form-select">
-                                            <option value="" selected>Seleccione Subcategoría</option>
-                                            <option value="CALZADO">Calzado Deportivo</option>
-                                            <option value="ROPA">Indumentaria / Ropa</option>
-                                            <option value="ACCESORIOS">Accesorios y Equipamiento</option>
+                                        <label for="size" class="form-label">Talle</label>
+                                        <select id="size" name="size" class="form-select" required>
+                                            <option value="" selected>Seleccione Talle...</option>
+                                            <option th:each="s : ${sizes}" th:value="${s}" th:text="${s}">M</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="row g-3 mb-3">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-12">
                                         <label for="basePrice" class="form-label">Precio de Venta ($)</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-white">$</span>
                                             <input type="number" id="basePrice" name="basePrice" class="form-control" placeholder="18500.00" step="0.01" min="0" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label for="discount" class="form-label">Descuento de Oferta (%)</label>
-                                        <div class="input-group">
-                                            <input type="number" id="discount" name="discount" class="form-control" placeholder="0" min="0" max="100" value="0">
-                                            <span class="input-group-text bg-white">%</span>
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +97,7 @@
 
                                 <div class="mb-4">
                                     <label for="imageUrl" class="form-label">URL de Imagen Principal</label>
-                                    <input type="text" id="imageUrl" name="imageUrl" class="form-control" placeholder="/assets/products/shoes-1.jpg">
+                                    <input type="text" id="imageUrl" name="imageUrl" class="form-control" placeholder="/assets/product-placeholder.jpg">
                                     <div class="form-text small text-muted">Ruta relativa o enlace web con formato JPG, PNG o WEBP.</div>
                                 </div>
 
