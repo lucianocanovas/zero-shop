@@ -21,9 +21,11 @@ public interface SupplierRepository extends JpaRepository<Supplier, UUID> {
     }
 
     Optional<Supplier> findByIdAndDeletedFalse(UUID id);
+
     Optional<Supplier> findByNameIgnoreCaseAndDeletedFalse(String name);
+
     List<Supplier> findAllByDeletedFalse();
+
     boolean existsByNameIgnoreCase(String name);
 
 }
-

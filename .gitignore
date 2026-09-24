@@ -43,3 +43,6 @@ build/
 .DS_Store
 
 .ROUTE_INSTRUCTIONS.md
+
+### Application config ###
+src/main/resources/application.properties
