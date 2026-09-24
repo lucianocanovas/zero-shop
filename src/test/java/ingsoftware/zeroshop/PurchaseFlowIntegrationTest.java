@@ -45,6 +45,10 @@ public class PurchaseFlowIntegrationTest {
 
         // 2. Agregar producto al carrito del usuario cliente
         String username = "client@gmail.com";
+        SaleOrder initialCart = saleOrderService.getOrCreateCart(username);
+        for (OrderDetail d : saleOrderService.getOrderDetails(initialCart.getId())) {
+            saleOrderService.removeCartItem(username, d.getId());
+        }
         SaleOrder cart = saleOrderService.addProductToCart(username, product.getId(), 2);
 
         assertNotNull(cart, "El carrito no debe ser nulo");

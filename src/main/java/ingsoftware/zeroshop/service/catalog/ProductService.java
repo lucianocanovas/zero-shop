@@ -123,8 +123,25 @@ public class ProductService {
     }
 
     public Product createProduct(Product product, BigDecimal basePrice, UUID subCategoryId) {
-        if (product.getCode() != null && productRepository.findByCodeAndDeletedFalse(product.getCode().trim()).isPresent()) {
-            throw new IllegalArgumentException("Ya existe un producto con el código SKU: " + product.getCode());
+        if (product.getName() == null || product.getName().trim().isBlank()) {
+            throw new IllegalArgumentException("El nombre del producto no puede estar vacío");
+        }
+        if (product.getCode() == null || product.getCode().trim().isBlank()) {
+            throw new IllegalArgumentException("El código SKU no puede estar vacío");
+        }
+        if (product.getSize() == null) {
+            throw new IllegalArgumentException("Debe seleccionar un talle para el producto");
+        }
+        if (basePrice != null && basePrice.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("El precio de venta no puede ser negativo");
+        }
+
+        String trimmedCode = product.getCode().trim();
+        product.setCode(trimmedCode);
+        product.setName(product.getName().trim());
+
+        if (productRepository.findByCodeAndDeletedFalse(trimmedCode).isPresent()) {
+            throw new IllegalArgumentException("Ya existe un producto con el código SKU: " + trimmedCode);
         }
 
         if (subCategoryId != null) {
@@ -132,6 +149,9 @@ public class ProductService {
             product.setSubCategory(subCategory);
         }
 
+        if (product.getOnSale() == null) {
+            product.setOnSale(false);
+        }
         product.setDeleted(false);
         Product savedProduct = productRepository.save(product);
 
@@ -155,15 +175,29 @@ public class ProductService {
     public Product updateProduct(UUID id, Product formProduct, BigDecimal basePrice, UUID subCategoryId) {
         Product existing = findActiveById(id);
 
-        if (formProduct.getCode() != null && !existing.getCode().equalsIgnoreCase(formProduct.getCode().trim())) {
-            Optional<Product> duplicate = productRepository.findByCodeAndDeletedFalse(formProduct.getCode().trim());
-            if (duplicate.isPresent() && !duplicate.get().getId().equals(id)) {
-                throw new IllegalArgumentException("Ya existe otro producto con el código SKU: " + formProduct.getCode());
-            }
-            existing.setCode(formProduct.getCode().trim());
+        if (formProduct.getName() == null || formProduct.getName().trim().isBlank()) {
+            throw new IllegalArgumentException("El nombre del producto no puede estar vacío");
+        }
+        if (formProduct.getCode() == null || formProduct.getCode().trim().isBlank()) {
+            throw new IllegalArgumentException("El código SKU no puede estar vacío");
+        }
+        if (formProduct.getSize() == null) {
+            throw new IllegalArgumentException("Debe seleccionar un talle para el producto");
+        }
+        if (basePrice != null && basePrice.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("El precio de venta no puede ser negativo");
         }
 
-        existing.setName(formProduct.getName());
+        String newCode = formProduct.getCode().trim();
+        if (!existing.getCode().equalsIgnoreCase(newCode)) {
+            Optional<Product> duplicate = productRepository.findByCodeAndDeletedFalse(newCode);
+            if (duplicate.isPresent() && !duplicate.get().getId().equals(id)) {
+                throw new IllegalArgumentException("Ya existe otro producto con el código SKU: " + newCode);
+            }
+            existing.setCode(newCode);
+        }
+
+        existing.setName(formProduct.getName().trim());
         existing.setDescription(formProduct.getDescription());
         existing.setSize(formProduct.getSize());
         existing.setImageUrl(formProduct.getImageUrl());

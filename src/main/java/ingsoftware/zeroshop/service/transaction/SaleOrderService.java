@@ -301,7 +301,7 @@ public class SaleOrderService {
             order.setStatus(OrderStatus.PAID);
             saleOrderRepository.save(order);
 
-            paymentService.registerPayment(order, order.getTotalAmount(), PaymentMethod.CREDIT);
+            paymentService.registerPayment(order, order.getTotalAmount(), paymentMethod != null ? paymentMethod : PaymentMethod.CREDIT);
             decrementStockForOrder(order, details);
             sendOrderEmailNotification(order, details, username);
 

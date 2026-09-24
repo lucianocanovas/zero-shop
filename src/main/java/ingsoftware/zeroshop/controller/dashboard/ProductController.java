@@ -74,7 +74,7 @@ public class ProductController {
             productService.createProduct(product, basePrice, subCategoryId);
             redirectAttributes.addFlashAttribute("successMessage", "Producto creado exitosamente.");
             return "redirect:/dashboard/products";
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
             return "redirect:/dashboard/products/new";
         }
@@ -92,7 +92,7 @@ public class ProductController {
             productService.updateProduct(id, product, basePrice, subCategoryId);
             redirectAttributes.addFlashAttribute("successMessage", "Producto actualizado exitosamente.");
             return "redirect:/dashboard/products";
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
             return "redirect:/dashboard/products/" + id;
         }
@@ -105,7 +105,7 @@ public class ProductController {
         try {
             productService.deleteProduct(id);
             redirectAttributes.addFlashAttribute("successMessage", "Producto eliminado exitosamente.");
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
         return "redirect:/dashboard/products";
