@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Producto - Zero Shop Staff</title>
+    <title>Producto - Zero Shop Staff</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -29,11 +29,17 @@
                 <!-- Migas de pan y Título -->
                 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4 pb-2 border-bottom">
                     <div>
-                        <h1 class="h4 fw-bold text-dark mb-0">Editar Producto</h1>
-                        <p class="text-muted small mb-0">Actualiza especificaciones, categorías, descripción y precio del producto</p>
+                        <div sec:authorize="hasRole('ADMIN')">
+                            <h1 class="h4 fw-bold text-dark mb-0">Editar Producto</h1>
+                            <p class="text-muted small mb-0">Actualiza especificaciones, categorías, descripción y precio del producto</p>
+                        </div>
+                        <div sec:authorize="!hasRole('ADMIN')">
+                            <h1 class="h4 fw-bold text-dark mb-0">Detalle del Producto</h1>
+                            <p class="text-muted small mb-0">Visualización de especificaciones y precio del artículo (Solo Lectura)</p>
+                        </div>
                     </div>
                     <div class="d-flex gap-2">
-                        <a th:href="@{/dashboard/products/{id}/prices(id=${product != null ? product.id : '00000000-0000-0000-0000-000000000001'})}" class="btn btn-outline-primary btn-sm">
+                        <a th:href="@{/dashboard/products/{id}/prices(id=${product != null ? product.id : ''})}" class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-currency-dollar me-1"></i>Historial de Precios
                         </a>
                         <a th:href="@{/dashboard/products}" class="btn btn-outline-secondary btn-sm">
@@ -44,75 +50,91 @@
 
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-9">
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
                         <div class="card border-0 shadow-sm p-4">
-                            <form method="post" th:action="@{/dashboard/products/{id}(id=${product != null ? product.id : '00000000-0000-0000-0000-000000000001'})}">
+                            <form method="post" th:action="@{/dashboard/products/{id}(id=${product.id})}">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <input type="hidden" name="_method" value="PUT">
 
-                                <div class="row g-3 mb-3">
-                                    <div class="col-sm-4">
-                                        <label for="code" class="form-label">Código (SKU)</label>
-                                        <input type="text" id="code" name="code" class="form-control" th:value="${product?.code}" placeholder="ZR-1049" required>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <label for="name" class="form-label">Nombre del Producto</label>
-                                        <input type="text" id="name" name="name" class="form-control" th:value="${product?.name}" placeholder="Ej: Zapatillas Running Zero Pro" required>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 mb-3">
-                                    <div class="col-sm-6">
-                                        <label for="category" class="form-label">Categoría Principal</label>
-                                        <select id="category" name="categoryId" class="form-select" required>
-                                            <option value="">Seleccione Categoría</option>
-                                            <option value="HOMBRES" th:selected="${product?.category?.name == 'Hombres' or product?.category?.name == 'HOMBRES'}">Hombres</option>
-                                            <option value="MUJERES" th:selected="${product?.category?.name == 'Mujeres' or product?.category?.name == 'MUJERES'}">Mujeres</option>
-                                            <option value="NINOS" th:selected="${product?.category?.name == 'Niños' or product?.category?.name == 'NINOS'}">Niños</option>
-                                            <option value="NINAS" th:selected="${product?.category?.name == 'Niñas' or product?.category?.name == 'NINAS'}">Niñas</option>
-                                            <option value="UNISEX" th:selected="${product?.category?.name == 'Unisex' or product?.category?.name == 'UNISEX'}">Unisex</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label for="subCategory" class="form-label">Subcategoría</label>
-                                        <select id="subCategory" name="subCategoryId" class="form-select">
-                                            <option value="">Seleccione Subcategoría</option>
-                                            <option value="CALZADO" selected>Calzado Deportivo</option>
-                                            <option value="ROPA">Indumentaria / Ropa</option>
-                                            <option value="ACCESORIOS">Accesorios y Equipamiento</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 mb-3">
-                                    <div class="col-sm-6">
-                                        <label for="basePrice" class="form-label">Precio de Venta Actual ($)</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white">$</span>
-                                            <input type="number" id="basePrice" name="basePrice" class="form-control" th:value="${product != null ? '24999.00' : '18500.00'}" step="0.01" min="0" required>
+                                <fieldset th:disabled="${!#authorization.expression('hasRole(''ADMIN'')')}">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-4">
+                                            <label for="code" class="form-label">Código (SKU)</label>
+                                            <input type="text" id="code" name="code" class="form-control" th:value="${product?.code}" placeholder="ZR-1049" required>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <label for="name" class="form-label">Nombre del Producto</label>
+                                            <input type="text" id="name" name="name" class="form-control" th:value="${product?.name}" placeholder="Ej: Zapatillas Running Zero Pro" required>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <label for="discount" class="form-label">Descuento de Oferta (%)</label>
-                                        <div class="input-group">
-                                            <input type="number" id="discount" name="discount" class="form-control" th:value="${product != null ? '10' : '0'}" min="0" max="100">
-                                            <span class="input-group-text bg-white">%</span>
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-6">
+                                            <label for="subCategoryId" class="form-label">Categoría / Subcategoría</label>
+                                            <select id="subCategoryId" name="subCategoryId" class="form-select" required>
+                                                <option value="">Seleccione Subcategoría...</option>
+                                                <option th:each="sub : ${subCategories}" 
+                                                        th:value="${sub.id}" 
+                                                        th:selected="${product?.subCategory?.id == sub.id}"
+                                                        th:text="${(sub.category != null ? sub.category.name + ' - ' : '') + sub.name}">
+                                                    Hombres - Calzado
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="size" class="form-label">Talle</label>
+                                            <select id="size" name="size" class="form-select" required>
+                                                <option value="">Seleccione Talle...</option>
+                                                <option th:each="s : ${sizes}" 
+                                                        th:value="${s}" 
+                                                        th:selected="${product?.size == s}" 
+                                                        th:text="${s}">M</option>
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="mb-3">
-                                    <label for="description" class="form-label">Descripción</label>
-                                    <textarea id="description" name="description" rows="3" class="form-control" th:text="${product?.description}" placeholder="Detalles del producto..."></textarea>
-                                </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-12">
+                                            <label for="basePrice" class="form-label">Precio de Venta ($)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white">$</span>
+                                                <input type="number" id="basePrice" name="basePrice" class="form-control" th:value="${product?.currentPrice}" step="0.01" min="0" required>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="mb-4">
-                                    <label for="imageUrl" class="form-label">URL de Imagen Principal</label>
-                                    <input type="text" id="imageUrl" name="imageUrl" class="form-control" th:value="${product != null and !product.images.empty ? product.images[0].url : '/assets/products/shoes-1.jpg'}">
-                                </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Descripción</label>
+                                        <textarea id="description" name="description" rows="3" class="form-control" th:text="${product?.description}" placeholder="Detalles del producto..."></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="imageUrl" class="form-label">URL de Imagen Principal</label>
+                                        <input type="text" id="imageUrl" name="imageUrl" class="form-control" th:value="${product?.imageUrl}" placeholder="/assets/product-placeholder.jpg">
+                                    </div>
+
+                                    <div class="mb-3" th:if="${product?.imageUrl != null and !product.imageUrl.empty}">
+                                        <label class="form-label text-muted small">Vista Previa:</label>
+                                        <div>
+                                            <img th:src="${product.imageUrl}" class="img-thumbnail" style="max-height: 120px;" alt="Vista previa">
+                                        </div>
+                                    </div>
+                                </fieldset>
 
                                 <div class="d-flex justify-content-end gap-2 pt-3 border-top">
-                                    <a th:href="@{/dashboard/products}" class="btn btn-outline-secondary">Cancelar</a>
-                                    <button type="submit" class="btn btn-primary px-4">
+                                    <a th:href="@{/dashboard/products}" class="btn btn-outline-secondary">
+                                        <span sec:authorize="hasRole('ADMIN')">Cancelar</span>
+                                        <span sec:authorize="!hasRole('ADMIN')">Volver</span>
+                                    </a>
+                                    <button sec:authorize="hasRole('ADMIN')" type="submit" class="btn btn-primary px-4">
                                         <i class="bi bi-check-lg me-1"></i>Guardar Cambios
                                     </button>
                                 </div>

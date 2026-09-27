@@ -25,6 +25,9 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, UUID> 
     Optional<SubCategory> findByNameIgnoreCaseAndCategoryId(String name, UUID categoryId);
     Optional<SubCategory> findByNameIgnoreCaseAndCategoryIdAndDeletedFalse(String name, UUID categoryId);
     List<SubCategory> findByCategoryIdAndDeletedFalse(UUID categoryId);
+    @org.springframework.data.jpa.repository.Query("SELECT sc FROM SubCategory sc LEFT JOIN FETCH sc.category WHERE sc.deleted = false")
+    List<SubCategory> findAllWithCategoryByDeletedFalse();
+
     List<SubCategory> findAllByDeletedFalse();
 
 }

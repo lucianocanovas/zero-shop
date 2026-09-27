@@ -8,9 +8,13 @@ import lombok.*;
 @Entity
 @Table(name = "categories")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Category {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
 
@@ -20,6 +24,7 @@ public class Category {
     @Column (name = "description", nullable = true)
     private String description;
 
+    @Builder.Default
     @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;
 

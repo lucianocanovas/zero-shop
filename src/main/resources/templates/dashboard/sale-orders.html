@@ -53,43 +53,40 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="fw-bold text-dark">#ZR-89312</td>
-                                    <td class="small text-muted">22/09/2026</td>
-                                    <td>Juan Pérez</td>
-                                    <td class="fw-bold text-primary">$24.990,00</td>
-                                    <td><i class="bi bi-wallet-fill text-info me-1"></i>Mercado Pago</td>
-                                    <td><span class="badge bg-primary-subtle text-primary">PENDIENTE DE ENVIO</span></td>
+                                <tr th:each="order : ${orders}" th:if="${orders != null and !orders.empty}">
+                                    <td class="fw-bold text-dark" th:text="'#' + ${#strings.substring(order.id.toString(), 0, 8)}">#ZR-89312</td>
+                                    <td class="small text-muted" th:text="${order.date != null ? #temporals.format(order.date, 'dd/MM/yyyy HH:mm') : '-'}">22/09/2026</td>
+                                    <td>
+                                        <span class="fw-semibold text-dark" th:text="${order.client != null ? (order.client.firstName + ' ' + order.client.lastName) : 'Cliente Anónimo'}">Juan Pérez</span>
+                                        <div class="text-muted small" th:if="${order.office != null}" th:text="'Sucursal: ' + ${order.office.name}">Sucursal</div>
+                                    </td>
+                                    <td class="fw-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$24.990,00</td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-wallet2 text-info me-1"></i>Pago Registrado
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" 
+                                              th:classappend="${order.status.name() == 'PENDING_PAYMENT' ? 'bg-warning text-dark' : 
+                                                              (order.status.name() == 'PAID' ? 'bg-success' : 
+                                                              (order.status.name() == 'PENDING_SHIPPING' ? 'bg-primary' : 
+                                                              (order.status.name() == 'PENDING_DELIVERY' ? 'bg-info text-dark' : 
+                                                              (order.status.name() == 'DELIVERED' ? 'bg-secondary' : 'bg-danger'))))}"
+                                              th:text="${order.status.displayName}">
+                                            PAGO REALIZADO
+                                        </span>
+                                    </td>
                                     <td class="text-end">
-                                        <a th:href="@{/dashboard/sale-orders/00000000-0000-0000-0000-000000000001}" class="btn btn-outline-secondary btn-sm">
+                                        <a th:href="@{/dashboard/sale-orders/{id}(id=${order.id})}" class="btn btn-outline-primary btn-sm">
                                             <i class="bi bi-eye me-1"></i>Gestionar
                                         </a>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="fw-bold text-dark">#ZR-89311</td>
-                                    <td class="small text-muted">21/09/2026</td>
-                                    <td>María González</td>
-                                    <td class="fw-bold text-primary">$18.500,00</td>
-                                    <td><i class="bi bi-cash me-1 text-success"></i>Efectivo</td>
-                                    <td><span class="badge bg-warning-subtle text-warning-emphasis">PENDIENTE DE PAGO</span></td>
-                                    <td class="text-end">
-                                        <a th:href="@{/dashboard/sale-orders/00000000-0000-0000-0000-000000000002}" class="btn btn-outline-secondary btn-sm">
-                                            <i class="bi bi-eye me-1"></i>Gestionar
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold text-dark">#ZR-89310</td>
-                                    <td class="small text-muted">20/09/2026</td>
-                                    <td>Carlos López</td>
-                                    <td class="fw-bold text-primary">$32.000,00</td>
-                                    <td><i class="bi bi-credit-card me-1 text-primary"></i>Tarjeta</td>
-                                    <td><span class="badge bg-success-subtle text-success">ENTREGADO</span></td>
-                                    <td class="text-end">
-                                        <a th:href="@{/dashboard/sale-orders/00000000-0000-0000-0000-000000000003}" class="btn btn-outline-secondary btn-sm">
-                                            <i class="bi bi-eye me-1"></i>Gestionar
-                                        </a>
+                                <tr th:if="${orders == null or orders.empty}">
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-2 d-block mb-1"></i>
+                                        No hay órdenes de venta confirmadas aún.
                                     </td>
                                 </tr>
                             </tbody>

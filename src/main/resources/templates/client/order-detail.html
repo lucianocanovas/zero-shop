@@ -26,70 +26,88 @@
 
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
             <div>
-                <h1 class="h3 fw-bold text-dark mb-1">Seguimiento de Pedido #ZR-89312</h1>
-                <p class="text-muted small mb-0">Compra realizada el 22 de Septiembre de 2026</p>
+                <h1 class="h3 fw-bold text-dark mb-1" th:text="'Seguimiento de Pedido #' + ${#strings.substring(order.id.toString(), 0, 8)}">Seguimiento de Pedido</h1>
+                <p class="text-muted small mb-0" th:text="'Compra realizada el ' + ${#temporals.format(order.date, 'dd/MM/yyyy HH:mm')}">Compra realizada</p>
             </div>
             <div class="d-flex gap-2">
-                <form method="post" th:action="@{/orders/00000000-0000-0000-0000-000000000001}">
+                <form th:if="${order.status.name() != 'DELIVERED' and order.status.name() != 'CANCELLED'}"
+                      method="post" th:action="@{/orders/{id}/cancel(id=${order.id})}">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Confirmas que deseas anular esta compra?')">
                         <i class="bi bi-x-circle me-1"></i>Anular Compra
                     </button>
                 </form>
                 <a th:href="@{/orders}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left me-1"></i>Volver
+                    <i class="bi bi-arrow-left me-1"></i>Volver a Mis Compras
                 </a>
             </div>
         </div>
 
+        <!-- Alerta especial si está cancelado -->
+        <div th:if="${order.status.name() == 'CANCELLED'}" class="alert alert-danger mb-4">
+            <i class="bi bi-x-octagon-fill me-2"></i>Esta compra ha sido <strong>ANULADA / CANCELADA</strong>.
+        </div>
+
         <!-- 1. Línea de Tiempo Oficial del TP Integrador: 5 Estados -->
-        <div class="card border-0 shadow-sm p-4 mb-4">
-            <h5 class="fw-bold mb-4">Estado del Seguimiento</h5>
+        <div class="card border-0 shadow-sm p-4 mb-4" th:if="${order.status.name() != 'CANCELLED'}">
+            <h5 class="fw-bold mb-4">Estado del Seguimiento Oficial</h5>
             <div class="row g-2 text-center">
                 <!-- 1. PENDIENTE DE PAGO -->
                 <div class="col">
-                    <div class="rounded-circle bg-success text-white mx-auto d-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">
+                    <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2" 
+                         style="width: 40px; height: 40px;"
+                         th:classappend="${order.status.name() == 'PENDING_PAYMENT' ? 'bg-primary text-white shadow' : 'bg-success text-white'}">
                         <i class="bi bi-check-lg"></i>
                     </div>
                     <div class="small fw-semibold text-dark">Pendiente de Pago</div>
-                    <span class="text-muted" style="font-size: 0.7rem;">Completado</span>
+                    <span class="text-muted" style="font-size: 0.7rem;" th:text="${order.status.name() == 'PENDING_PAYMENT' ? 'Esperando Pago' : 'Completado'}">Completado</span>
                 </div>
 
                 <!-- 2. PAGO REALIZADO -->
                 <div class="col">
-                    <div class="rounded-circle bg-success text-white mx-auto d-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">
+                    <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2" 
+                         style="width: 40px; height: 40px;"
+                         th:classappend="${order.status.name() == 'PAID' ? 'bg-primary text-white shadow' : 
+                                         (order.status.name() == 'PENDING_PAYMENT' ? 'bg-light text-muted border' : 'bg-success text-white')}">
                         <i class="bi bi-wallet2"></i>
                     </div>
-                    <div class="small fw-semibold text-dark">Pago Realizado</div>
-                    <span class="text-muted" style="font-size: 0.7rem;">Mercado Pago</span>
+                    <div class="small fw-semibold" th:classappend="${order.status.name() == 'PAID' ? 'text-primary fw-bold' : 'text-dark'}">Pago Realizado</div>
+                    <span class="text-muted" style="font-size: 0.7rem;" th:text="${order.status.name() == 'PAID' ? 'Acreditado' : (order.status.name() == 'PENDING_PAYMENT' ? 'Pendiente' : 'Completado')}">Acreditado</span>
                 </div>
 
-                <!-- 3. PENDIENTE DE ENVIO (Estado Actual) -->
+                <!-- 3. PENDIENTE DE ENVIO -->
                 <div class="col">
-                    <div class="rounded-circle bg-primary text-white mx-auto d-flex align-items-center justify-content-center mb-2 shadow" style="width: 40px; height: 40px;">
+                    <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2" 
+                         style="width: 40px; height: 40px;"
+                         th:classappend="${order.status.name() == 'PENDING_SHIPPING' ? 'bg-primary text-white shadow' : 
+                                         (order.status.name() == 'PENDING_PAYMENT' or order.status.name() == 'PAID' ? 'bg-light text-muted border' : 'bg-success text-white')}">
                         <i class="bi bi-box-seam"></i>
                     </div>
-                    <div class="small fw-bold text-primary">Pendiente de Envío</div>
-                    <span class="badge bg-primary-subtle text-primary" style="font-size: 0.7rem;">En Almacén</span>
+                    <div class="small fw-semibold" th:classappend="${order.status.name() == 'PENDING_SHIPPING' ? 'text-primary fw-bold' : 'text-dark'}">Pendiente de Envío</div>
+                    <span class="text-muted" style="font-size: 0.7rem;" th:text="${order.status.name() == 'PENDING_SHIPPING' ? 'En Preparación' : (order.status.name() == 'PENDING_DELIVERY' or order.status.name() == 'DELIVERED' ? 'Completado' : 'Pendiente')}">En Almacén</span>
                 </div>
 
                 <!-- 4. PENDIENTE DE ENTREGA -->
                 <div class="col">
-                    <div class="rounded-circle bg-light text-muted border mx-auto d-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">
+                    <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2" 
+                         style="width: 40px; height: 40px;"
+                         th:classappend="${order.status.name() == 'PENDING_DELIVERY' ? 'bg-primary text-white shadow' : 
+                                         (order.status.name() == 'DELIVERED' ? 'bg-success text-white' : 'bg-light text-muted border')}">
                         <i class="bi bi-truck"></i>
                     </div>
-                    <div class="small fw-semibold text-muted">Pendiente de Entrega</div>
-                    <span class="text-muted" style="font-size: 0.7rem;">Próximamente</span>
+                    <div class="small fw-semibold" th:classappend="${order.status.name() == 'PENDING_DELIVERY' ? 'text-primary fw-bold' : 'text-dark'}">Pendiente de Entrega</div>
+                    <span class="text-muted" style="font-size: 0.7rem;" th:text="${order.status.name() == 'PENDING_DELIVERY' ? 'En Camino' : (order.status.name() == 'DELIVERED' ? 'Completado' : 'Pendiente')}">En Camino</span>
                 </div>
 
                 <!-- 5. ENTREGADO -->
                 <div class="col">
-                    <div class="rounded-circle bg-light text-muted border mx-auto d-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">
+                    <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2" 
+                         style="width: 40px; height: 40px;"
+                         th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success text-white shadow' : 'bg-light text-muted border'}">
                         <i class="bi bi-house-check"></i>
                     </div>
-                    <div class="small fw-semibold text-muted">Entregado</div>
-                    <span class="text-muted" style="font-size: 0.7rem;">Destino Final</span>
+                    <div class="small fw-semibold" th:classappend="${order.status.name() == 'DELIVERED' ? 'text-success fw-bold' : 'text-muted'}">Entregado</div>
+                    <span class="text-muted" style="font-size: 0.7rem;" th:text="${order.status.name() == 'DELIVERED' ? 'Entregado al Cliente' : 'Pendiente'}">Destino Final</span>
                 </div>
             </div>
         </div>
@@ -104,32 +122,29 @@
                             <thead>
                                 <tr class="text-muted">
                                     <th>Producto</th>
-                                    <th>Talle</th>
                                     <th>Precio</th>
                                     <th class="text-center">Cant.</th>
                                     <th class="text-end">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr th:each="detail : ${details}">
                                     <td>
-                                        <div class="fw-semibold text-dark">Zapatillas Running Zero Pro</div>
-                                        <small class="text-muted">SKU: ZR-1049 | Línea Hombres</small>
+                                        <div class="fw-semibold text-dark" th:text="${detail.product.name}">Zapatillas Running Zero Pro</div>
                                     </td>
-                                    <td><span class="badge bg-light text-dark border">Talle M</span></td>
-                                    <td>$24.990,00</td>
-                                    <td class="text-center">1</td>
-                                    <td class="text-end fw-bold">$24.990,00</td>
+                                    <td th:text="'$' + ${#numbers.formatDecimal(detail.unitPrice, 1, 2)}">$24.990,00</td>
+                                    <td class="text-center" th:text="${detail.quantity}">1</td>
+                                    <td class="text-end fw-bold" th:text="'$' + ${#numbers.formatDecimal(detail.total, 1, 2)}">$24.990,00</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="4" class="text-end border-0 pt-3">Envío:</th>
+                                    <th colspan="3" class="text-end border-0 pt-3">Envío en Mendoza:</th>
                                     <td class="text-end border-0 pt-3 text-success fw-semibold">Gratis</td>
                                 </tr>
                                 <tr>
-                                    <th colspan="4" class="text-end border-0">Total Abonado:</th>
-                                    <td class="text-end border-0 fw-bold fs-6 text-primary">$24.990,00</td>
+                                    <th colspan="3" class="text-end border-0">Total:</th>
+                                    <td class="text-end border-0 fw-bold fs-6 text-primary" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$24.990,00</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -140,22 +155,28 @@
             <!-- 3. Dirección Mendoza y Pago -->
             <div class="col-12 col-lg-4">
                 <div class="card border-0 shadow-sm p-4 mb-3">
-                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-geo-alt me-2 text-primary"></i>Destino en Mendoza</h6>
+                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-geo-alt me-2 text-primary"></i>Destino y Sucursal en Mendoza</h6>
                     <div class="small text-muted">
-                        <div class="text-dark fw-semibold mb-1">Juan Pérez</div>
-                        <div>Av. San Martín 1250, Piso 2 Depto B</div>
-                        <div>Departamento: Capital • Localidad: Mendoza</div>
-                        <div>Código Postal: M5500</div>
-                        <div class="mt-1"><i class="bi bi-telephone me-1"></i>+54 9 261 455-1234</div>
+                        <div class="text-dark fw-semibold mb-1" th:text="${order.client != null ? (order.client.firstName + ' ' + order.client.lastName) : 'Cliente'}">Juan Pérez</div>
+                        <div th:if="${order.shippingAddress != null}">
+                            <div th:text="${order.shippingAddress.street + ' ' + order.shippingAddress.number}">Av. San Martín 1250</div>
+                            <div th:text="'Código Postal: ' + ${order.shippingAddress.zipCode}">CP M5500</div>
+                            <div class="mt-1" th:if="${order.shippingAddress.observations != null}" th:text="${order.shippingAddress.observations}">Tel</div>
+                        </div>
+                        <div class="mt-2 pt-2 border-top" th:if="${order.office != null}">
+                            <strong class="text-dark">Sucursal: </strong><span th:text="${order.office.name}">Mendoza Centro</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="card border-0 shadow-sm p-4">
                     <h6 class="fw-bold text-dark mb-3"><i class="bi bi-wallet2 me-2 text-info"></i>Información de Pago</h6>
                     <div class="small text-muted">
-                        <div class="mb-1"><strong class="text-dark">Medio:</strong> Mercado Pago</div>
-                        <div class="mb-2"><strong class="text-dark">Estado:</strong> <span class="badge bg-success-subtle text-success">PAGO REALIZADO</span></div>
-                        <div><strong class="text-dark">Comprobante:</strong> Enviado al correo del cliente</div>
+                        <div class="mb-2">
+                            <strong class="text-dark">Estado Oficial:</strong> 
+                            <span class="badge" th:classappend="${order.status.name() == 'PAID' ? 'bg-success' : 'bg-warning text-dark'}" th:text="${order.status.displayName}">PAGO REALIZADO</span>
+                        </div>
+                        <div><strong class="text-dark">Comprobante:</strong> Notificación enviada al correo del cliente</div>
                     </div>
                 </div>
             </div>

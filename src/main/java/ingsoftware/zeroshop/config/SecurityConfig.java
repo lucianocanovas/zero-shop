@@ -44,7 +44,8 @@ public class SecurityConfig {
                     "/contact",
                     "/products/**",
                     "/categories/**",
-                    "/offers"
+                    "/offers",
+                    "/checkout/mp/**"
                 ).permitAll()
 
                 // Rutas públicas de autenticación y registro
@@ -58,7 +59,17 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/dashboard/admin/**",
                     "/dashboard/users/**",
-                    "/dashboard/offices/**"
+                    "/dashboard/offices/**",
+                    "/dashboard/products/new"
+                ).hasRole(Role.ADMIN.name())
+                .requestMatchers(
+                    org.springframework.http.HttpMethod.POST, "/dashboard/products", "/dashboard/products/**"
+                ).hasRole(Role.ADMIN.name())
+                .requestMatchers(
+                    org.springframework.http.HttpMethod.PUT, "/dashboard/products/**"
+                ).hasRole(Role.ADMIN.name())
+                .requestMatchers(
+                    org.springframework.http.HttpMethod.DELETE, "/dashboard/products/**"
                 ).hasRole(Role.ADMIN.name())
 
                 // Rutas exclusivas para empleados dentro del dashboard

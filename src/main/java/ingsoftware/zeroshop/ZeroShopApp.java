@@ -56,9 +56,40 @@ package ingsoftware.zeroshop;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
 @SpringBootApplication
 public class ZeroShopApp {
+
+    static {
+        loadDotEnv();
+    }
+
     public static void main(String[] args) {
+        loadDotEnv();
         SpringApplication.run(ZeroShopApp.class, args);
+    }
+
+    public static void loadDotEnv() {
+        try {
+            Path envPath = Path.of(".env");
+            if (Files.exists(envPath)) {
+                List<String> lines = Files.readAllLines(envPath);
+                for (String line : lines) {
+                    line = line.trim();
+                    if (!line.isEmpty() && !line.startsWith("#") && line.contains("=")) {
+                        int eq = line.indexOf('=');
+                        String key = line.substring(0, eq).trim();
+                        String value = line.substring(eq + 1).trim();
+                        if (System.getProperty(key) == null && System.getenv(key) == null) {
+                            System.setProperty(key, value);
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
     }
 }

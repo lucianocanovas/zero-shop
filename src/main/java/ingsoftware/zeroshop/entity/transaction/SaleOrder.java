@@ -28,7 +28,7 @@ public class SaleOrder extends Order {
     private Employee employee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "office_id", nullable = false)
+    @JoinColumn(name = "office_id")
     private Office office;
 
     @ManyToOne(fetch = FetchType.LAZY)

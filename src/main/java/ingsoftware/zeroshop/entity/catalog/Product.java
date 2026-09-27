@@ -1,5 +1,9 @@
 package ingsoftware.zeroshop.entity.catalog;
 
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import jakarta.persistence.*;
@@ -33,6 +37,9 @@ public class Product {
     @Column(name = "size", nullable = false)
     private Size size;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Builder.Default
     @Column(name = "on_sale", nullable = false)
     private Boolean onSale = false;
@@ -44,5 +51,23 @@ public class Product {
     @Builder.Default
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+
+    @Transient
+    private BigDecimal currentPrice;
+
+    @Transient
+    private Integer stock;
+
+    public Category getCategory() {
+        return subCategory != null ? subCategory.getCategory() : null;
+    }
+
+    @Transient
+    public List<Map<String, String>> getImages() {
+        if (imageUrl != null && !imageUrl.isBlank()) {
+            return List.of(Map.of("url", imageUrl));
+        }
+        return Collections.emptyList();
+    }
     
 }
