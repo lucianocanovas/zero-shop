@@ -56,6 +56,7 @@ public abstract class Person {
     )
     private java.util.Collection<Address> address;
     
+    @Builder.Default
     @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;
 

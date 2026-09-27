@@ -6,5 +6,9 @@ public enum Size {
     M,
     L,
     XL,
-    XXL
+    XXL;
+
+    public String getDisplayName() {
+        return this.name();
+    }
 }

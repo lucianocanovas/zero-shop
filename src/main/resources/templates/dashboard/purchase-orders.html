@@ -42,6 +42,16 @@
                     </div>
                 </div>
 
+                <!-- Alertas Flash -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <!-- Tabla de Órdenes de Compra -->
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="table-responsive">
@@ -51,38 +61,54 @@
                                     <th>Nº Pedido</th>
                                     <th>Fecha</th>
                                     <th>Proveedor</th>
+                                    <th>Sucursal Destino</th>
                                     <th>Costo Total</th>
                                     <th>Estado</th>
                                     <th class="text-end">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="fw-bold text-dark">#OC-104</td>
-                                    <td class="small text-muted">22/09/2026</td>
-                                    <td>Distribuidora Textil S.A.</td>
-                                    <td class="fw-bold text-dark">$180.000,00</td>
-                                    <td><span class="badge bg-warning-subtle text-warning-emphasis">Solicitada</span></td>
+                                <tr th:if="${#lists.isEmpty(orders)}">
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                                        No hay órdenes de compra registradas actualmente.
+                                    </td>
+                                </tr>
+                                <tr th:each="order : ${orders}">
+                                    <td class="fw-bold text-dark" th:text="'#OC-' + ${#strings.substring(order.id.toString(), 0, 8).toUpperCase()}">#OC-104</td>
+                                    <td class="small text-muted" th:text="${order.date != null ? #temporals.format(order.date, 'dd/MM/yyyy HH:mm') : '-'}">22/09/2026</td>
+                                    <td th:text="${order.supplier != null ? order.supplier.name : 'Sin Proveedor'}">Distribuidora Textil S.A.</td>
+                                    <td class="small text-muted" th:text="${order.office != null ? order.office.name : 'Sin Sucursal'}">Sucursal Central</td>
+                                    <td class="fw-bold text-dark" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 'POINT', 2, 'COMMA')}">$180.000,00</td>
+                                    <td>
+                                        <span th:if="${order.status != null and order.status.name() == 'DELIVERED'}" class="badge bg-success-subtle text-success">
+                                            <i class="bi bi-check2-circle me-1"></i>Mercadería Recibida
+                                        </span>
+                                        <span th:if="${order.status != null and order.status.name() == 'PENDING_DELIVERY'}" class="badge bg-warning-subtle text-warning-emphasis">
+                                            <i class="bi bi-hourglass-split me-1"></i>Solicitada
+                                        </span>
+                                        <span th:if="${order.status != null and order.status.name() == 'CANCELLED'}" class="badge bg-danger-subtle text-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Cancelada
+                                        </span>
+                                        <span th:if="${order.status != null and order.status.name() != 'DELIVERED' and order.status.name() != 'PENDING_DELIVERY' and order.status.name() != 'CANCELLED'}"
+                                              class="badge bg-secondary-subtle text-secondary" th:text="${order.status.displayName}">
+                                            En Proceso
+                                        </span>
+                                    </td>
                                     <td class="text-end">
                                         <div class="btn-group btn-group-sm">
-                                            <a th:href="@{/dashboard/purchase-orders/00000000-0000-0000-0000-000000000001}" class="btn btn-outline-secondary" title="Detalle"><i class="bi bi-eye"></i></a>
-                                            <form method="post" th:action="@{/dashboard/purchase-orders/00000000-0000-0000-0000-000000000001/receive}" class="d-inline">
+                                            <a th:href="@{/dashboard/purchase-orders/{id}(id=${order.id})}" class="btn btn-outline-secondary" title="Detalle">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <form th:if="${order.status != null and order.status.name() != 'DELIVERED' and order.status.name() != 'CANCELLED'}"
+                                                  method="post" th:action="@{/dashboard/purchase-orders/{id}/receive(id=${order.id})}" class="d-inline">
                                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                                <button type="submit" class="btn btn-outline-success" title="Recibir Mercadería (Sumar Stock)" onclick="return confirm('¿Confirmar recepción de mercadería? Se sumará automáticamente al stock.')">
+                                                <button type="submit" class="btn btn-outline-success" title="Recibir Mercadería (Sumar Stock)"
+                                                        onclick="return confirm('¿Confirmar recepción de mercadería? Se sumará automáticamente al stock del inventario.')">
                                                     <i class="bi bi-box-arrow-in-down me-1"></i>Recibir
                                                 </button>
                                             </form>
                                         </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold text-dark">#OC-103</td>
-                                    <td class="small text-muted">10/09/2026</td>
-                                    <td>Importaciones Electrónica Express</td>
-                                    <td class="fw-bold text-dark">$320.000,00</td>
-                                    <td><span class="badge bg-success-subtle text-success">Mercadería Recibida</span></td>
-                                    <td class="text-end">
-                                        <a th:href="@{/dashboard/purchase-orders/00000000-0000-0000-0000-000000000002}" class="btn btn-outline-secondary btn-sm" title="Detalle"><i class="bi bi-eye"></i> Detalle</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -112,19 +138,17 @@
                         
                         <div class="row g-3 mb-3">
                             <div class="col-sm-6">
-                                <label for="providerId" class="form-label">Proveedor</label>
-                                <select id="providerId" name="providerId" class="form-select" required>
-                                    <option value="">Seleccione Proveedor</option>
-                                    <option value="1">Distribuidora Textil S.A. (WhatsApp: +54 9 11 4444-1234)</option>
-                                    <option value="2">Indumentaria Deportiva Mendoza (WhatsApp: +54 9 261 488-9900)</option>
-                                    <option value="3">Importaciones Cuyo S.R.L. (WhatsApp: +54 9 261 511-2233)</option>
+                                <label for="supplierId" class="form-label">Proveedor</label>
+                                <select id="supplierId" name="supplierId" class="form-select" required>
+                                    <option value="" disabled selected>Seleccione Proveedor</option>
+                                    <option th:each="sup : ${suppliers}" th:value="${sup.id}" th:text="${sup.name + (sup.cuit != null ? ' (CUIT: ' + sup.cuit + ')' : '')}">Distribuidora Textil S.A.</option>
                                 </select>
                             </div>
                             <div class="col-sm-6">
                                 <label for="officeId" class="form-label">Sucursal de Destino</label>
                                 <select id="officeId" name="officeId" class="form-select" required>
-                                    <option value="1">Sucursal Central (Mendoza)</option>
-                                    <option value="2">Sucursal Norte (Mendoza)</option>
+                                    <option value="" disabled selected>Seleccione Sucursal</option>
+                                    <option th:each="off : ${offices}" th:value="${off.id}" th:text="${off.name}">Sucursal Central (Mendoza)</option>
                                 </select>
                             </div>
                         </div>
@@ -133,29 +157,27 @@
                             <div class="col-sm-6">
                                 <label for="productId" class="form-label">Producto</label>
                                 <select id="productId" name="productId" class="form-select" required>
-                                    <option value="1">Zapatillas Running Zero Pro (SKU: ZR-1049)</option>
-                                    <option value="2">Campera Deportiva Rompeviento (SKU: ZR-2081)</option>
-                                    <option value="3">Calza Deportiva Tiro Alto (SKU: ZR-4491)</option>
-                                    <option value="4">Mochila Sport Backpack Zero (SKU: ZR-3310)</option>
+                                    <option value="" disabled selected>Seleccione Producto</option>
+                                    <option th:each="prod : ${products}" th:value="${prod.id}" th:text="${prod.name + (prod.code != null ? ' (Código: ' + prod.code + ')' : '')}">Zapatillas Running Zero Pro</option>
                                 </select>
                             </div>
                             <div class="col-sm-3">
                                 <label for="quantity" class="form-label">Cantidad</label>
-                                <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="15" required>
+                                <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="10" required>
                             </div>
                             <div class="col-sm-3">
-                                <label for="unitPrice" class="form-label">Precio Unitario ($)</label>
+                                <label for="unitPrice" class="form-label">Costo Unitario ($)</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-white">$</span>
-                                    <input type="number" id="unitPrice" name="unitPrice" step="0.01" class="form-control" value="12000.00" required>
+                                    <input type="number" id="unitPrice" name="unitPrice" step="0.01" min="0.01" class="form-control" value="10000.00" required>
                                 </div>
                             </div>
                         </div>
 
                         <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
                             <div>
-                                <span class="text-muted small d-block">Total de la Orden de Compra</span>
-                                <strong class="fs-5 text-primary" id="calculatedTotal">$180.000,00</strong>
+                                <span class="text-muted small d-block">Total Estimado de la Orden</span>
+                                <strong class="fs-5 text-primary" id="calculatedTotal">$100.000,00</strong>
                             </div>
                             <span class="badge bg-secondary-subtle text-secondary">Estado inicial: Solicitada</span>
                         </div>
@@ -186,6 +208,7 @@
         if (qtyInput && priceInput && totalDisplay) {
             qtyInput.addEventListener('input', updateTotal);
             priceInput.addEventListener('input', updateTotal);
+            updateTotal();
         }
     </script>
 </body>

@@ -53,13 +53,16 @@ Que su memoria nos guíe y nos motive a seguir adelante con determinación y opt
 
 package ingsoftware.zeroshop;
 
+import ingsoftware.zeroshop.config.DotEnvInitializer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+@EnableAsync
 @SpringBootApplication
 public class ZeroShopApp {
 
@@ -69,12 +72,17 @@ public class ZeroShopApp {
 
     public static void main(String[] args) {
         loadDotEnv();
-        SpringApplication.run(ZeroShopApp.class, args);
+        SpringApplication app = new SpringApplication(ZeroShopApp.class);
+        app.addInitializers(new DotEnvInitializer());
+        app.run(args);
     }
 
     public static void loadDotEnv() {
         try {
             Path envPath = Path.of(".env");
+            if (!Files.exists(envPath)) {
+                envPath = Path.of("../.env");
+            }
             if (Files.exists(envPath)) {
                 List<String> lines = Files.readAllLines(envPath);
                 for (String line : lines) {
@@ -83,9 +91,7 @@ public class ZeroShopApp {
                         int eq = line.indexOf('=');
                         String key = line.substring(0, eq).trim();
                         String value = line.substring(eq + 1).trim();
-                        if (System.getProperty(key) == null && System.getenv(key) == null) {
-                            System.setProperty(key, value);
-                        }
+                        System.setProperty(key, value);
                     }
                 }
             }

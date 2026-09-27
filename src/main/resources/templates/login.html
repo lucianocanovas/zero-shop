@@ -41,6 +41,10 @@
                         </div>
 
                         <!-- Alertas de error o éxito -->
+                        <div th:if="${param.registered}" class="alert alert-success py-2 small d-flex align-items-center mb-3" role="alert">
+                            <i class="bi bi-check-circle-fill me-2 fs-6"></i>
+                            <span>¡Cuenta creada con éxito! Ya puedes iniciar sesión.</span>
+                        </div>
                         <div th:if="${param.error}" class="alert alert-danger py-2 small d-flex align-items-center mb-3" role="alert">
                             <i class="bi bi-exclamation-triangle-fill me-2 fs-6"></i>
                             <span>Usuario o contraseña incorrectos.</span>

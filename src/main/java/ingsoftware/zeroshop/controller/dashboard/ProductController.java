@@ -148,16 +148,4 @@ public class ProductController {
         return "redirect:/dashboard/products/" + id + "/prices";
     }
 
-    // GET /dashboard/stock: Muestra el panel de gestión de stock general y por sucursales
-    @GetMapping("/dashboard/stock")
-    public String getStock() {
-        return "dashboard/stock";
-    }
-
-    // PUT /dashboard/stock/{id}: Realiza un ajuste manual de stock para un producto
-    @PutMapping("/dashboard/stock/{id}")
-    public String updateStock(@PathVariable("id") UUID id) {
-        return "redirect:/dashboard/stock";
-    }
-
 }

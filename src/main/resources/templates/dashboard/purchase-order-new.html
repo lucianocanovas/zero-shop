@@ -37,6 +37,12 @@
                     </a>
                 </div>
 
+                <!-- Alertas Flash -->
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-9">
                         <div class="card border-0 shadow-sm p-4">
@@ -45,42 +51,38 @@
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-sm-6">
-                                        <label for="supplierId" class="form-label">Proveedor</label>
+                                        <label for="supplierId" class="form-label fw-semibold">Proveedor</label>
                                         <select id="supplierId" name="supplierId" class="form-select" required>
-                                            <option value="" selected>Seleccione un Proveedor</option>
-                                            <option value="1">Distribuidora Textil S.A. (Calzado e Indumentaria)</option>
-                                            <option value="2">Zapatillas Deportivas Mendoza (Calzado)</option>
-                                            <option value="3">Accesorios Deportivos Cuyo (Mochilas y Accesorios)</option>
+                                            <option value="" disabled selected>Seleccione un Proveedor</option>
+                                            <option th:each="sup : ${suppliers}" th:value="${sup.id}" th:text="${sup.name + (sup.cuit != null ? ' (CUIT: ' + sup.cuit + ')' : '')}">Distribuidora Textil S.A.</option>
                                         </select>
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="officeId" class="form-label">Sucursal de Destino</label>
+                                        <label for="officeId" class="form-label fw-semibold">Sucursal de Destino</label>
                                         <select id="officeId" name="officeId" class="form-select" required>
-                                            <option value="1" selected>Sucursal Central (Mendoza)</option>
-                                            <option value="2">Sucursal Norte (Mendoza)</option>
+                                            <option value="" disabled selected>Seleccione Sucursal</option>
+                                            <option th:each="off : ${offices}" th:value="${off.id}" th:text="${off.name}">Sucursal Central (Mendoza)</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-sm-6">
-                                        <label for="productId" class="form-label">Producto a Comprar</label>
+                                        <label for="productId" class="form-label fw-semibold">Producto a Comprar</label>
                                         <select id="productId" name="productId" class="form-select" required>
-                                            <option value="1" selected>Zapatillas Running Zero Pro (SKU: ZR-1049)</option>
-                                            <option value="2">Campera Deportiva Rompeviento (SKU: ZR-2081)</option>
-                                            <option value="3">Calza Deportiva Tiro Alto (SKU: ZR-4491)</option>
-                                            <option value="4">Mochila Sport Backpack Zero (SKU: ZR-3310)</option>
+                                            <option value="" disabled selected>Seleccione Producto</option>
+                                            <option th:each="prod : ${products}" th:value="${prod.id}" th:text="${prod.name + (prod.code != null ? ' (Código: ' + prod.code + ')' : '')}">Zapatillas Running Zero Pro</option>
                                         </select>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label for="quantity" class="form-label">Cantidad</label>
+                                        <label for="quantity" class="form-label fw-semibold">Cantidad</label>
                                         <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="10" required>
                                     </div>
                                     <div class="col-sm-3">
-                                        <label for="unitPrice" class="form-label">Costo Unitario ($)</label>
+                                        <label for="unitPrice" class="form-label fw-semibold">Costo Unitario ($)</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-white">$</span>
-                                            <input type="number" id="unitPrice" name="unitPrice" step="0.01" class="form-control" value="12000.00" required>
+                                            <input type="number" id="unitPrice" name="unitPrice" step="0.01" min="0.01" class="form-control" value="10000.00" required>
                                         </div>
                                     </div>
                                 </div>
@@ -90,8 +92,9 @@
                                         <span class="text-muted small d-block">Estado Inicial de la Orden</span>
                                         <span class="badge bg-secondary-subtle text-secondary">Solicitada (Pendiente de Recepción)</span>
                                     </div>
-                                    <div class="text-muted small">
-                                        Al recibirse se actualizará el stock de la sucursal de destino.
+                                    <div class="text-end">
+                                        <span class="text-muted small d-block">Total Estimado</span>
+                                        <strong class="fs-5 text-primary" id="calculatedTotal">$100.000,00</strong>
                                     </div>
                                 </div>
 
@@ -111,6 +114,21 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const qtyInput = document.getElementById('quantity');
+        const priceInput = document.getElementById('unitPrice');
+        const totalDisplay = document.getElementById('calculatedTotal');
+        function updateTotal() {
+            const q = parseFloat(qtyInput.value) || 0;
+            const p = parseFloat(priceInput.value) || 0;
+            const total = q * p;
+            totalDisplay.textContent = '$' + total.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+        if (qtyInput && priceInput && totalDisplay) {
+            qtyInput.addEventListener('input', updateTotal);
+            priceInput.addEventListener('input', updateTotal);
+            updateTotal();
+        }
+    </script>
 </body>
 </html>
-

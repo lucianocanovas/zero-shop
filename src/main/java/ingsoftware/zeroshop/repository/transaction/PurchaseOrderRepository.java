@@ -26,6 +26,6 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, UU
     List<PurchaseOrder> findByStatusAndDeletedFalse(OrderStatus status);
     List<PurchaseOrder> findByOfficeIdAndDeletedFalse(UUID officeId);
     List<PurchaseOrder> findAllByDeletedFalse();
+    List<PurchaseOrder> findAllByDeletedFalseOrderByDateDesc();
 
 }
-

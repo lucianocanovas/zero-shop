@@ -45,6 +45,18 @@ public class OrderController {
         return "dashboard/order-detail";
     }
 
+    // POST /dashboard/sale-orders/:id/pay-cash: Registrar cobro en efectivo y descontar stock
+    @PostMapping("/dashboard/sale-orders/{id}/pay-cash")
+    public String payOrderWithCash(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes) {
+        try {
+            saleOrderService.payOrderWithCash(id);
+            redirectAttributes.addFlashAttribute("successMessage", "¡Cobro en efectivo registrado exitosamente! Stock descontado del inventario.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al registrar cobro en efectivo: " + e.getMessage());
+        }
+        return "redirect:/dashboard/sale-orders/" + id;
+    }
+
     // PUT /dashboard/sale-orders/:id/status: Actualiza el estado de la orden
     @PutMapping("/dashboard/sale-orders/{id}/status")
     public String updateOrderStatus(@PathVariable("id") UUID id,

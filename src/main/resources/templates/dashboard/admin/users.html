@@ -37,6 +37,18 @@
                     </a>
                 </div>
 
+                <!-- Mensajes Flash de Éxito o Error -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+                    <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                    <span th:text="${success}">Operación realizada exitosamente.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                    <span th:text="${error}">Ocurrió un error.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <!-- Tabla de Usuarios -->
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="table-responsive">

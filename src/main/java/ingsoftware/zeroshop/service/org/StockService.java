@@ -48,6 +48,11 @@ public class StockService {
         return stockRepository.findByProductIdAndOfficeIdAndDeletedFalse(productId, officeId);
     }
 
+    public Stock getStockById(UUID id) {
+        return stockRepository.findActive(id)
+                .orElseThrow(() -> new IllegalArgumentException("Registro de stock no encontrado con ID: " + id));
+    }
+
     public boolean hasAvailableStock(UUID productId, UUID officeId, Integer quantity) {
         if (quantity == null || quantity <= 0) {
             return false;
@@ -81,9 +86,9 @@ public class StockService {
         Stock stock = stockRepository.findByProductIdAndOfficeIdAndDeletedFalse(productId, officeId)
                 .orElseGet(() -> {
                     Product product = productRepository.findActive(productId)
-                            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado."));
+                            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + productId));
                     Office office = officeRepository.findActive(officeId)
-                            .orElseThrow(() -> new IllegalArgumentException("Sucursal no encontrada."));
+                            .orElseThrow(() -> new IllegalArgumentException("Sucursal no encontrada con ID: " + officeId));
                     return Stock.builder()
                             .product(product)
                             .office(office)
@@ -94,5 +99,52 @@ public class StockService {
 
         stock.setQuantity(stock.getQuantity() + quantity);
         stockRepository.save(stock);
+    }
+
+    @Transactional
+    public Stock updateStockQuantity(UUID stockId, Integer newQuantity) {
+        if (newQuantity == null || newQuantity < 0) {
+            throw new IllegalArgumentException("La cantidad de stock no puede ser negativa.");
+        }
+        Stock stock = getStockById(stockId);
+        stock.setQuantity(newQuantity);
+        return stockRepository.save(stock);
+    }
+
+    @Transactional
+    public Stock adjustStock(UUID stockId, Integer adjustment) {
+        if (adjustment == null) {
+            throw new IllegalArgumentException("El valor de ajuste no puede ser nulo.");
+        }
+        Stock stock = getStockById(stockId);
+        int updated = stock.getQuantity() + adjustment;
+        if (updated < 0) {
+            throw new IllegalStateException("El ajuste resultaría en un stock negativo (" + updated + ").");
+        }
+        stock.setQuantity(updated);
+        return stockRepository.save(stock);
+    }
+
+    @Transactional
+    public Stock setStock(UUID productId, UUID officeId, Integer quantity) {
+        if (quantity == null || quantity < 0) {
+            throw new IllegalArgumentException("La cantidad de stock no puede ser negativa.");
+        }
+        Stock stock = stockRepository.findByProductIdAndOfficeIdAndDeletedFalse(productId, officeId)
+                .orElseGet(() -> {
+                    Product product = productRepository.findActive(productId)
+                            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + productId));
+                    Office office = officeRepository.findActive(officeId)
+                            .orElseThrow(() -> new IllegalArgumentException("Sucursal no encontrada con ID: " + officeId));
+                    return Stock.builder()
+                            .product(product)
+                            .office(office)
+                            .quantity(0)
+                            .deleted(false)
+                            .build();
+                });
+
+        stock.setQuantity(quantity);
+        return stockRepository.save(stock);
     }
 }

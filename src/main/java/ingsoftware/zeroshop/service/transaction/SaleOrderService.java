@@ -325,13 +325,41 @@ public class SaleOrderService {
             paymentService.registerPayment(order, order.getTotalAmount(), PaymentMethod.MERCADO_PAGO);
             decrementStockForOrder(order, details);
 
-            String userEmail = order.getClient() != null ? order.getClient().getFirstName() : null;
             // Buscar email real del cliente si existe
             userRepository.findAllByDeletedFalse().stream()
                     .filter(u -> u.getPerson() != null && u.getPerson().getId().equals(order.getClient().getId()))
                     .findFirst()
                     .ifPresent(u -> sendOrderEmailNotification(order, details, u.getUsername()));
         }
+        return order;
+    }
+
+    /**
+     * Registra el cobro en efectivo de una orden existente y descuenta inmediatamente el stock.
+     */
+    @Transactional
+    public SaleOrder payOrderWithCash(UUID orderId) {
+        SaleOrder order = saleOrderRepository.findActive(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + orderId));
+
+        if (order.getStatus() == OrderStatus.PAID) {
+            return order;
+        }
+
+        order.setStatus(OrderStatus.PAID);
+        saleOrderRepository.save(order);
+
+        List<OrderDetail> details = orderDetailRepository.findByOrderIdAndDeletedFalse(order.getId());
+        paymentService.registerPayment(order, order.getTotalAmount(), PaymentMethod.CASH);
+        decrementStockForOrder(order, details);
+
+        if (order.getClient() != null) {
+            userRepository.findAllByDeletedFalse().stream()
+                    .filter(u -> u.getPerson() != null && u.getPerson().getId().equals(order.getClient().getId()))
+                    .findFirst()
+                    .ifPresent(u -> sendOrderEmailNotification(order, details, u.getUsername()));
+        }
+
         return order;
     }
 
@@ -351,25 +379,27 @@ public class SaleOrderService {
 
     private void sendOrderEmailNotification(SaleOrder order, List<OrderDetail> details, String recipientEmail) {
         try {
-            StringBuilder sb = new StringBuilder();
-            sb.append("¡Gracias por tu compra en Zero Shop Mendoza!\n\n");
-            sb.append("Número de Pedido: #").append(order.getId()).append("\n");
-            sb.append("Fecha: ").append(order.getDate()).append("\n");
-            sb.append("Estado Actual: ").append(order.getStatus().getDisplayName()).append("\n\n");
-            sb.append("Detalle de Productos:\n");
-            for (OrderDetail d : details) {
-                sb.append("- ").append(d.getProduct().getName())
-                        .append(" x ").append(d.getQuantity())
-                        .append(" = $").append(d.getTotal()).append("\n");
-            }
-            sb.append("\nTotal Abonado/a Pagar: $").append(order.getTotalAmount()).append("\n");
-            if (order.getShippingAddress() != null) {
-                sb.append("Dirección de Envío: ").append(order.getShippingAddress().getStreet())
-                        .append(" ").append(order.getShippingAddress().getNumber()).append("\n");
-            }
-            sb.append("\nPuedes realizar el seguimiento de tu compra desde tu perfil en la sección 'Mis Compras'.");
+            String customerName = (order.getClient() != null && order.getClient().getFirstName() != null)
+                    ? order.getClient().getFirstName() + " " + (order.getClient().getLastName() != null ? order.getClient().getLastName() : "")
+                    : "Cliente";
 
-            emailService.sendEmail(recipientEmail, "Confirmación de Compra - Zero Shop #" + order.getId().toString().substring(0, 8), sb.toString());
+            String shippingAddress = (order.getShippingAddress() != null)
+                    ? order.getShippingAddress().getStreet() + " " + order.getShippingAddress().getNumber()
+                    : "Retiro en sucursal";
+
+            List<String> items = details.stream()
+                    .map(d -> d.getProduct().getName() + " x " + d.getQuantity() + " ($" + d.getTotal() + ")")
+                    .toList();
+
+            emailService.sendOrderReceiptEmail(
+                    recipientEmail,
+                    customerName.trim(),
+                    order.getId(),
+                    order.getTotalAmount(),
+                    order.getStatus() != null ? order.getStatus().getDisplayName() : "En proceso",
+                    shippingAddress,
+                    items
+            );
         } catch (Exception e) {
             log.warn("No se pudo enviar correo de confirmación: {}", e.getMessage());
         }
