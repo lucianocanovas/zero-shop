@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "subcategories", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "category_id"})})
+@Table(name = "subcategories", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "description", "category_id"})})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +24,9 @@ public class SubCategory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     private Category category;
+
+    @Column (name = "description", nullable = true)
+    private String description;
 
     @Builder.Default
     @Column(name = "deleted", nullable = false)

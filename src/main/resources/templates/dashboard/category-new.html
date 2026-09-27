@@ -57,11 +57,9 @@
                                     <label for="parentId" class="form-label">Categoría Superior <span class="text-muted small fw-normal">(opcional para subcategorías)</span></label>
                                     <select id="parentId" name="parentId" class="form-select">
                                         <option value="" selected>Ninguna (Es una categoría principal)</option>
-                                        <option value="HOMBRES">Hombres</option>
-                                        <option value="MUJERES">Mujeres</option>
-                                        <option value="NINOS">Niños</option>
-                                        <option value="NINAS">Niñas</option>
+                                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Hombres</option>
                                     </select>
+                                    <div class="form-text small">Si seleccionas una categoría superior, se registrará como subcategoría dentro de ella.</div>
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-2 pt-3 border-top">
@@ -82,4 +80,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

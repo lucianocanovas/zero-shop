@@ -35,8 +35,8 @@
             <div class="col-12 col-md-6 col-lg-3" th:each="category : ${categories}" th:if="${categories != null and !categories.empty}">
                 <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="rounded-3 bg-primary-subtle text-primary p-3 fs-3 d-flex align-items-center justify-content-center">
-                            <i class="bi bi-tag-fill"></i>
+                        <div th:class="'rounded-3 p-3 fs-3 d-flex align-items-center justify-content-center ' + ${category.colorClass != null ? category.colorClass : 'bg-primary-subtle text-primary'}">
+                            <i th:class="${category.iconClass != null ? category.iconClass : 'bi bi-tag-fill'}"></i>
                         </div>
                         <div>
                             <h5 class="fw-bold text-dark mb-0" th:text="${category.name}">Categoría</h5>
@@ -49,13 +49,16 @@
                     </p>
 
                     <!-- Subcategorías oficiales: Ropa, Calzado, Accesorios -->
-                    <div class="mb-3" th:if="${category.subCategories != null and !category.subCategories.empty}">
+                    <div class="mb-3">
                         <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
-                        <div class="d-flex flex-wrap gap-1">
+                        <div class="d-flex flex-wrap gap-1" th:if="${category.subCategories != null and !category.subCategories.empty}">
                             <a th:each="sub : ${category.subCategories}" th:href="@{/products(subCategoryId=${sub.id})}" th:text="${sub.name}" class="badge bg-light text-dark border text-decoration-none">
                                 Subcategoría
                             </a>
                         </div>
+                        <span class="badge bg-light text-muted border fst-italic" th:if="${category.subCategories == null or category.subCategories.empty}">
+                            Sin subcategorías
+                        </span>
                     </div>
 
                     <div class="mt-auto pt-3 border-top">

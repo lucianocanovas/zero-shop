@@ -22,6 +22,8 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, UUID> 
 
     Optional<SubCategory> findByIdAndDeletedFalse(UUID id);
     Optional<SubCategory> findByNameIgnoreCase(String name);
+    Optional<SubCategory> findByNameIgnoreCaseAndCategoryId(String name, UUID categoryId);
+    Optional<SubCategory> findByNameIgnoreCaseAndCategoryIdAndDeletedFalse(String name, UUID categoryId);
     List<SubCategory> findByCategoryIdAndDeletedFalse(UUID categoryId);
     List<SubCategory> findAllByDeletedFalse();
 

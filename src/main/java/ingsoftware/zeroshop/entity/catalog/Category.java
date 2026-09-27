@@ -17,6 +17,9 @@ public class Category {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Column (name = "description", nullable = true)
+    private String description;
+
     @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;
 
