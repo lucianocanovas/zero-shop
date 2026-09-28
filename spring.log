@@ -13261,3 +13261,8 @@ Unconditional classes:
 2026-09-27T13:12:01.083-03:00  INFO 256508 --- [zeroshop] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
 2026-09-27T13:12:01.083-03:00  INFO 256508 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2026-09-27T13:12:01.088-03:00  INFO 256508 --- [zeroshop] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2026-09-27T13:15:00.983-03:00  INFO 256508 --- [zeroshop] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-27T13:15:00.984-03:00  INFO 256508 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-27T13:15:00.986-03:00  INFO 256508 --- [zeroshop] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-27T13:15:00.987-03:00  INFO 256508 --- [zeroshop] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2026-09-27T13:15:00.988-03:00  INFO 256508 --- [zeroshop] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.
