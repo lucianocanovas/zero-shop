@@ -159,7 +159,7 @@
                     <div class="small text-muted">
                         <div class="text-dark fw-semibold mb-1" th:text="${order.client != null ? (order.client.firstName + ' ' + order.client.lastName) : 'Cliente'}">Juan Pérez</div>
                         <div th:if="${order.shippingAddress != null}">
-                            <div th:text="${order.shippingAddress.street + ' ' + order.shippingAddress.number}">Av. San Martín 1250</div>
+                            <div th:text="${order.shippingAddress.street + ' ' + order.shippingAddress.number + (order.shippingAddress.city != null ? ', ' + order.shippingAddress.city.name : '')}">Av. San Martín 1250</div>
                             <div th:text="'Código Postal: ' + ${order.shippingAddress.zipCode}">CP M5500</div>
                             <div class="mt-1" th:if="${order.shippingAddress.observations != null}" th:text="${order.shippingAddress.observations}">Tel</div>
                         </div>

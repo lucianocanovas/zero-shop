@@ -1701,3 +1701,696 @@ Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Pa
 2026-09-29T00:41:51.218-03:00  INFO 36001 --- [zeroshop] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-09-29T00:41:51.219-03:00  INFO 36001 --- [zeroshop] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-17 - Shutdown initiated...
 2026-09-29T00:41:51.232-03:00  INFO 36001 --- [zeroshop] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-17 - Shutdown completed.
+2026-09-29T00:42:31.061-03:00  INFO 47256 --- [zeroshop] [main] .z.CheckoutAndPaymentFlowIntegrationTest : Starting CheckoutAndPaymentFlowIntegrationTest using Java 21.0.11 with PID 47256 (started by mateoperalta in /home/mateoperalta/zero-shop)
+2026-09-29T00:42:31.070-03:00  INFO 47256 --- [zeroshop] [main] .z.CheckoutAndPaymentFlowIntegrationTest : No active profile set, falling back to 1 default profile: "default"
+2026-09-29T00:42:32.729-03:00  INFO 47256 --- [zeroshop] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-29T00:42:33.292-03:00  INFO 47256 --- [zeroshop] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 538 ms. Found 28 JPA repository interfaces.
+2026-09-29T00:42:35.347-03:00  INFO 47256 --- [zeroshop] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-29T00:42:35.497-03:00  INFO 47256 --- [zeroshop] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-09-29T00:42:36.344-03:00  INFO 47256 --- [zeroshop] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-29T00:42:36.415-03:00  INFO 47256 --- [zeroshop] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-29T00:42:37.175-03:00  INFO 47256 --- [zeroshop] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@64a7ad02
+2026-09-29T00:42:37.199-03:00  INFO 47256 --- [zeroshop] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-29T00:42:37.270-03:00  WARN 47256 --- [zeroshop] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-29T00:42:37.327-03:00  INFO 47256 --- [zeroshop] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-29T00:42:41.192-03:00  INFO 47256 --- [zeroshop] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-29T00:42:41.490-03:00  INFO 47256 --- [zeroshop] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:42:42.145-03:00  INFO 47256 --- [zeroshop] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-29T00:42:46.066-03:00  INFO 47256 --- [zeroshop] [main] ingsoftware.zeroshop.config.MailConfig   : JavaMailSender configurado exitosamente para la cuenta SMTP: gregorykirkco@gmail.com
+2026-09-29T00:42:46.209-03:00  INFO 47256 --- [zeroshop] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-29T00:42:48.522-03:00  INFO 47256 --- [zeroshop] [main] .z.CheckoutAndPaymentFlowIntegrationTest : Started CheckoutAndPaymentFlowIntegrationTest in 18.032 seconds (process running for 20.57)
+2026-09-29T00:42:48.541-03:00  INFO 47256 --- [zeroshop] [main] i.z.config.DatabaseMigrationRunner       : Restricción orders_status_check verificada y eliminada para permitir nuevos estados de pedido.
+2026-09-29T00:42:48.547-03:00  INFO 47256 --- [zeroshop] [main] i.z.config.DatabaseMigrationRunner       : Columna sale_orders.office_id verificada para permitir null en estado ON_CART.
+2026-09-29T00:42:51.635-03:00 ERROR 47256 --- [zeroshop] [main] i.z.s.transaction.MercadoPagoService     : Error API Mercado Pago (HTTP 403): {"message":"At least one policy returned UNAUTHORIZED.","code":"PA_UNAUTHORIZED_RESULT_FROM_POLICIES","status":403,"blocked_by":"PolicyAgent"}
+
+2026-09-29T00:42:51.636-03:00  WARN 47256 --- [zeroshop] [main] i.z.s.transaction.MercadoPagoService     : Simulando preferencia de Mercado Pago debido a error de API con sandbox activado
+2026-09-29T00:42:51.792-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.MercadoPagoSdkUnitTest]: MercadoPagoSdkUnitTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:51.794-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.MercadoPagoSdkUnitTest
+2026-09-29T00:42:51.796-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.MercadoPagoSdkUnitTest]: MercadoPagoSdkUnitTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:51.798-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.MercadoPagoSdkUnitTest
+2026-09-29T00:42:51.841-03:00 ERROR 47256 --- [zeroshop] [task-1] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a client@gmail.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendOrderReceiptEmail(EmailService.java:216) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a1e0cc1a2514c-9889b08af8asm9395623241.3 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:51.843-03:00 ERROR 47256 --- [zeroshop] [task-2] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a client@gmail.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendOrderReceiptEmail(EmailService.java:216) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 71dfb90a1353d-5cde4f969b9sm11481331e0c.3 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:52.031-03:00 ERROR 47256 --- [zeroshop] [main] i.z.s.transaction.MercadoPagoService     : Error API Mercado Pago (HTTP 403): {"message":"At least one policy returned UNAUTHORIZED.","code":"PA_UNAUTHORIZED_RESULT_FROM_POLICIES","blocked_by":"PolicyAgent","status":403}
+
+2026-09-29T00:42:52.032-03:00  WARN 47256 --- [zeroshop] [main] i.z.s.transaction.MercadoPagoService     : Simulando preferencia de Mercado Pago debido a error de API con sandbox activado
+2026-09-29T00:42:52.046-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.ProductCrudIntegrationTest]: ProductCrudIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:52.048-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.ProductCrudIntegrationTest
+2026-09-29T00:42:52.049-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.ProductCrudIntegrationTest]: ProductCrudIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:52.051-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.ProductCrudIntegrationTest
+2026-09-29T00:42:52.274-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.PurchaseFlowIntegrationTest]: PurchaseFlowIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:52.277-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.PurchaseFlowIntegrationTest
+2026-09-29T00:42:52.280-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.PurchaseFlowIntegrationTest]: PurchaseFlowIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:52.285-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.PurchaseFlowIntegrationTest
+2026-09-29T00:42:52.545-03:00 ERROR 47256 --- [zeroshop] [main] i.z.s.transaction.MercadoPagoService     : Error API Mercado Pago (HTTP 403): {"status":403,"message":"At least one policy returned UNAUTHORIZED.","code":"PA_UNAUTHORIZED_RESULT_FROM_POLICIES","blocked_by":"PolicyAgent"}
+
+2026-09-29T00:42:52.545-03:00  WARN 47256 --- [zeroshop] [main] i.z.s.transaction.MercadoPagoService     : Simulando preferencia de Mercado Pago debido a error de API con sandbox activado
+2026-09-29T00:42:52.552-03:00  WARN 47256 --- [zeroshop] [main] i.z.s.transaction.SaleOrderService       : No se pudo descontar stock automáticamente para el producto Remera Deportiva: No existe registro de stock para el producto en la sucursal seleccionada.
+2026-09-29T00:42:52.625-03:00  WARN 47256 --- [zeroshop] [main] i.z.s.transaction.SaleOrderService       : No se pudo descontar stock automáticamente para el producto Remera Deportiva: No existe registro de stock para el producto en la sucursal seleccionada.
+2026-09-29T00:42:52.653-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.PurchaseOrderIntegrationTest]: PurchaseOrderIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:52.656-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.PurchaseOrderIntegrationTest
+2026-09-29T00:42:52.658-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.PurchaseOrderIntegrationTest]: PurchaseOrderIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:52.660-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.PurchaseOrderIntegrationTest
+2026-09-29T00:42:52.705-03:00  INFO 47256 --- [zeroshop] [main] i.z.s.transaction.PurchaseOrderService   : Orden de compra creada exitosamente con ID: 2531425a-7fe8-4367-abf4-f0742e1d2682 para el proveedor: Distribuidora Test d9cf2c
+2026-09-29T00:42:52.745-03:00  INFO 47256 --- [zeroshop] [main] i.z.s.transaction.PurchaseOrderService   : Orden de compra creada exitosamente con ID: 553245ba-91e3-40d5-a73e-f2b25f1f6266 para el proveedor: Distribuidora Test bc3ba9
+2026-09-29T00:42:52.772-03:00  INFO 47256 --- [zeroshop] [main] i.z.s.transaction.PurchaseOrderService   : Stock incrementado: Producto 'Zapatillas Test b05821' (+30 unidades) en sucursal 'Sucursal Test fdc330'
+2026-09-29T00:42:52.773-03:00  INFO 47256 --- [zeroshop] [main] i.z.s.transaction.PurchaseOrderService   : Orden de compra 553245ba-91e3-40d5-a73e-f2b25f1f6266 marcada como RECIBIDA exitosamente.
+2026-09-29T00:42:52.818-03:00  INFO 47256 --- [zeroshop] [main] i.z.s.transaction.PurchaseOrderService   : Orden de compra creada exitosamente con ID: 1e620ce4-e710-4ba8-b66d-f3a30adf5caf para el proveedor: Distribuidora Test d1b3a7
+2026-09-29T00:42:52.826-03:00  INFO 47256 --- [zeroshop] [main] i.z.s.transaction.PurchaseOrderService   : Orden de compra 1e620ce4-e710-4ba8-b66d-f3a30adf5caf cancelada y eliminada lógicamente.
+2026-09-29T00:42:52.843-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.StockAndCashPaymentIntegrationTest]: StockAndCashPaymentIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:52.845-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.StockAndCashPaymentIntegrationTest
+2026-09-29T00:42:52.848-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.StockAndCashPaymentIntegrationTest]: StockAndCashPaymentIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:52.851-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.StockAndCashPaymentIntegrationTest
+2026-09-29T00:42:53.015-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.UserServiceIntegrationTest]: UserServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:53.018-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.UserServiceIntegrationTest
+2026-09-29T00:42:53.021-03:00  INFO 47256 --- [zeroshop] [main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [ingsoftware.zeroshop.UserServiceIntegrationTest]: UserServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-09-29T00:42:53.024-03:00  INFO 47256 --- [zeroshop] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration ingsoftware.zeroshop.ZeroShopApp for test class ingsoftware.zeroshop.UserServiceIntegrationTest
+2026-09-29T00:42:53.267-03:00 ERROR 47256 --- [zeroshop] [task-3] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a client@gmail.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendOrderReceiptEmail(EmailService.java:216) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a1e0cc1a2514c-9889b1f453bsm9764248241.11 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:53.486-03:00 ERROR 47256 --- [zeroshop] [task-4] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a client@gmail.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendOrderReceiptEmail(EmailService.java:216) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a1e0cc1a2514c-988baa163d9sm2182115241.8 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:54.193-03:00 ERROR 47256 --- [zeroshop] [task-5] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a client@gmail.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendOrderReceiptEmail(EmailService.java:216) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials ada2fe7eead31-7b39640471csm12172679137.0 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:54.616-03:00 ERROR 47256 --- [zeroshop] [task-8] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a cashclient@test.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendOrderReceiptEmail(EmailService.java:216) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a1e0cc1a2514c-988bc1607d3sm1746759241.12 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:54.663-03:00 ERROR 47256 --- [zeroshop] [task-7] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a cashclient@test.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendOrderReceiptEmail(EmailService.java:216) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 71dfb90a1353d-5cde577632bsm12411862e0c.8 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:54.824-03:00 ERROR 47256 --- [zeroshop] [task-6] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a client@gmail.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendOrderReceiptEmail(EmailService.java:216) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials ada2fe7eead31-7b398ee9869sm12155679137.1 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:55.032-03:00 ERROR 47256 --- [zeroshop] [task-1] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a original.8aff13@test.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendWelcomeEmail(EmailService.java:140) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 71dfb90a1353d-5cde4f9842csm11270909e0c.5 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:55.320-03:00 ERROR 47256 --- [zeroshop] [task-2] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a cliente.completo.a9bb39@test.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendWelcomeEmail(EmailService.java:140) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 71dfb90a1353d-5d2b49a7ea2sm399287e0c.11 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:55.478-03:00 ERROR 47256 --- [zeroshop] [task-3] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a reactivar.cliente.82caa0@test.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendWelcomeEmail(EmailService.java:140) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials ada2fe7eead31-7b398ee8b75sm12232082137.2 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:55.661-03:00 ERROR 47256 --- [zeroshop] [task-4] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a reactivar.cliente.82caa0@test.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendWelcomeEmail(EmailService.java:140) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 71dfb90a1353d-5cde02784b7sm11227099e0c.0 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:56.058-03:00 ERROR 47256 --- [zeroshop] [task-5] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a duplicado.853ddd@test.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendWelcomeEmail(EmailService.java:140) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 71dfb90a1353d-5d2b49a7ea2sm399316e0c.11 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:56.236-03:00 ERROR 47256 --- [zeroshop] [task-8] i.z.service.notification.EmailService    : Fallo de transporte SMTP al enviar correo HTML a nuevo.cliente.40f71f@test.com: Authentication failed
+
+org.springframework.mail.MailAuthenticationException: Authentication failed
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:389) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.send(JavaMailSenderImpl.java:337) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSender.send(JavaMailSender.java:101) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendHtmlEmail(EmailService.java:89) ~[classes/:na]
+	at ingsoftware.zeroshop.service.notification.EmailService.sendWelcomeEmail(EmailService.java:140) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158) ~[spring-aop-7.0.9.jar:7.0.9]
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:112) ~[spring-aop-7.0.9.jar:7.0.9]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials ada2fe7eead31-7b39b15808esm12236198137.5 - gsmtp
+
+	at org.eclipse.angus.mail.smtp.SMTPTransport$Authenticator.authenticate(SMTPTransport.java:954) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.authenticate(SMTPTransport.java:865) ~[angus-mail-2.0.5.jar:na]
+	at org.eclipse.angus.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:769) ~[angus-mail-2.0.5.jar:na]
+	at jakarta.mail.Service.connect(Service.java:345) ~[jakarta.mail-api-2.1.5.jar:na]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.connectTransport(JavaMailSenderImpl.java:467) ~[spring-context-support-7.0.9.jar:7.0.9]
+	at org.springframework.mail.javamail.JavaMailSenderImpl.doSend(JavaMailSenderImpl.java:386) ~[spring-context-support-7.0.9.jar:7.0.9]
+	... 14 common frames omitted
+
+2026-09-29T00:42:56.244-03:00  INFO 47256 --- [zeroshop] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:42:56.247-03:00  INFO 47256 --- [zeroshop] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-09-29T00:42:56.253-03:00  INFO 47256 --- [zeroshop] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-09-29T00:45:16.045-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.zeroshop.config.DotEnvInitializer      : Archivo .env cargado con éxito. Se incorporaron 2 variables de entorno seguras.
+2026-09-29T00:45:16.052-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 21.0.11 with PID 48621 (/home/mateoperalta/zero-shop/target/classes started by mateoperalta in /home/mateoperalta/zero-shop)
+2026-09-29T00:45:16.054-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-29T00:45:16.119-03:00  INFO 48621 --- [zeroshop] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-29T00:45:16.119-03:00  INFO 48621 --- [zeroshop] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-29T00:45:16.996-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-29T00:45:17.133-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 127 ms. Found 28 JPA repository interfaces.
+2026-09-29T00:45:17.947-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-29T00:45:17.970-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-29T00:45:17.971-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-29T00:45:18.008-03:00  INFO 48621 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1888 ms
+2026-09-29T00:45:18.275-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-29T00:45:18.334-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-09-29T00:45:18.786-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-29T00:45:18.822-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-29T00:45:18.975-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@62b25395
+2026-09-29T00:45:18.977-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-29T00:45:19.012-03:00  WARN 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-29T00:45:19.037-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-29T00:45:21.290-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-29T00:45:21.407-03:00  INFO 48621 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:45:21.527-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-29T00:45:22.999-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.config.MailConfig   : JavaMailSender configurado exitosamente para la cuenta SMTP: gregorykirkco@gmail.com
+2026-09-29T00:45:23.114-03:00  INFO 48621 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-29T00:45:24.928-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-29T00:45:24.993-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-29T00:45:25.002-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 9.443 seconds (process running for 10.191)
+2026-09-29T00:45:25.013-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Restricción orders_status_check verificada y eliminada para permitir nuevos estados de pedido.
+2026-09-29T00:45:25.017-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Columna sale_orders.office_id verificada para permitir null en estado ON_CART.
+2026-09-29T00:49:20.868-03:00  INFO 48621 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-09-29T00:49:20.874-03:00  INFO 48621 --- [zeroshop] [Thread-5] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-29T00:49:20.878-03:00  INFO 48621 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-29T00:49:20.887-03:00  INFO 48621 --- [zeroshop] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:49:20.891-03:00  INFO 48621 --- [zeroshop] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-09-29T00:49:20.899-03:00  INFO 48621 --- [zeroshop] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-09-29T00:49:21.060-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.zeroshop.config.DotEnvInitializer      : Archivo .env cargado con éxito. Se incorporaron 2 variables de entorno seguras.
+2026-09-29T00:49:21.061-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 21.0.11 with PID 48621 (/home/mateoperalta/zero-shop/target/classes started by mateoperalta in /home/mateoperalta/zero-shop)
+2026-09-29T00:49:21.061-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-29T00:49:21.390-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-29T00:49:21.482-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 89 ms. Found 28 JPA repository interfaces.
+2026-09-29T00:49:21.835-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-29T00:49:21.838-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-29T00:49:21.839-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-29T00:49:21.857-03:00  INFO 48621 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 792 ms
+2026-09-29T00:49:22.077-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-29T00:49:22.118-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-29T00:49:22.120-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-09-29T00:49:22.155-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@48a7f506
+2026-09-29T00:49:22.156-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-09-29T00:49:22.160-03:00  WARN 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-29T00:49:22.165-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-29T00:49:22.866-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-29T00:49:22.915-03:00  INFO 48621 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:49:23.431-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.config.MailConfig   : JavaMailSender configurado exitosamente para la cuenta SMTP: gregorykirkco@gmail.com
+2026-09-29T00:49:23.470-03:00  INFO 48621 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-29T00:49:24.838-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-29T00:49:24.868-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-29T00:49:24.873-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 3.857 seconds (process running for 250.062)
+2026-09-29T00:49:24.883-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Restricción orders_status_check verificada y eliminada para permitir nuevos estados de pedido.
+2026-09-29T00:49:24.889-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Columna sale_orders.office_id verificada para permitir null en estado ON_CART.
+2026-09-29T00:49:24.949-03:00  INFO 48621 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-29T00:49:31.301-03:00  INFO 48621 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-09-29T00:49:31.302-03:00  INFO 48621 --- [zeroshop] [Thread-7] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-29T00:49:31.303-03:00  INFO 48621 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-29T00:49:31.309-03:00  INFO 48621 --- [zeroshop] [Thread-7] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:49:31.310-03:00  INFO 48621 --- [zeroshop] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2026-09-29T00:49:31.313-03:00  INFO 48621 --- [zeroshop] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2026-09-29T00:49:31.457-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.zeroshop.config.DotEnvInitializer      : Archivo .env cargado con éxito. Se incorporaron 2 variables de entorno seguras.
+2026-09-29T00:49:31.458-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 21.0.11 with PID 48621 (/home/mateoperalta/zero-shop/target/classes started by mateoperalta in /home/mateoperalta/zero-shop)
+2026-09-29T00:49:31.458-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-29T00:49:31.673-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-29T00:49:31.774-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 97 ms. Found 28 JPA repository interfaces.
+2026-09-29T00:49:31.954-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-29T00:49:31.955-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-29T00:49:31.955-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-29T00:49:31.967-03:00  INFO 48621 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 507 ms
+2026-09-29T00:49:32.077-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-29T00:49:32.098-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-29T00:49:32.099-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-09-29T00:49:32.127-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@4be9c6c2
+2026-09-29T00:49:32.128-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-09-29T00:49:32.130-03:00  WARN 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-29T00:49:32.135-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-29T00:49:32.596-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-29T00:49:32.649-03:00  INFO 48621 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:49:33.080-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.config.MailConfig   : JavaMailSender configurado exitosamente para la cuenta SMTP: gregorykirkco@gmail.com
+2026-09-29T00:49:33.114-03:00  INFO 48621 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-29T00:49:34.033-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-29T00:49:34.076-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-29T00:49:34.079-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 2.649 seconds (process running for 259.268)
+2026-09-29T00:49:34.089-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Restricción orders_status_check verificada y eliminada para permitir nuevos estados de pedido.
+2026-09-29T00:49:34.095-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Columna sale_orders.office_id verificada para permitir null en estado ON_CART.
+2026-09-29T00:49:34.150-03:00  INFO 48621 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-29T00:50:03.622-03:00  INFO 48621 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 4 class path changes (0 additions, 4 deletions, 0 modifications)
+2026-09-29T00:50:03.624-03:00  INFO 48621 --- [zeroshop] [Thread-11] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-29T00:50:03.626-03:00  INFO 48621 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-29T00:50:03.629-03:00  INFO 48621 --- [zeroshop] [Thread-11] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:50:03.630-03:00  INFO 48621 --- [zeroshop] [Thread-11] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2026-09-29T00:50:03.638-03:00  INFO 48621 --- [zeroshop] [Thread-11] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+2026-09-29T00:50:03.802-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.zeroshop.config.DotEnvInitializer      : Archivo .env cargado con éxito. Se incorporaron 2 variables de entorno seguras.
+2026-09-29T00:50:03.803-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 21.0.11 with PID 48621 (/home/mateoperalta/zero-shop/target/classes started by mateoperalta in /home/mateoperalta/zero-shop)
+2026-09-29T00:50:03.804-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-29T00:50:04.106-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-29T00:50:04.184-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 75 ms. Found 28 JPA repository interfaces.
+2026-09-29T00:50:04.468-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-29T00:50:04.469-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-29T00:50:04.469-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-29T00:50:04.482-03:00  INFO 48621 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 675 ms
+2026-09-29T00:50:04.600-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-29T00:50:04.624-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-29T00:50:04.625-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2026-09-29T00:50:04.655-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@522e81ff
+2026-09-29T00:50:04.655-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2026-09-29T00:50:04.658-03:00  WARN 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-29T00:50:04.663-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-29T00:50:05.178-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-29T00:50:05.225-03:00  INFO 48621 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:50:05.602-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.config.MailConfig   : JavaMailSender configurado exitosamente para la cuenta SMTP: gregorykirkco@gmail.com
+2026-09-29T00:50:05.638-03:00  INFO 48621 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-29T00:50:06.490-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-29T00:50:06.526-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-29T00:50:06.530-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 2.763 seconds (process running for 291.719)
+2026-09-29T00:50:06.540-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Restricción orders_status_check verificada y eliminada para permitir nuevos estados de pedido.
+2026-09-29T00:50:06.544-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Columna sale_orders.office_id verificada para permitir null en estado ON_CART.
+2026-09-29T00:50:06.602-03:00  INFO 48621 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-09-29T00:50:18.375-03:00  INFO 48621 --- [zeroshop] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-09-29T00:50:18.377-03:00  INFO 48621 --- [zeroshop] [Thread-15] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-29T00:50:18.378-03:00  INFO 48621 --- [zeroshop] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-29T00:50:18.383-03:00  INFO 48621 --- [zeroshop] [Thread-15] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:50:18.384-03:00  INFO 48621 --- [zeroshop] [Thread-15] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2026-09-29T00:50:18.387-03:00  INFO 48621 --- [zeroshop] [Thread-15] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.
+2026-09-29T00:50:18.504-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.zeroshop.config.DotEnvInitializer      : Archivo .env cargado con éxito. Se incorporaron 2 variables de entorno seguras.
+2026-09-29T00:50:18.504-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Starting ZeroShopApp using Java 21.0.11 with PID 48621 (/home/mateoperalta/zero-shop/target/classes started by mateoperalta in /home/mateoperalta/zero-shop)
+2026-09-29T00:50:18.505-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : No active profile set, falling back to 1 default profile: "default"
+2026-09-29T00:50:18.723-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-29T00:50:18.789-03:00  INFO 48621 --- [zeroshop] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 63 ms. Found 28 JPA repository interfaces.
+2026-09-29T00:50:19.142-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-09-29T00:50:19.143-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-29T00:50:19.144-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-29T00:50:19.156-03:00  INFO 48621 --- [zeroshop] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 649 ms
+2026-09-29T00:50:19.300-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-29T00:50:19.336-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-29T00:50:19.338-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2026-09-29T00:50:19.370-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@2c2d057d
+2026-09-29T00:50:19.370-03:00  INFO 48621 --- [zeroshop] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2026-09-29T00:50:19.374-03:00  WARN 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-29T00:50:19.381-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/zero-shop?currentSchema=public]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.4
+	Default catalog/schema: zero-shop/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-29T00:50:19.925-03:00  INFO 48621 --- [zeroshop] [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-29T00:50:20.000-03:00  INFO 48621 --- [zeroshop] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T00:50:20.651-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.config.MailConfig   : JavaMailSender configurado exitosamente para la cuenta SMTP: gregorykirkco@gmail.com
+2026-09-29T00:50:20.708-03:00  INFO 48621 --- [zeroshop] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-09-29T00:50:21.874-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-09-29T00:50:21.908-03:00  INFO 48621 --- [zeroshop] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-09-29T00:50:21.911-03:00  INFO 48621 --- [zeroshop] [restartedMain] ingsoftware.zeroshop.ZeroShopApp         : Started ZeroShopApp in 3.431 seconds (process running for 307.1)
+2026-09-29T00:50:21.919-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Restricción orders_status_check verificada y eliminada para permitir nuevos estados de pedido.
+2026-09-29T00:50:21.923-03:00  INFO 48621 --- [zeroshop] [restartedMain] i.z.config.DatabaseMigrationRunner       : Columna sale_orders.office_id verificada para permitir null en estado ON_CART.
+2026-09-29T00:50:21.976-03:00  INFO 48621 --- [zeroshop] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
