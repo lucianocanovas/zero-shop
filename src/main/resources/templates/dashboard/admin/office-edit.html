@@ -40,33 +40,39 @@
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-8">
                         <div class="card border-0 shadow-sm p-4">
-                            <form method="post" th:action="@{/dashboard/admin/offices/{id}(id=${office != null ? office.id : '00000000-0000-0000-0000-000000000001'})}">
+                            <form method="post" th:action="@{/dashboard/admin/offices/{id}(id=${officeId})}" th:object="${officeDTO}">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <input type="hidden" name="_method" value="PUT">
 
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Nombre de la Sucursal</label>
-                                    <input type="text" id="name" name="name" class="form-control" th:value="${office?.name}" placeholder="Ej: Sucursal Central" required>
-                                </div>
-
                                 <div class="row g-3 mb-3">
-                                    <div class="col-sm-8">
-                                        <label for="address" class="form-label">Dirección Completa</label>
-                                        <input type="text" id="address" name="address" class="form-control" th:value="${office?.address}" placeholder="Av. Corrientes 1500" required>
+                                    <div class="col-sm-7">
+                                        <label for="name" class="form-label">Nombre de la Sucursal</label>
+                                        <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Ej: Sucursal Central" required>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <label for="phone" class="form-label">Teléfono</label>
-                                        <input type="text" id="phone" name="phone" class="form-control" th:value="${office?.phone}" placeholder="+54 11 4321-0001">
+                                    <div class="col-sm-5">
+                                        <label for="cuit" class="form-label">CUIT</label>
+                                        <input type="text" id="cuit" th:field="*{cuit}" class="form-control" placeholder="30-71123456-8" required>
                                     </div>
                                 </div>
 
-                                <div class="mb-4">
-                                    <label for="type" class="form-label">Tipo de Establecimiento</label>
-                                    <select id="type" name="type" class="form-select">
-                                        <option value="STORE_AND_WAREHOUSE" th:selected="${office?.type?.name() == 'STORE_AND_WAREHOUSE'}">Tienda con Depósito</option>
-                                        <option value="STORE_ONLY" th:selected="${office?.type?.name() == 'STORE_ONLY'}">Punto de Venta Exclusivo</option>
-                                        <option value="WAREHOUSE_ONLY" th:selected="${office?.type?.name() == 'WAREHOUSE_ONLY'}">Depósito / Almacén Central</option>
-                                    </select>
+                                <h5 class="mt-4 mb-3 border-bottom pb-2">Ubicación y Contacto</h5>
+                                <div th:replace="~{common/fragments/address-form :: address-fields('address')}"></div>
+
+                                <div class="row g-3 mb-4 mt-1">
+                                    <div class="col-sm-6">
+                                        <label for="phone" class="form-label">Teléfono</label>
+                                        <input type="text" id="phone" th:field="*{phone}" class="form-control" placeholder="+54 11 4321-0001">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="type" class="form-label">Tipo de Establecimiento</label>
+                                        <select id="type" th:field="*{type}" class="form-select">
+                                            <option value="HEADQUARTERS">Sede Central</option>
+                                            <option value="BRANCH">Sucursal (Punto de Venta)</option>
+                                            <option value="WAREHOUSE">Depósito</option>
+                                            <option value="DISTRIBUTION_CENTER">Centro de Distribución</option>
+                                            <option value="OTHER">Otro</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-2 pt-3 border-top">

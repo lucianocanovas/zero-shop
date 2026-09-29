@@ -1,0 +1,868 @@
+[
+  {
+    "name": "Argentina",
+    "code": "AR",
+    "states": [
+      {
+        "name": "Buenos Aires",
+        "code": "B",
+        "cities": [
+          {
+            "name": "La Plata",
+            "code": "1900"
+          },
+          {
+            "name": "Mar del Plata",
+            "code": "7600"
+          },
+          {
+            "name": "Pilar",
+            "code": "1629"
+          },
+          {
+            "name": "Bahía Blanca",
+            "code": "8000"
+          },
+          {
+            "name": "Tandil",
+            "code": "7000"
+          }
+        ]
+      },
+      {
+        "name": "Mendoza",
+        "code": "M",
+        "cities": [
+          {
+            "name": "Mendoza",
+            "code": "5500"
+          },
+          {
+            "name": "San Rafael",
+            "code": "5600"
+          },
+          {
+            "name": "Godoy Cruz",
+            "code": "5501"
+          },
+          {
+            "name": "Luján de Cuyo",
+            "code": "5507"
+          },
+          {
+            "name": "Maipú",
+            "code": "5515"
+          }
+        ]
+      },
+      {
+        "name": "Córdoba",
+        "code": "X",
+        "cities": [
+          {
+            "name": "Córdoba",
+            "code": "5000"
+          },
+          {
+            "name": "Villa Carlos Paz",
+            "code": "5152"
+          },
+          {
+            "name": "Río Cuarto",
+            "code": "5800"
+          },
+          {
+            "name": "San Francisco",
+            "code": "2400"
+          },
+          {
+            "name": "Villa María",
+            "code": "5900"
+          }
+        ]
+      },
+      {
+        "name": "Santa Fe",
+        "code": "S",
+        "cities": [
+          {
+            "name": "Rosario",
+            "code": "2000"
+          },
+          {
+            "name": "Santa Fe",
+            "code": "3000"
+          },
+          {
+            "name": "Rafaela",
+            "code": "2300"
+          },
+          {
+            "name": "Reconquista",
+            "code": "3560"
+          },
+          {
+            "name": "Venado Tuerto",
+            "code": "2600"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Brasil",
+    "code": "BR",
+    "states": [
+      {
+        "name": "São Paulo",
+        "code": "SP",
+        "cities": [
+          {
+            "name": "São Paulo",
+            "code": "01000"
+          },
+          {
+            "name": "Campinas",
+            "code": "13000"
+          },
+          {
+            "name": "Santos",
+            "code": "11000"
+          },
+          {
+            "name": "Ribeirão Preto",
+            "code": "14000"
+          },
+          {
+            "name": "Sorocaba",
+            "code": "18000"
+          }
+        ]
+      },
+      {
+        "name": "Rio de Janeiro",
+        "code": "RJ",
+        "cities": [
+          {
+            "name": "Rio de Janeiro",
+            "code": "20000"
+          },
+          {
+            "name": "Niterói",
+            "code": "24000"
+          },
+          {
+            "name": "Petrópolis",
+            "code": "25600"
+          },
+          {
+            "name": "Cabo Frio",
+            "code": "28900"
+          },
+          {
+            "name": "Volta Redonda",
+            "code": "27200"
+          }
+        ]
+      },
+      {
+        "name": "Minas Gerais",
+        "code": "MG",
+        "cities": [
+          {
+            "name": "Belo Horizonte",
+            "code": "30000"
+          },
+          {
+            "name": "Uberlândia",
+            "code": "38400"
+          },
+          {
+            "name": "Juiz de Fora",
+            "code": "36000"
+          },
+          {
+            "name": "Ouro Preto",
+            "code": "35400"
+          },
+          {
+            "name": "Contagem",
+            "code": "32000"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "México",
+    "code": "MX",
+    "states": [
+      {
+        "name": "Jalisco",
+        "code": "JAL",
+        "cities": [
+          {
+            "name": "Guadalajara",
+            "code": "44100"
+          },
+          {
+            "name": "Zapopan",
+            "code": "45010"
+          },
+          {
+            "name": "Puerto Vallarta",
+            "code": "48300"
+          },
+          {
+            "name": "Tlaquepaque",
+            "code": "45500"
+          },
+          {
+            "name": "Tonalá",
+            "code": "45400"
+          }
+        ]
+      },
+      {
+        "name": "Nuevo León",
+        "code": "NLE",
+        "cities": [
+          {
+            "name": "Monterrey",
+            "code": "64000"
+          },
+          {
+            "name": "San Pedro Garza García",
+            "code": "66200"
+          },
+          {
+            "name": "Guadalupe",
+            "code": "67100"
+          },
+          {
+            "name": "San Nicolás de los Garza",
+            "code": "66400"
+          },
+          {
+            "name": "Apodaca",
+            "code": "66600"
+          }
+        ]
+      },
+      {
+        "name": "Estado de México",
+        "code": "MEX",
+        "cities": [
+          {
+            "name": "Toluca",
+            "code": "50000"
+          },
+          {
+            "name": "Naucalpan",
+            "code": "53000"
+          },
+          {
+            "name": "Tlalnepantla",
+            "code": "54000"
+          },
+          {
+            "name": "Ecatepec",
+            "code": "55000"
+          },
+          {
+            "name": "Nezahualcóyotl",
+            "code": "57000"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Estados Unidos",
+    "code": "US",
+    "states": [
+      {
+        "name": "California",
+        "code": "CA",
+        "cities": [
+          {
+            "name": "Los Angeles",
+            "code": "90001"
+          },
+          {
+            "name": "San Francisco",
+            "code": "94101"
+          },
+          {
+            "name": "San Diego",
+            "code": "92101"
+          },
+          {
+            "name": "Sacramento",
+            "code": "95814"
+          },
+          {
+            "name": "San Jose",
+            "code": "95101"
+          }
+        ]
+      },
+      {
+        "name": "Texas",
+        "code": "TX",
+        "cities": [
+          {
+            "name": "Houston",
+            "code": "77001"
+          },
+          {
+            "name": "Austin",
+            "code": "73301"
+          },
+          {
+            "name": "Dallas",
+            "code": "75201"
+          },
+          {
+            "name": "San Antonio",
+            "code": "78201"
+          },
+          {
+            "name": "Fort Worth",
+            "code": "76101"
+          }
+        ]
+      },
+      {
+        "name": "New York",
+        "code": "NY",
+        "cities": [
+          {
+            "name": "New York City",
+            "code": "10001"
+          },
+          {
+            "name": "Buffalo",
+            "code": "14201"
+          },
+          {
+            "name": "Rochester",
+            "code": "14601"
+          },
+          {
+            "name": "Syracuse",
+            "code": "13201"
+          },
+          {
+            "name": "Albany",
+            "code": "12201"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Canadá",
+    "code": "CA",
+    "states": [
+      {
+        "name": "Ontario",
+        "code": "ON",
+        "cities": [
+          {
+            "name": "Toronto",
+            "code": "M5H"
+          },
+          {
+            "name": "Ottawa",
+            "code": "K1P"
+          },
+          {
+            "name": "Mississauga",
+            "code": "L5B"
+          },
+          {
+            "name": "Hamilton",
+            "code": "L8P"
+          },
+          {
+            "name": "London",
+            "code": "N6A"
+          }
+        ]
+      },
+      {
+        "name": "Quebec",
+        "code": "QC",
+        "cities": [
+          {
+            "name": "Montreal",
+            "code": "H2Y"
+          },
+          {
+            "name": "Quebec City",
+            "code": "G1R"
+          },
+          {
+            "name": "Laval",
+            "code": "H7V"
+          },
+          {
+            "name": "Gatineau",
+            "code": "J8X"
+          },
+          {
+            "name": "Longueuil",
+            "code": "J4K"
+          }
+        ]
+      },
+      {
+        "name": "British Columbia",
+        "code": "BC",
+        "cities": [
+          {
+            "name": "Vancouver",
+            "code": "V6B"
+          },
+          {
+            "name": "Victoria",
+            "code": "V8W"
+          },
+          {
+            "name": "Surrey",
+            "code": "V3T"
+          },
+          {
+            "name": "Burnaby",
+            "code": "V5H"
+          },
+          {
+            "name": "Kelowna",
+            "code": "V1Y"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "España",
+    "code": "ES",
+    "states": [
+      {
+        "name": "Madrid",
+        "code": "MD",
+        "cities": [
+          {
+            "name": "Madrid",
+            "code": "28001"
+          },
+          {
+            "name": "Alcalá de Henares",
+            "code": "28801"
+          },
+          {
+            "name": "Getafe",
+            "code": "28901"
+          },
+          {
+            "name": "Leganés",
+            "code": "28911"
+          },
+          {
+            "name": "Móstoles",
+            "code": "28931"
+          }
+        ]
+      },
+      {
+        "name": "Cataluña",
+        "code": "CT",
+        "cities": [
+          {
+            "name": "Barcelona",
+            "code": "08001"
+          },
+          {
+            "name": "Girona",
+            "code": "17001"
+          },
+          {
+            "name": "Lleida",
+            "code": "25001"
+          },
+          {
+            "name": "Tarragona",
+            "code": "43001"
+          },
+          {
+            "name": "Sabadell",
+            "code": "08201"
+          }
+        ]
+      },
+      {
+        "name": "Andalucía",
+        "code": "AN",
+        "cities": [
+          {
+            "name": "Sevilla",
+            "code": "41001"
+          },
+          {
+            "name": "Málaga",
+            "code": "29001"
+          },
+          {
+            "name": "Granada",
+            "code": "18001"
+          },
+          {
+            "name": "Córdoba",
+            "code": "14001"
+          },
+          {
+            "name": "Almería",
+            "code": "04001"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Francia",
+    "code": "FR",
+    "states": [
+      {
+        "name": "Île-de-France",
+        "code": "IDF",
+        "cities": [
+          {
+            "name": "París",
+            "code": "75001"
+          },
+          {
+            "name": "Versalles",
+            "code": "78000"
+          },
+          {
+            "name": "Boulogne-Billancourt",
+            "code": "92100"
+          },
+          {
+            "name": "Saint-Denis",
+            "code": "93200"
+          },
+          {
+            "name": "Argenteuil",
+            "code": "95100"
+          }
+        ]
+      },
+      {
+        "name": "Provence-Alpes-Côte d'Azur",
+        "code": "PAC",
+        "cities": [
+          {
+            "name": "Marsella",
+            "code": "13001"
+          },
+          {
+            "name": "Niza",
+            "code": "06000"
+          },
+          {
+            "name": "Cannes",
+            "code": "06400"
+          },
+          {
+            "name": "Aix-en-Provence",
+            "code": "13100"
+          },
+          {
+            "name": "Aviñón",
+            "code": "84000"
+          }
+        ]
+      },
+      {
+        "name": "Auvergne-Rhône-Alpes",
+        "code": "ARA",
+        "cities": [
+          {
+            "name": "Lyon",
+            "code": "69001"
+          },
+          {
+            "name": "Grenoble",
+            "code": "38000"
+          },
+          {
+            "name": "Saint-Étienne",
+            "code": "42000"
+          },
+          {
+            "name": "Annecy",
+            "code": "74000"
+          },
+          {
+            "name": "Valence",
+            "code": "26000"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Alemania",
+    "code": "DE",
+    "states": [
+      {
+        "name": "Baviera",
+        "code": "BY",
+        "cities": [
+          {
+            "name": "Múnich",
+            "code": "80331"
+          },
+          {
+            "name": "Núremberg",
+            "code": "90402"
+          },
+          {
+            "name": "Augsburgo",
+            "code": "86150"
+          },
+          {
+            "name": "Ratisbona",
+            "code": "93047"
+          },
+          {
+            "name": "Ingolstadt",
+            "code": "85049"
+          }
+        ]
+      },
+      {
+        "name": "Renania del Norte-Westfalia",
+        "code": "NW",
+        "cities": [
+          {
+            "name": "Colonia",
+            "code": "50667"
+          },
+          {
+            "name": "Düsseldorf",
+            "code": "40213"
+          },
+          {
+            "name": "Dortmund",
+            "code": "44135"
+          },
+          {
+            "name": "Essen",
+            "code": "45127"
+          },
+          {
+            "name": "Bonn",
+            "code": "53111"
+          }
+        ]
+      },
+      {
+        "name": "Baden-Wurtemberg",
+        "code": "BW",
+        "cities": [
+          {
+            "name": "Stuttgart",
+            "code": "70173"
+          },
+          {
+            "name": "Karlsruhe",
+            "code": "76133"
+          },
+          {
+            "name": "Mannheim",
+            "code": "68159"
+          },
+          {
+            "name": "Friburgo",
+            "code": "79098"
+          },
+          {
+            "name": "Heidelberg",
+            "code": "69115"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Italia",
+    "code": "IT",
+    "states": [
+      {
+        "name": "Lombardía",
+        "code": "LOM",
+        "cities": [
+          {
+            "name": "Milán",
+            "code": "20121"
+          },
+          {
+            "name": "Brescia",
+            "code": "25121"
+          },
+          {
+            "name": "Bérgamo",
+            "code": "24121"
+          },
+          {
+            "name": "Monza",
+            "code": "20900"
+          },
+          {
+            "name": "Como",
+            "code": "22100"
+          }
+        ]
+      },
+      {
+        "name": "Lacio",
+        "code": "LAZ",
+        "cities": [
+          {
+            "name": "Roma",
+            "code": "00118"
+          },
+          {
+            "name": "Latina",
+            "code": "04100"
+          },
+          {
+            "name": "Viterbo",
+            "code": "01100"
+          },
+          {
+            "name": "Rieti",
+            "code": "02100"
+          },
+          {
+            "name": "Frosinone",
+            "code": "03100"
+          }
+        ]
+      },
+      {
+        "name": "Campania",
+        "code": "CAM",
+        "cities": [
+          {
+            "name": "Nápoles",
+            "code": "80121"
+          },
+          {
+            "name": "Salerno",
+            "code": "84121"
+          },
+          {
+            "name": "Caserta",
+            "code": "81100"
+          },
+          {
+            "name": "Benevento",
+            "code": "82100"
+          },
+          {
+            "name": "Avellino",
+            "code": "83100"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Reino Unido",
+    "code": "GB",
+    "states": [
+      {
+        "name": "Inglaterra",
+        "code": "ENG",
+        "cities": [
+          {
+            "name": "Londres",
+            "code": "EC1A"
+          },
+          {
+            "name": "Mánchester",
+            "code": "M1"
+          },
+          {
+            "name": "Birmingham",
+            "code": "B1"
+          },
+          {
+            "name": "Leeds",
+            "code": "LS1"
+          },
+          {
+            "name": "Liverpool",
+            "code": "L1"
+          }
+        ]
+      },
+      {
+        "name": "Escocia",
+        "code": "SCT",
+        "cities": [
+          {
+            "name": "Edimburgo",
+            "code": "EH1"
+          },
+          {
+            "name": "Glasgow",
+            "code": "G1"
+          },
+          {
+            "name": "Aberdeen",
+            "code": "AB10"
+          },
+          {
+            "name": "Dundee",
+            "code": "DD1"
+          },
+          {
+            "name": "Inverness",
+            "code": "IV1"
+          }
+        ]
+      },
+      {
+        "name": "Gales",
+        "code": "WLS",
+        "cities": [
+          {
+            "name": "Cardiff",
+            "code": "CF10"
+          },
+          {
+            "name": "Swansea",
+            "code": "SA1"
+          },
+          {
+            "name": "Newport",
+            "code": "NP20"
+          },
+          {
+            "name": "Wrexham",
+            "code": "LL11"
+          },
+          {
+            "name": "Bangor",
+            "code": "LL57"
+          }
+        ]
+      }
+    ]
+  }
+]

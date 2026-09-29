@@ -35,6 +35,30 @@ public class PurchaseFlowIntegrationTest {
     @Autowired
     private StockService stockService;
 
+    @Autowired
+    private ingsoftware.zeroshop.service.catalog.ProductService productService;
+
+    @org.junit.jupiter.api.BeforeEach
+    public void setUp() {
+        if (officeRepository.findAllByDeletedFalse().isEmpty()) {
+            Office newOffice = new Office();
+            newOffice.setName("Sucursal Centro");
+            newOffice.setCuit("30-11111111-9");
+            newOffice.setType(ingsoftware.zeroshop.enums.OfficeType.BRANCH);
+            newOffice.setDeleted(false);
+            officeRepository.save(newOffice);
+        }
+
+        if (productRepository.findAllByDeletedFalse().isEmpty()) {
+            Product product = Product.builder()
+                    .code("PROD-TEST-" + java.util.UUID.randomUUID().toString().substring(0, 5))
+                    .name("Remera Deportiva")
+                    .size(ingsoftware.zeroshop.enums.Size.L)
+                    .build();
+            productService.createProduct(product, new BigDecimal("15000.00"), null);
+        }
+    }
+
     @Test
     @Transactional
     public void testFullPurchaseFlow() {

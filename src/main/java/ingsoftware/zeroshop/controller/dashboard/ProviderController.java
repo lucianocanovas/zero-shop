@@ -10,6 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import ingsoftware.zeroshop.dto.AddressDTO;
+import ingsoftware.zeroshop.entity.location.Address;
+import ingsoftware.zeroshop.repository.location.CityRepository;
+import jakarta.validation.Valid;
 import java.util.UUID;
 
 @Controller("dashboardProviderController")
@@ -17,6 +21,9 @@ public class ProviderController {
 
     @Autowired
     private SupplierService supplierService;
+
+    @Autowired
+    private ingsoftware.zeroshop.repository.location.CountryRepository countryRepository;
 
     // GET /dashboard/providers: Lista los proveedores registrados
     @GetMapping("/dashboard/providers")
@@ -47,6 +54,7 @@ public class ProviderController {
     @GetMapping("/dashboard/providers/new")
     public String newProviderForm(Model model) {
         model.addAttribute("supplierDTO", new SupplierFormDTO());
+        model.addAttribute("countries", countryRepository.findAll());
         return "dashboard/provider-new";
     }
 
@@ -74,25 +82,43 @@ public class ProviderController {
         }
 
         if (supplier.getAddress() != null && !supplier.getAddress().isEmpty()) {
-            dto.setAddress(supplier.getAddress().iterator().next().getStreet());
+            Address entityAddress = supplier.getAddress().iterator().next();
+            AddressDTO addressDTO = new AddressDTO();
+            addressDTO.setStreet(entityAddress.getStreet());
+            addressDTO.setNumber(entityAddress.getNumber());
+            addressDTO.setZipCode(entityAddress.getZipCode());
+            addressDTO.setFloor(entityAddress.getFloor());
+            addressDTO.setApartment(entityAddress.getApartment());
+            addressDTO.setObservations(entityAddress.getObservations());
+            if (entityAddress.getCity() != null) {
+                addressDTO.setCityId(entityAddress.getCity().getId());
+                if (entityAddress.getCity().getState() != null) {
+                    addressDTO.setStateId(entityAddress.getCity().getState().getId());
+                    if (entityAddress.getCity().getState().getCountry() != null) {
+                        addressDTO.setCountryId(entityAddress.getCity().getState().getCountry().getId());
+                    }
+                }
+            }
+            dto.setAddress(addressDTO);
         }
 
         model.addAttribute("supplierDTO", dto);
         model.addAttribute("providerId", supplier.getId());
+        model.addAttribute("countries", countryRepository.findAll());
 
         return "dashboard/provider-edit";
     }
 
     // POST /dashboard/providers: Registra un nuevo proveedor
     @PostMapping("/dashboard/providers")
-    public String createProvider(@ModelAttribute SupplierFormDTO supplierDTO) {
+    public String createProvider(@Valid @ModelAttribute SupplierFormDTO supplierDTO) {
         supplierService.createSupplier(supplierDTO);
         return "redirect:/dashboard/providers";
     }
 
     // PUT /dashboard/providers/:id: Actualiza los datos de un proveedor
     @PutMapping("/dashboard/providers/{id}")
-    public String updateProvider(@PathVariable("id") UUID id, @ModelAttribute SupplierFormDTO supplierDTO) {
+    public String updateProvider(@PathVariable("id") UUID id, @Valid @ModelAttribute SupplierFormDTO supplierDTO) {
         supplierService.updateSupplier(id, supplierDTO);
         return "redirect:/dashboard/providers";
     }

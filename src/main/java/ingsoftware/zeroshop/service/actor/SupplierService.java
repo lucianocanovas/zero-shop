@@ -5,9 +5,12 @@ import ingsoftware.zeroshop.entity.actor.ContactEmail;
 import ingsoftware.zeroshop.entity.actor.ContactPhone;
 import ingsoftware.zeroshop.entity.actor.Supplier;
 import ingsoftware.zeroshop.entity.location.Address;
+import ingsoftware.zeroshop.entity.location.City;
 import ingsoftware.zeroshop.enums.ContactType;
 import ingsoftware.zeroshop.enums.PhoneType;
 import ingsoftware.zeroshop.repository.actor.SupplierRepository;
+import ingsoftware.zeroshop.repository.location.CityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,9 @@ public class SupplierService {
 
     @Autowired
     private SupplierRepository supplierRepository;
+
+    @Autowired
+    private CityRepository cityRepository;
 
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAllByDeletedFalse();
@@ -52,11 +58,18 @@ public class SupplierService {
         }
 
         supplier.setAddress(new java.util.ArrayList<>());
-        if (dto.getAddress() != null && !dto.getAddress().isEmpty()) {
+        if (dto.getAddress() != null) {
+            City city = cityRepository.findById(dto.getAddress().getCityId())
+                    .orElseThrow(() -> new EntityNotFoundException("Ciudad no encontrada con ID: " + dto.getAddress().getCityId()));
+
             Address address = new Address();
-            address.setStreet(dto.getAddress());
-            address.setZipCode("N/A"); // Default value as it's required
-            address.setNumber("S/N"); // Default value as it's required
+            address.setStreet(dto.getAddress().getStreet());
+            address.setNumber(dto.getAddress().getNumber());
+            address.setZipCode(dto.getAddress().getZipCode());
+            address.setFloor(dto.getAddress().getFloor());
+            address.setApartment(dto.getAddress().getApartment());
+            address.setObservations(dto.getAddress().getObservations());
+            address.setCity(city);
             supplier.getAddress().add(address);
         }
 
@@ -90,11 +103,18 @@ public class SupplierService {
         }
 
         supplier.getAddress().clear();
-        if (dto.getAddress() != null && !dto.getAddress().isEmpty()) {
+        if (dto.getAddress() != null) {
+            City city = cityRepository.findById(dto.getAddress().getCityId())
+                    .orElseThrow(() -> new EntityNotFoundException("Ciudad no encontrada con ID: " + dto.getAddress().getCityId()));
+
             Address address = new Address();
-            address.setStreet(dto.getAddress());
-            address.setZipCode("N/A");
-            address.setNumber("S/N");
+            address.setStreet(dto.getAddress().getStreet());
+            address.setNumber(dto.getAddress().getNumber());
+            address.setZipCode(dto.getAddress().getZipCode());
+            address.setFloor(dto.getAddress().getFloor());
+            address.setApartment(dto.getAddress().getApartment());
+            address.setObservations(dto.getAddress().getObservations());
+            address.setCity(city);
             supplier.getAddress().add(address);
         }
 

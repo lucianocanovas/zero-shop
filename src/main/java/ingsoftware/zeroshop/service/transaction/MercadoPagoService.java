@@ -75,9 +75,10 @@ public class MercadoPagoService {
                     PreferenceItemRequest item = PreferenceItemRequest.builder()
                             .id(detail.getProduct().getId().toString())
                             .title(detail.getProduct().getName())
-                            .description(detail.getProduct().getDescription() != null && !detail.getProduct().getDescription().isBlank() 
-                                    ? detail.getProduct().getDescription() 
-                                    : detail.getProduct().getName())
+                            .description(detail.getProduct().getDescription() != null
+                                    && !detail.getProduct().getDescription().isBlank()
+                                            ? detail.getProduct().getDescription()
+                                            : detail.getProduct().getName())
                             .quantity(detail.getQuantity())
                             .unitPrice(unitPrice)
                             .currencyId("ARS")
@@ -85,9 +86,10 @@ public class MercadoPagoService {
                     items.add(item);
                 }
             } else {
-                BigDecimal total = (saleOrder.getTotalAmount() != null && saleOrder.getTotalAmount().compareTo(BigDecimal.ZERO) > 0)
-                        ? saleOrder.getTotalAmount()
-                        : BigDecimal.valueOf(1.00);
+                BigDecimal total = (saleOrder.getTotalAmount() != null
+                        && saleOrder.getTotalAmount().compareTo(BigDecimal.ZERO) > 0)
+                                ? saleOrder.getTotalAmount()
+                                : BigDecimal.valueOf(1.00);
                 PreferenceItemRequest item = PreferenceItemRequest.builder()
                         .title("Orden Zero Shop #" + saleOrder.getId())
                         .quantity(1)
@@ -128,7 +130,8 @@ public class MercadoPagoService {
                     .backUrls(backUrls)
                     .externalReference(saleOrder.getId().toString());
 
-            if (baseUrl != null && baseUrl.startsWith("https://") && !baseUrl.contains("localhost") && !baseUrl.contains("127.0.0.1")) {
+            if (baseUrl != null && baseUrl.startsWith("https://") && !baseUrl.contains("localhost")
+                    && !baseUrl.contains("127.0.0.1")) {
                 requestBuilder.autoReturn("approved");
             }
 
@@ -138,9 +141,10 @@ public class MercadoPagoService {
             Preference preference = client.create(preferenceRequest);
 
             log.info("Preferencia de Mercado Pago creada con éxito con SDK: {}", preference.getId());
-            String redirectUrl = (sandboxEnabled && preference.getSandboxInitPoint() != null && !preference.getSandboxInitPoint().isBlank())
-                    ? preference.getSandboxInitPoint()
-                    : preference.getInitPoint();
+            String redirectUrl = (sandboxEnabled && preference.getSandboxInitPoint() != null
+                    && !preference.getSandboxInitPoint().isBlank())
+                            ? preference.getSandboxInitPoint()
+                            : preference.getInitPoint();
 
             log.info("Redirigiendo a checkout de Mercado Pago: {}", redirectUrl);
             return redirectUrl;
@@ -154,7 +158,8 @@ public class MercadoPagoService {
             throw new IllegalStateException("Error al conectar con Mercado Pago: " + e.getMessage());
         } catch (Exception e) {
             log.error("Excepción inesperada en Mercado Pago: {}", e.getMessage(), e);
-            return baseUrl + "/checkout/mp/success?orderId=" + saleOrder.getId() + "&collection_status=approved&simulated=true";
+            return baseUrl + "/checkout/mp/success?orderId=" + saleOrder.getId()
+                    + "&collection_status=approved&simulated=true";
         }
     }
 }

@@ -27,6 +27,10 @@
                     <p class="text-muted small mb-4">
                         La página que estás buscando puede haber cambiado de dirección, haber sido eliminada o no estar disponible en este momento.
                     </p>
+                    <div th:if="${message != null}" class="alert alert-danger text-start" style="font-size: 0.8rem; overflow: auto; max-height: 200px;">
+                        <strong th:text="${message}"></strong>
+                        <pre th:if="${trace != null}" th:text="${trace}"></pre>
+                    </div>
 
                     <div class="d-flex justify-content-center flex-wrap gap-2">
                         <a th:href="@{/}" class="btn btn-primary fw-semibold px-4 py-2">

@@ -81,11 +81,8 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">Dirección Fiscal / Depósito Central</label>
-                                    <input type="text" id="address" th:field="*{address}" class="form-control"
-                                        placeholder="Parque Industrial Pilar, Lote 12">
-                                </div>
+                                <h5 class="mt-4 mb-3 border-bottom pb-2">Dirección Fiscal / Depósito Central</h5>
+                                <div th:replace="~{common/fragments/address-form :: address-fields('address')}"></div>
 
                                 <div class="d-flex justify-content-end gap-2 pt-3 border-top">
                                     <a th:href="@{/dashboard/providers}" class="btn btn-outline-secondary">Cancelar</a>

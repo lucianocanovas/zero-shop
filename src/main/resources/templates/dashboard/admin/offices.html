@@ -51,7 +51,37 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <!-- Iteración dinámica si existen sucursales -->
+                                <tr th:each="office : ${offices}" th:if="${offices != null and !offices.isEmpty()}">
+                                    <td class="fw-bold text-dark">
+                                        <i class="bi bi-building text-primary me-2"></i><span th:text="${office.name}">Sucursal Nombre</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${office.address != null}" th:text="${office.address.street + ' ' + office.address.number}">Dirección</span>
+                                        <span th:if="${office.address == null}" class="text-muted">Sin dirección registrada</span>
+                                    </td>
+                                    <td class="text-muted" th:text="${office.phone != null ? office.phone : 'Sin teléfono'}">+54 11 4321-0001</td>
+                                    <td>
+                                        <span th:if="${office.type == 'HEADQUARTERS'}" class="badge bg-primary-subtle text-primary">Sede Central</span>
+                                        <span th:if="${office.type == 'BRANCH'}" class="badge bg-success-subtle text-success">Sucursal (Punto de Venta)</span>
+                                        <span th:if="${office.type == 'WAREHOUSE'}" class="badge bg-warning-subtle text-warning">Depósito</span>
+                                        <span th:if="${office.type == 'DISTRIBUTION_CENTER'}" class="badge bg-info-subtle text-info">Centro de Distribución</span>
+                                        <span th:if="${office.type == 'OTHER'}" class="badge bg-secondary-subtle text-secondary">Otro</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <a th:href="@{/dashboard/admin/offices/{id}(id=${office.id})}" class="btn btn-outline-secondary" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <form method="post" th:action="@{/dashboard/admin/offices/{id}(id=${office.id})}" class="d-inline">
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <button type="submit" class="btn btn-outline-danger" title="Eliminar" onclick="return confirm('¿Eliminar esta sucursal?')"><i class="bi bi-trash"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Fallbacks / Demostración si la lista está vacía -->
+                                <tr th:if="${offices == null or offices.isEmpty()}">
                                     <td class="fw-bold text-dark">
                                         <i class="bi bi-building text-primary me-2"></i>Sucursal Central
                                     </td>
@@ -65,7 +95,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr th:if="${offices == null or offices.isEmpty()}">
                                     <td class="fw-bold text-dark">
                                         <i class="bi bi-shop text-success me-2"></i>Sucursal Norte
                                     </td>

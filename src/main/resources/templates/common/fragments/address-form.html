@@ -1,0 +1,195 @@
+<div th:fragment="address-fields(dtoPrefix)">
+    <div class="row g-3">
+        <!-- Calle -->
+        <div class="col-md-8">
+            <label th:for="${dtoPrefix + '.street'}" class="form-label">Calle <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" th:field="*{__${dtoPrefix}__.street}" required>
+        </div>
+
+        <!-- Número y lógica "S/N" -->
+        <div class="col-md-4">
+            <label th:for="${dtoPrefix + '.number'}" class="form-label">Número <span
+                    class="text-danger">*</span></label>
+            <div class="input-group">
+                <input type="text" class="form-control" th:field="*{__${dtoPrefix}__.number}"
+                    th:id="${'addressNumber_' + dtoPrefix}" required>
+                <!-- Checkbox S/N -->
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0" type="checkbox" th:id="${'snCheckbox_' + dtoPrefix}"
+                           th:data-target="${'addressNumber_' + dtoPrefix}"
+                           onchange="document.getElementById(this.getAttribute('data-target')).value = this.checked ? 'S/N' : ''; document.getElementById(this.getAttribute('data-target')).readOnly = this.checked;">
+                    <label class="form-check-label ms-2" th:for="${'snCheckbox_' + dtoPrefix}">S/N</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Código Postal -->
+        <div class="col-md-4">
+            <label th:for="${dtoPrefix + '.zipCode'}" class="form-label">Código Postal <span
+                    class="text-danger">*</span></label>
+            <input type="text" class="form-control" th:field="*{__${dtoPrefix}__.zipCode}" required>
+        </div>
+
+        <!-- Piso y Depto (Opcionales) -->
+        <div class="col-md-4">
+            <label th:for="${dtoPrefix + '.floor'}" class="form-label">Piso</label>
+            <input type="text" class="form-control" th:field="*{__${dtoPrefix}__.floor}">
+        </div>
+        <div class="col-md-4">
+            <label th:for="${dtoPrefix + '.apartment'}" class="form-label">Departamento</label>
+            <input type="text" class="form-control" th:field="*{__${dtoPrefix}__.apartment}">
+        </div>
+
+        <!-- País -->
+        <div class="col-md-4">
+            <label th:for="${dtoPrefix + '.countryId'}" class="form-label">País <span class="text-danger">*</span></label>
+            <select class="form-select" th:field="*{__${dtoPrefix}__.countryId}" th:id="${'countrySelect_' + dtoPrefix}" required>
+                <option value="">Seleccione un país...</option>
+                <option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name}" th:data-code="${country.code}"></option>
+            </select>
+        </div>
+
+        <!-- Provincia / Estado -->
+        <div class="col-md-4">
+            <label th:for="${dtoPrefix + '.stateId'}" class="form-label">Provincia / Estado <span class="text-danger">*</span></label>
+            <select class="form-select" th:field="*{__${dtoPrefix}__.stateId}" th:id="${'stateSelect_' + dtoPrefix}" th:data-initial-value="*{__${dtoPrefix}__.stateId}" required disabled>
+                <option value="">Seleccione una provincia...</option>
+                <!-- Opciones dinámicas -->
+            </select>
+        </div>
+
+        <!-- Localidad / Ciudad (Select) -->
+        <div class="col-md-4">
+            <label th:for="${dtoPrefix + '.cityId'}" class="form-label">Localidad / Ciudad <span
+                    class="text-danger">*</span></label>
+            <select class="form-select" th:field="*{__${dtoPrefix}__.cityId}" th:id="${'citySelect_' + dtoPrefix}" th:data-initial-value="*{__${dtoPrefix}__.cityId}" required disabled>
+                <option value="">Seleccione una localidad...</option>
+                <!-- Opciones dinámicas -->
+            </select>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="col-md-12">
+            <label th:for="${dtoPrefix + '.observations'}" class="form-label">Observaciones (Opcional)</label>
+            <textarea class="form-control" th:field="*{__${dtoPrefix}__.observations}" rows="2"></textarea>
+        </div>
+    </div>
+
+    <!-- Script para cascada de País -> Provincia -> Ciudad -->
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            const prefix = /*[[${dtoPrefix}]]*/ 'address';
+            const countrySelect = document.getElementById('countrySelect_' + prefix);
+            const stateSelect = document.getElementById('stateSelect_' + prefix);
+            const citySelect = document.getElementById('citySelect_' + prefix);
+            const zipInput = document.getElementById('__${dtoPrefix}__.zipCode') || document.querySelector('[name="' + prefix + '.zipCode"]');
+            const phoneInput = document.getElementById('phone') || document.querySelector('[name="phone"]');
+
+            const initialStateId = stateSelect.getAttribute('data-initial-value');
+            const initialCityId = citySelect.getAttribute('data-initial-value');
+
+            const phonePrefixes = {
+                'AR': '+54 ', 'BR': '+55 ', 'MX': '+52 ', 'US': '+1 ', 'CA': '+1 ',
+                'ES': '+34 ', 'FR': '+33 ', 'DE': '+49 ', 'IT': '+39 ', 'GB': '+44 '
+            };
+
+            function loadStates(countryId, callback) {
+                stateSelect.innerHTML = '<option value="">Cargando...</option>';
+                stateSelect.disabled = true;
+                citySelect.innerHTML = '<option value="">Seleccione una localidad...</option>';
+                citySelect.disabled = true;
+
+                if (!countryId) {
+                    stateSelect.innerHTML = '<option value="">Seleccione una provincia...</option>';
+                    return;
+                }
+
+                fetch('/api/locations/states?countryId=' + countryId)
+                    .then(response => response.json())
+                    .then(data => {
+                        stateSelect.innerHTML = '<option value="">Seleccione una provincia...</option>';
+                        data.forEach(state => {
+                            let option = document.createElement('option');
+                            option.value = state.id;
+                            option.text = state.name;
+                            stateSelect.appendChild(option);
+                        });
+                        stateSelect.disabled = false;
+                        if (callback) callback();
+                    });
+            }
+
+            function loadCities(stateId, callback) {
+                citySelect.innerHTML = '<option value="">Cargando...</option>';
+                citySelect.disabled = true;
+
+                if (!stateId) {
+                    citySelect.innerHTML = '<option value="">Seleccione una localidad...</option>';
+                    return;
+                }
+
+                fetch('/api/locations/cities?stateId=' + stateId)
+                    .then(response => response.json())
+                    .then(data => {
+                        citySelect.innerHTML = '<option value="">Seleccione una localidad...</option>';
+                        data.forEach(city => {
+                            let option = document.createElement('option');
+                            option.value = city.id;
+                            option.text = city.name;
+                            option.dataset.code = city.code;
+                            citySelect.appendChild(option);
+                        });
+                        citySelect.disabled = false;
+                        if (callback) callback();
+                    });
+            }
+
+            countrySelect.addEventListener('change', function() {
+                loadStates(this.value);
+                
+                // Set phone prefix
+                if (phoneInput && this.selectedIndex > 0) {
+                    let selectedOption = this.options[this.selectedIndex];
+                    let countryCode = selectedOption.dataset.code;
+                    let prefix = phonePrefixes[countryCode];
+                    if (prefix && (!phoneInput.value || phoneInput.value.trim() === '')) {
+                        phoneInput.value = prefix;
+                    } else if (prefix && phoneInput.value) {
+                        // Optional: Replace prefix if it matches an existing one
+                        for (let p in phonePrefixes) {
+                            if (phoneInput.value.startsWith(phonePrefixes[p])) {
+                                phoneInput.value = phoneInput.value.replace(phonePrefixes[p], prefix);
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+
+            stateSelect.addEventListener('change', function() {
+                loadCities(this.value);
+            });
+
+            citySelect.addEventListener('change', function() {
+                let selectedOption = this.options[this.selectedIndex];
+                if (selectedOption && selectedOption.dataset.code && zipInput) {
+                    zipInput.value = selectedOption.dataset.code;
+                }
+            });
+
+            // Inicialización si hay valores pre-seleccionados (Edit)
+            if (countrySelect.value) {
+                loadStates(countrySelect.value, function() {
+                    if (initialStateId) {
+                        stateSelect.value = initialStateId;
+                        loadCities(initialStateId, function() {
+                            if (initialCityId) {
+                                citySelect.value = initialCityId;
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</div>
