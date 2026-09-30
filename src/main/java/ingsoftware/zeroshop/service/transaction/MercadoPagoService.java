@@ -101,7 +101,6 @@ public class MercadoPagoService {
 
             String payerName = "Cliente";
             String payerSurname = "Zero";
-            String payerEmail = "cliente@zeroshop.com";
 
             if (saleOrder.getClient() != null) {
                 if (saleOrder.getClient().getFirstName() != null && !saleOrder.getClient().getFirstName().isBlank()) {
@@ -112,10 +111,10 @@ public class MercadoPagoService {
                 }
             }
 
+            // Omitir email por defecto para evitar bloqueos en Sandbox con cuentas de compradores de prueba
             PreferencePayerRequest payer = PreferencePayerRequest.builder()
                     .name(payerName)
                     .surname(payerSurname)
-                    .email(payerEmail)
                     .build();
 
             PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
@@ -140,11 +139,11 @@ public class MercadoPagoService {
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
-            log.info("Preferencia de Mercado Pago creada con éxito con SDK: {}", preference.getId());
-            String redirectUrl = (sandboxEnabled && preference.getSandboxInitPoint() != null
-                    && !preference.getSandboxInitPoint().isBlank())
-                            ? preference.getSandboxInitPoint()
-                            : preference.getInitPoint();
+            // Usar siempre initPoint: el subdominio sandbox_init_point (sandbox.mercadopago.com.ar)
+            // se encuentra discontinuado en la infraestructura de MP y genera bucles de redirección
+            // ("ERR_TOO_MANY_REDIRECTS / borra las cookies") y fallos ("algo anduvo mal").
+            // initPoint detecta automáticamente el entorno de prueba según las credenciales.
+            String redirectUrl = preference.getInitPoint();
 
             log.info("Redirigiendo a checkout de Mercado Pago: {}", redirectUrl);
             return redirectUrl;

@@ -282,6 +282,41 @@ public class EmailService {
         sendHtmlEmail(to, subject, html);
     }
 
+    /**
+     * Envía un correo con código numérico de 6 dígitos y enlace para activar la cuenta (especificación integrador).
+     */
+    @Async
+    public void sendVerificationCodeEmail(String to, String code, String verificationUrl) {
+        String subject = "Código de Activación de Cuenta: " + code + " - Zero Shop";
+        String html = """
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa; padding: 20px; }
+                        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+                        .code-box { background: #e0f2fe; color: #0369a1; font-size: 32px; font-weight: bold; letter-spacing: 6px; padding: 15px 25px; border-radius: 8px; display: inline-block; margin: 20px 0; }
+                        .btn { display: inline-block; background-color: #0d6efd; color: #ffffff !important; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container" style="text-align: center;">
+                        <h2 style="color: #0f172a;">¡Bienvenido a Zero Shop!</h2>
+                        <p style="color: #475569;">Para completar tu registro y activar tu cuenta, ingresa el siguiente código de activación en la plataforma:</p>
+                        <div class="code-box">%s</div>
+                        <p style="color: #64748b; font-size: 14px;">También puedes ingresar a la página de activación haciendo clic en el siguiente botón:</p>
+                        <div>
+                            <a href="%s" class="btn">Activar mi Cuenta</a>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """.formatted(code, verificationUrl != null ? verificationUrl : "http://localhost:8080/verify");
+
+        sendHtmlEmail(to, subject, html);
+    }
+
     public boolean isMailSenderAvailable() {
         return mailSender != null
                 && mailUsername != null && !mailUsername.isBlank()

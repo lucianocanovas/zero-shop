@@ -3,26 +3,22 @@ package ingsoftware.zeroshop.controller;
 import ingsoftware.zeroshop.enums.IDType;
 import ingsoftware.zeroshop.service.actor.UserService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.time.LocalDate;
 
 @Controller
 public class AuthController {
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
 
-    // Constructor para inyectar la dependencia del servicio de usuario y autenticación
-    public AuthController(UserService userService, AuthenticationManager authenticationManager) {
+    // Constructor para inyectar la dependencia del servicio de usuario
+    public AuthController(UserService userService) {
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
     }
 
     // GET /login: Muestra la página de inicio de sesión
@@ -65,7 +61,7 @@ public class AuthController {
 
         try {
             userService.registerClient(firstName, lastName, idType, idNumber, dateOfBirth, email, password);
-            return "redirect:/login?registered=true";
+            return "redirect:/verify?email=" + java.net.URLEncoder.encode(email, java.nio.charset.StandardCharsets.UTF_8) + "&sent=true";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "register";
@@ -77,22 +73,44 @@ public class AuthController {
 
     // GET /verify: Muestra la página de verificación de correo electrónico
     @GetMapping("/verify")
-    public String verifyPage() {
+    public String verifyPage(@RequestParam(value = "email", required = false) String email,
+                             @RequestParam(value = "sent", required = false) Boolean sent,
+                             Model model) {
+        model.addAttribute("email", email);
+        if (Boolean.TRUE.equals(sent)) {
+            model.addAttribute("info", "Te hemos enviado un código de activación de 6 dígitos a tu correo. Ingrésalo a continuación para activar tu cuenta.");
+        }
         return "verify";
     }
 
     // POST /verify: Maneja la verificación del correo electrónico del usuario
     @PostMapping("/verify")
-    public String verify() {
-        // LÓGICA DE VERIFICACIÓN DE CORREO ELECTRÓNICO
-        return "redirect:/login";
+    public String verify(@RequestParam("email") String email,
+                         @RequestParam("code") String code,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
+        boolean verified = userService.verifyAccount(email, code);
+        if (verified) {
+            redirectAttributes.addFlashAttribute("success", "¡Cuenta activada con éxito! Ya puedes iniciar sesión con tus credenciales.");
+            return "redirect:/login?verified=true";
+        } else {
+            model.addAttribute("error", "Código de activación incorrecto o inexistente. Verifica e intenta nuevamente.");
+            model.addAttribute("email", email);
+            return "verify";
+        }
     }
 
     // POST /verify/resend: Maneja el reenvío del correo de verificación
     @PostMapping("/verify/resend")
-    public String resendVerificationEmail() {
-        // LÓGICA DE REENVÍO DE CORREO DE VERIFICACIÓN
-        return "redirect:/verify";
+    public String resendVerificationEmail(@RequestParam("email") String email,
+                                          RedirectAttributes redirectAttributes) {
+        try {
+            userService.resendVerificationCode(email);
+            redirectAttributes.addFlashAttribute("info", "Se ha reenviado un nuevo código de activación a tu correo.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "No se pudo reenviar el código: " + e.getMessage());
+        }
+        return "redirect:/verify?email=" + (email != null ? java.net.URLEncoder.encode(email, java.nio.charset.StandardCharsets.UTF_8) : "");
     }
 
     // GET /logout: Maneja el cierre de sesión del usuario

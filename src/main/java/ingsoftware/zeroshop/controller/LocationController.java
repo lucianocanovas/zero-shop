@@ -1,8 +1,6 @@
-package ingsoftware.zeroshop.controller.api;
+package ingsoftware.zeroshop.controller;
 
-import ingsoftware.zeroshop.repository.location.CityRepository;
-import ingsoftware.zeroshop.repository.location.StateRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import ingsoftware.zeroshop.service.location.LocationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,29 +11,25 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/locations")
-public class LocationRestController {
+@RequestMapping("/dashboard/locations")
+public class LocationController {
 
-    @Autowired
-    private StateRepository stateRepository;
+    private final LocationService locationService;
 
-    @Autowired
-    private CityRepository cityRepository;
+    public LocationController(LocationService locationService) {
+        this.locationService = locationService;
+    }
 
     @GetMapping("/states")
     public List<LocationDTO> getStates(@RequestParam("countryId") UUID countryId) {
-        return stateRepository.findAll().stream()
-                .filter(state -> state.getCountry() != null && state.getCountry().getId().equals(countryId)
-                        && !state.getDeleted())
+        return locationService.getStatesByCountryId(countryId).stream()
                 .map(state -> new LocationDTO(state.getId(), state.getName(), state.getCode()))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/cities")
     public List<LocationDTO> getCities(@RequestParam("stateId") UUID stateId) {
-        return cityRepository.findAll().stream()
-                .filter(city -> city.getState() != null && city.getState().getId().equals(stateId)
-                        && !city.getDeleted())
+        return locationService.getCitiesByStateId(stateId).stream()
                 .map(city -> new LocationDTO(city.getId(), city.getName(), city.getCode()))
                 .collect(Collectors.toList());
     }

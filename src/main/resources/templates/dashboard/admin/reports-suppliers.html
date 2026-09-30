@@ -57,57 +57,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="fw-bold text-dark">Zapatillas Running Zero Pro</div>
-                                        <small class="text-muted">SKU: ZR-1049 • Hombres</small>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-success-subtle text-success me-1"><i class="bi bi-check-circle-fill me-1"></i>Elegido</span>
-                                        <strong>Distribuidora Textil S.A.</strong>
-                                    </td>
-                                    <td class="fw-bold text-success fs-6">$12.000,00</td>
-                                    <td class="text-muted">Calzados Cuyo Mayorista</td>
-                                    <td class="text-muted">$14.500,00</td>
-                                    <td class="fw-bold text-primary">-$2.500,00 (17%)</td>
-                                    <td class="text-end">
-                                        <a th:href="@{/dashboard/purchase-orders}" class="btn btn-primary btn-sm">
-                                            <i class="bi bi-cart-plus me-1"></i>Comprar
-                                        </a>
+                                <tr th:if="${supplierComparisons == null or supplierComparisons.empty}">
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No se encontraron datos comparativos de proveedores y costos.
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr th:each="comp : ${supplierComparisons}">
                                     <td>
-                                        <div class="fw-bold text-dark">Campera Deportiva Rompeviento</div>
-                                        <small class="text-muted">SKU: ZR-2081 • Unisex</small>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-success-subtle text-success me-1"><i class="bi bi-check-circle-fill me-1"></i>Elegido</span>
-                                        <strong>Indumentaria Deportiva Mendoza</strong>
-                                    </td>
-                                    <td class="fw-bold text-success fs-6">$8.900,00</td>
-                                    <td class="text-muted">Distribuidora Textil S.A.</td>
-                                    <td class="text-muted">$10.200,00</td>
-                                    <td class="fw-bold text-primary">-$1.300,00 (13%)</td>
-                                    <td class="text-end">
-                                        <a th:href="@{/dashboard/purchase-orders}" class="btn btn-primary btn-sm">
-                                            <i class="bi bi-cart-plus me-1"></i>Comprar
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="fw-bold text-dark">Mochila Sport Backpack Zero</div>
-                                        <small class="text-muted">SKU: ZR-3310 • Accesorios</small>
+                                        <div class="fw-bold text-dark" th:text="${comp.productName}">Zapatillas Running Zero Pro</div>
+                                        <small class="text-muted" th:text="'SKU: ' + ${comp.productCode} + (${comp.categoryName != null} ? ' • ' + ${comp.categoryName} : '')">SKU: ZR-1049 • Hombres</small>
                                     </td>
                                     <td>
                                         <span class="badge bg-success-subtle text-success me-1"><i class="bi bi-check-circle-fill me-1"></i>Elegido</span>
-                                        <strong>Importaciones Cuyo S.R.L.</strong>
+                                        <strong th:text="${comp.bestSupplierName}">Distribuidora Textil S.A.</strong>
                                     </td>
-                                    <td class="fw-bold text-success fs-6">$7.500,00</td>
-                                    <td class="text-muted">Mochilas & Bolsos Baires</td>
-                                    <td class="text-muted">$9.100,00</td>
-                                    <td class="fw-bold text-primary">-$1.600,00 (18%)</td>
+                                    <td class="fw-bold text-success fs-6" th:text="'$' + ${#numbers.formatDecimal(comp.bestCostPrice != null ? comp.bestCostPrice : 0, 1, 2)}">$12.000,00</td>
+                                    <td class="text-muted" th:text="${comp.altSupplierName != null ? comp.altSupplierName : 'N/A'}">Calzados Cuyo Mayorista</td>
+                                    <td class="text-muted" th:text="${comp.altCostPrice != null ? '$' + #numbers.formatDecimal(comp.altCostPrice, 1, 2) : '-'}">$14.500,00</td>
+                                    <td>
+                                        <span th:if="${comp.unitSavings != null and comp.unitSavings.compareTo(T(java.math.BigDecimal).ZERO) > 0}" class="fw-bold text-primary" th:text="'-$' + ${#numbers.formatDecimal(comp.unitSavings, 1, 2)} + ' (' + ${#numbers.formatDecimal(comp.savingPercentage != null ? comp.savingPercentage : 0, 1, 0)} + '%)'">-$2.500,00 (17%)</span>
+                                        <span th:if="${comp.unitSavings == null or comp.unitSavings.compareTo(T(java.math.BigDecimal).ZERO) <= 0}" class="text-muted small">Único proveedor</span>
+                                    </td>
                                     <td class="text-end">
                                         <a th:href="@{/dashboard/purchase-orders}" class="btn btn-primary btn-sm">
                                             <i class="bi bi-cart-plus me-1"></i>Comprar

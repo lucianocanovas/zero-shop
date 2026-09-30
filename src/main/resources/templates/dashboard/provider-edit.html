@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +9,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
-
 <body class="bg-light">
 
     <!-- Topbar -->
@@ -29,79 +27,408 @@
             <!-- Contenido Principal -->
             <main class="col-12 col-md-9 col-lg-10 p-4">
                 <!-- Migas de pan y Título -->
-                <div
-                    class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4 pb-2 border-bottom">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4 pb-2 border-bottom">
                     <div>
                         <h1 class="h4 fw-bold text-dark mb-0">Editar Proveedor</h1>
-                        <p class="text-muted small mb-0">Actualiza los canales de contacto, razón social y datos
-                            comerciales</p>
+                        <p class="text-muted small mb-0">Actualiza los canales de contacto, razón social y múltiples domicilios comerciales</p>
                     </div>
                     <a th:href="@{/dashboard/providers}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left me-1"></i>Volver a Proveedores
                     </a>
                 </div>
 
+                <!-- Alertas -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${success}">¡Acción completada con éxito!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${error}">Ocurrió un problema.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+
                 <div class="row justify-content-center">
-                    <div class="col-12 col-lg-8">
-                        <div class="card border-0 shadow-sm p-4">
-                            <form method="post" th:action="@{/dashboard/providers/{id}(id=${providerId})}"
-                                th:object="${supplierDTO}">
+                    <div class="col-12 col-lg-10">
+
+                        <!-- SECCIÓN 1: DATOS COMERCIALES -->
+                        <div class="card border-0 shadow-sm p-4 mb-4">
+                            <div class="d-flex align-items-center gap-2 mb-3 border-bottom pb-2">
+                                <i class="bi bi-briefcase-fill fs-4 text-primary"></i>
+                                <h5 class="fw-bold text-dark mb-0">1. Datos Comerciales del Proveedor</h5>
+                            </div>
+
+                            <form method="post" th:action="@{/dashboard/providers/{id}(id=${providerId})}" th:object="${supplierDTO}">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <input type="hidden" name="_method" value="PUT">
 
-                                <div class="row g-3 mb-3">
+                                <div class="row g-3 mb-4">
                                     <div class="col-sm-7">
-                                        <label for="name" class="form-label">Razón Social / Nombre Comercial</label>
-                                        <input type="text" id="name" th:field="*{name}" class="form-control"
-                                            placeholder="Ej: Distribuidora Textil S.A." required>
+                                        <label for="name" class="form-label">Razón Social / Nombre Comercial <span class="text-danger">*</span></label>
+                                        <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Ej: Distribuidora Textil S.A." required>
                                     </div>
                                     <div class="col-sm-5">
-                                        <label for="cuit" class="form-label">CUIT / RUT</label>
-                                        <input type="text" id="cuit" th:field="*{cuit}" class="form-control"
-                                            placeholder="30-71123456-8" required>
+                                        <label for="cuit" class="form-label">CUIT / RUT <span class="text-danger">*</span></label>
+                                        <input type="text" id="cuit" th:field="*{cuit}" class="form-control" placeholder="30-71123456-8" required>
                                     </div>
                                 </div>
 
-                                <div class="row g-3 mb-3">
-                                    <div class="col-sm-6">
-                                        <label for="email" class="form-label">Correo Electrónico</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-envelope"></i></span>
-                                            <input type="email" id="email" th:field="*{email}" class="form-control"
-                                                placeholder="ventas@proveedor.com" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <label for="phone" class="form-label">Teléfono / WhatsApp</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-telephone"></i></span>
-                                            <input type="text" id="phone" th:field="*{phone}" class="form-control"
-                                                placeholder="+54 11 5555-8888">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <h5 class="mt-4 mb-3 border-bottom pb-2">Dirección Fiscal / Depósito Central</h5>
-                                <div th:replace="~{common/fragments/address-form :: address-fields('address')}"></div>
-
-                                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
-                                    <a th:href="@{/dashboard/providers}" class="btn btn-outline-secondary">Cancelar</a>
+                                <div class="d-flex justify-content-end">
                                     <button type="submit" class="btn btn-primary px-4">
-                                        <i class="bi bi-check-lg me-1"></i>Guardar Cambios
+                                        <i class="bi bi-check-lg me-1"></i>Guardar Datos Comerciales
                                     </button>
                                 </div>
                             </form>
                         </div>
+
+                        <!-- SECCIÓN 2: DIRECCIONES DEL PROVEEDOR -->
+                        <div class="card border-0 shadow-sm p-4 mb-4">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3 border-bottom pb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-geo-alt-fill fs-4 text-primary"></i>
+                                    <div>
+                                        <h5 class="fw-bold text-dark mb-0">2. Direcciones del Proveedor</h5>
+                                        <p class="text-muted small mb-0">Registra plantas de producción, depósitos de retiro o domicilios fiscales</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProviderAddressModal">
+                                    <i class="bi bi-plus-circle me-1"></i>Agregar Nueva Dirección
+                                </button>
+                            </div>
+
+                            <!-- Estado vacío -->
+                            <div th:if="${addresses == null or #lists.isEmpty(addresses)}" class="text-center py-4 bg-light rounded-3 border border-dashed">
+                                <i class="bi bi-geo-alt text-muted fs-1 d-block mb-2"></i>
+                                <p class="text-muted mb-2">Este proveedor aún no tiene direcciones registradas.</p>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addProviderAddressModal">
+                                    <i class="bi bi-plus-lg me-1"></i>Agregar dirección
+                                </button>
+                            </div>
+
+                            <!-- Listado de direcciones -->
+                            <div th:if="${addresses != null and not #lists.isEmpty(addresses)}" class="row g-3">
+                                <div class="col-12 col-md-6" th:each="addr, stat : ${addresses}">
+                                    <div class="card h-100 border rounded-3 p-3 bg-white shadow-sm position-relative">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                                <i class="bi bi-geo-alt-fill me-1"></i>Dirección <span th:text="${stat.count}">1</span>
+                                            </span>
+                                            <form th:action="@{/dashboard/providers/{id}/addresses/{addressId}/delete(id=${providerId}, addressId=${addr.id})}" method="post" onsubmit="return confirm('¿Seguro que deseas eliminar esta dirección?');">
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none" title="Eliminar dirección">
+                                                    <i class="bi bi-trash3 fs-5"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <h6 class="fw-bold text-dark mb-1" th:text="${addr.street + ' ' + addr.number}">Av. Industrial 450</h6>
+                                        <p class="text-muted small mb-1">
+                                            <span th:if="${addr.floor != null and !addr.floor.isBlank()}" th:text="'Piso: ' + ${addr.floor} + ' '"></span>
+                                            <span th:if="${addr.apartment != null and !addr.apartment.isBlank()}" th:text="'Depto: ' + ${addr.apartment}"></span>
+                                        </p>
+                                        <p class="text-secondary small mb-1">
+                                            <span th:text="${addr.city != null ? addr.city.name : 'Mendoza'}">Mendoza</span>,
+                                            <span th:text="${addr.city != null and addr.city.state != null ? addr.city.state.name : 'Mendoza'}">Mendoza</span>
+                                            <span class="text-muted" th:text="'(CP ' + ${addr.zipCode} + ')'"> (CP 5500)</span>
+                                        </p>
+                                        <p th:if="${addr.observations != null and !addr.observations.isBlank()}" class="small text-muted fst-italic mb-0 border-top pt-2 mt-2">
+                                            <i class="bi bi-info-circle me-1"></i><span th:text="${addr.observations}">Depósito Fiscal</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECCIÓN 3: CANALES DE CONTACTO -->
+                        <div class="card border-0 shadow-sm p-4 mb-4">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3 border-bottom pb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-telephone-fill fs-4 text-primary"></i>
+                                    <div>
+                                        <h5 class="fw-bold text-dark mb-0">3. Canales de Contacto del Proveedor</h5>
+                                        <p class="text-muted small mb-0">Registra correos para pedidos, teléfonos de vendedores o WhatsApp de entregas</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProviderContactModal">
+                                    <i class="bi bi-plus-circle me-1"></i>Agregar Nuevo Contacto
+                                </button>
+                            </div>
+
+                            <!-- Estado vacío -->
+                            <div th:if="${contacts == null or #lists.isEmpty(contacts)}" class="text-center py-4 bg-light rounded-3 border border-dashed">
+                                <i class="bi bi-telephone text-muted fs-1 d-block mb-2"></i>
+                                <p class="text-muted mb-2">Este proveedor aún no tiene canales de contacto registrados.</p>
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addProviderContactModal">
+                                    <i class="bi bi-plus-lg me-1"></i>Agregar un teléfono o email
+                                </button>
+                            </div>
+
+                            <!-- Listado de contactos -->
+                            <div th:if="${contacts != null and not #lists.isEmpty(contacts)}" class="row g-3">
+                                <div class="col-12 col-md-6" th:each="cont : ${contacts}">
+                                    <div class="card h-100 border rounded-3 p-3 bg-white shadow-sm position-relative">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <span th:if="${cont instanceof T(ingsoftware.zeroshop.entity.actor.ContactPhone)}" class="badge bg-success-subtle text-success border border-success-subtle">
+                                                    <i class="bi bi-telephone-fill me-1"></i>Teléfono
+                                                </span>
+                                                <span th:if="${cont instanceof T(ingsoftware.zeroshop.entity.actor.ContactEmail)}" class="badge bg-info-subtle text-info border border-info-subtle">
+                                                    <i class="bi bi-envelope-at-fill me-1"></i>Email
+                                                </span>
+                                                <span class="badge bg-secondary-subtle text-secondary" th:text="${cont.contactType}">WORK</span>
+                                                <span th:if="${cont instanceof T(ingsoftware.zeroshop.entity.actor.ContactPhone)}" class="badge bg-light text-dark border" th:text="${cont.phoneType}">MOBILE</span>
+                                            </div>
+                                            <form th:action="@{/dashboard/providers/{id}/contacts/{contactId}/delete(id=${providerId}, contactId=${cont.id})}" method="post" onsubmit="return confirm('¿Seguro que deseas eliminar este contacto?');">
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none" title="Eliminar contacto">
+                                                    <i class="bi bi-trash3 fs-5"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <h6 class="fw-bold text-dark mb-1">
+                                            <span th:if="${cont instanceof T(ingsoftware.zeroshop.entity.actor.ContactPhone)}" th:text="${cont.phoneNumber}">+54 11 5555-8888</span>
+                                            <span th:if="${cont instanceof T(ingsoftware.zeroshop.entity.actor.ContactEmail)}" th:text="${cont.email}">ventas@proveedor.com</span>
+                                        </h6>
+                                        <p th:if="${cont.observation != null and !cont.observation.isBlank()}" class="small text-muted mb-0">
+                                            <i class="bi bi-tag me-1"></i><span th:text="${cont.observation}">Ventas y Pedidos</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </main>
         </div>
     </div>
 
+    <!-- MODAL AGREGAR DIRECCIÓN DE PROVEEDOR -->
+    <div class="modal fade" id="addProviderAddressModal" tabindex="-1" aria-labelledby="addProviderAddressModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="addProviderAddressModalLabel">
+                        <i class="bi bi-geo-alt-fill me-2"></i>Agregar Dirección al Proveedor
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form method="post" th:action="@{/dashboard/providers/{id}/addresses(id=${providerId})}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="provStreet" class="form-label">Calle <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="provStreet" name="street" placeholder="Ej: Av. Las Heras, Acceso Norte..." required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="provNumber" class="form-label">Número <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="provNumber" name="number" placeholder="Ej: 1420 o S/N" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="provZipCode" class="form-label">Código Postal <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="provZipCode" name="zipCode" placeholder="Ej: 5500" value="5500" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="provFloor" class="form-label">Piso / Galpón <span class="text-muted small">(opc.)</span></label>
+                                <input type="text" class="form-control" id="provFloor" name="floor" placeholder="Ej: PB, Galpón 4">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="provApt" class="form-label">Oficina / Lote <span class="text-muted small">(opc.)</span></label>
+                                <input type="text" class="form-control" id="provApt" name="apartment" placeholder="Ej: Of. 12, Lote 5">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="provCountry" class="form-label">País <span class="text-danger">*</span></label>
+                                <select class="form-select" id="provCountry" required>
+                                    <option value="">Seleccione país...</option>
+                                    <option th:each="c : ${countries}" th:value="${c.id}" th:text="${c.name}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="provState" class="form-label">Provincia <span class="text-danger">*</span></label>
+                                <select class="form-select" id="provState" required disabled>
+                                    <option value="">Seleccione provincia...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="provCity" class="form-label">Localidad / Ciudad <span class="text-danger">*</span></label>
+                                <select class="form-select" id="provCity" name="cityId" required disabled>
+                                    <option value="">Seleccione localidad...</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="provObs" class="form-label">Observaciones / Tipo de Sede <span class="text-muted small">(opc.)</span></label>
+                                <input type="text" class="form-control" id="provObs" name="observations" placeholder="Ej: Depósito Central, Fábrica, Oficina de facturación...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg me-1"></i>Guardar Dirección
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AGREGAR CONTACTO DE PROVEEDOR -->
+    <div class="modal fade" id="addProviderContactModal" tabindex="-1" aria-labelledby="addProviderContactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="addProviderContactModalLabel">
+                        <i class="bi bi-telephone-plus-fill me-2"></i>Agregar Contacto al Proveedor
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form method="post" th:action="@{/dashboard/providers/{id}/contacts(id=${providerId})}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tipo de Canal <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="contactCategory" id="provCatPhone" value="PHONE" checked onchange="toggleProvContactCategory()">
+                                    <label class="form-check-label" for="provCatPhone">
+                                        <i class="bi bi-telephone me-1"></i>Teléfono
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="contactCategory" id="provCatEmail" value="EMAIL" onchange="toggleProvContactCategory()">
+                                    <label class="form-check-label" for="provCatEmail">
+                                        <i class="bi bi-envelope me-1"></i>Correo Electrónico
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campos para Teléfono -->
+                        <div id="provPhoneGroup">
+                            <div class="mb-3">
+                                <label for="provPhoneInput" class="form-label">Número de Teléfono <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="provPhoneInput" name="phoneNumber" placeholder="+54 11 5555-8888">
+                            </div>
+                            <div class="mb-3">
+                                <label for="provPhoneType" class="form-label">Tipo de Línea</label>
+                                <select class="form-select" id="provPhoneType" name="phoneType">
+                                    <option value="LANDLINE">Línea Fija / Oficina</option>
+                                    <option value="MOBILE" selected>Móvil / WhatsApp Comercial</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Campos para Email -->
+                        <div id="provEmailGroup" style="display: none;">
+                            <div class="mb-3">
+                                <label for="provEmailInput" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="provEmailInput" name="email" placeholder="ventas@proveedor.com">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="provContactType" class="form-label">Categoría</label>
+                            <select class="form-select" id="provContactType" name="contactType">
+                                <option value="WORK" selected>Laboral / Comercial</option>
+                                <option value="BUSINESS">Empresarial</option>
+                                <option value="OTHER">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="provContactObs" class="form-label">Sector / Persona de Contacto <span class="text-muted small">(opc.)</span></label>
+                            <input type="text" class="form-control" id="provContactObs" name="observation" placeholder="Ej: Ventas mayoristas, Despacho, Juan Pérez (Vendedor)...">
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg me-1"></i>Guardar Contacto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 
+    <!-- Script de cascada para modal de direcciones y switch de contactos -->
+    <script>
+        function toggleProvContactCategory() {
+            const isEmail = document.getElementById('provCatEmail').checked;
+            document.getElementById('provPhoneGroup').style.display = isEmail ? 'none' : 'block';
+            document.getElementById('provEmailGroup').style.display = isEmail ? 'block' : 'none';
+            if (isEmail) {
+                document.getElementById('provPhoneInput').removeAttribute('required');
+                document.getElementById('provEmailInput').setAttribute('required', 'required');
+            } else {
+                document.getElementById('provEmailInput').removeAttribute('required');
+                document.getElementById('provPhoneInput').setAttribute('required', 'required');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            toggleProvContactCategory();
+
+            const countrySel = document.getElementById('provCountry');
+            const stateSel = document.getElementById('provState');
+            const citySel = document.getElementById('provCity');
+
+            if (countrySel && stateSel && citySel) {
+                countrySel.addEventListener('change', function() {
+                    const countryId = this.value;
+                    stateSel.innerHTML = '<option value="">Cargando provincias...</option>';
+                    stateSel.disabled = true;
+                    citySel.innerHTML = '<option value="">Seleccione localidad...</option>';
+                    citySel.disabled = true;
+
+                    if (!countryId) {
+                        stateSel.innerHTML = '<option value="">Seleccione provincia...</option>';
+                        return;
+                    }
+
+                    fetch('/api/locations/states?countryId=' + countryId)
+                        .then(r => r.json())
+                        .then(states => {
+                            stateSel.innerHTML = '<option value="">Seleccione provincia...</option>';
+                            states.forEach(s => {
+                                const opt = document.createElement('option');
+                                opt.value = s.id;
+                                opt.textContent = s.name;
+                                stateSel.appendChild(opt);
+                            });
+                            stateSel.disabled = false;
+                        });
+                });
+
+                stateSel.addEventListener('change', function() {
+                    const stateId = this.value;
+                    citySel.innerHTML = '<option value="">Cargando localidades...</option>';
+                    citySel.disabled = true;
+
+                    if (!stateId) {
+                        citySel.innerHTML = '<option value="">Seleccione localidad...</option>';
+                        return;
+                    }
+
+                    fetch('/api/locations/cities?stateId=' + stateId)
+                        .then(r => r.json())
+                        .then(cities => {
+                            citySel.innerHTML = '<option value="">Seleccione localidad...</option>';
+                            cities.forEach(c => {
+                                const opt = document.createElement('option');
+                                opt.value = c.id;
+                                opt.textContent = c.name;
+                                citySel.appendChild(opt);
+                            });
+                            citySel.disabled = false;
+                        });
+                });
+            }
+        });
+    </script>
+</body>
 </html>

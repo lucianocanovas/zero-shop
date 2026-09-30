@@ -59,6 +59,7 @@
                                     <th>Nombre del Producto</th>
                                     <th>Categoría / Subcategoría</th>
                                     <th>Talle</th>
+                                    <th>Oferta</th>
                                     <th>Precio</th>
                                     <th>Stock</th>
                                     <th class="text-end">Acciones</th>
@@ -76,7 +77,13 @@
                                     <td>
                                         <span class="badge bg-secondary-subtle text-secondary" th:text="${product.size != null ? product.size : '-'}">M</span>
                                     </td>
-                                    <td class="fw-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(product.currentPrice != null ? product.currentPrice : 0, 1, 2)}">$0.00</td>
+                                    <td>
+                                        <span th:if="${product.onSale}" class="badge bg-danger"><i class="bi bi-fire me-1"></i>En Oferta</span>
+                                        <span th:unless="${product.onSale}" class="badge bg-light text-muted border">Regular</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold" th:classappend="${product.onSale ? 'text-danger' : 'text-primary'}" th:text="'$' + ${#numbers.formatDecimal(product.currentPrice != null ? product.currentPrice : 0, 1, 2)}">$0.00</span>
+                                    </td>
                                     <td>
                                         <span class="badge" th:classappend="${product.stock > 5 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}" th:text="${product.stock} + ' un.'">
                                             0 un.
@@ -110,7 +117,7 @@
 
                                 <!-- Fallback cuando no hay productos registrados -->
                                 <tr th:if="${products == null or products.empty}">
-                                    <td colspan="7" class="text-center py-4 text-muted">
+                                    <td colspan="8" class="text-center py-4 text-muted">
                                         <i class="bi bi-inbox fs-2 d-block mb-2"></i>
                                         No hay productos registrados en el sistema.
                                     </td>

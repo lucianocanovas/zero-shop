@@ -1,6 +1,5 @@
 package ingsoftware.zeroshop.controller.dashboard.admin;
 
-import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.enums.IDType;
 import ingsoftware.zeroshop.enums.Role;
 import ingsoftware.zeroshop.service.actor.UserService;

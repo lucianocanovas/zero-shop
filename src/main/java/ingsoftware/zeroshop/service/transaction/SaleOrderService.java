@@ -1,8 +1,10 @@
 package ingsoftware.zeroshop.service.transaction;
 
 import ingsoftware.zeroshop.entity.actor.Client;
+import ingsoftware.zeroshop.entity.actor.Employee;
 import ingsoftware.zeroshop.entity.actor.Person;
 import ingsoftware.zeroshop.entity.actor.User;
+import ingsoftware.zeroshop.entity.catalog.PriceHistory;
 import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.entity.location.Address;
 import ingsoftware.zeroshop.entity.org.Office;
@@ -29,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -159,7 +162,7 @@ public class SaleOrderService {
 
         BigDecimal price = priceHistoryRepository
                 .findFirstByProductIdAndDeletedFalseOrderByStartDateDesc(product.getId())
-                .map(ingsoftware.zeroshop.entity.catalog.PriceHistory::getPrice)
+                .map(ph -> ph.getPrice())
                 .orElse(product.getCurrentPrice() != null ? product.getCurrentPrice() : new BigDecimal("24990.00"));
 
         Optional<OrderDetail> existingDetailOpt = orderDetailRepository.findByOrderIdAndProductIdAndDeletedFalse(cart.getId(), productId);
@@ -229,8 +232,9 @@ public class SaleOrderService {
     private void recalculateCartTotal(SaleOrder cart) {
         List<OrderDetail> details = orderDetailRepository.findByOrderIdAndDeletedFalse(cart.getId());
         BigDecimal total = details.stream()
-                .map(OrderDetail::getTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .filter(d -> d != null && d.getTotal() != null)
+                .map(d -> d.getTotal())
+                .reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
         cart.setTotalAmount(total);
         saleOrderRepository.save(cart);
     }
@@ -469,5 +473,152 @@ public class SaleOrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         saleOrderRepository.save(order);
+    }
+
+    /**
+     * Registra una venta directa de mostrador (POS) en tienda física.
+     * Crea la orden con estado DELIVERED, asocia los ítems, descuenta el stock
+     * de la sucursal especificada y registra el cobro.
+     */
+    @Transactional
+    public SaleOrder createDeskSale(UUID officeId,
+                                   String employeeUsername,
+                                   String clientDni,
+                                   String clientName,
+                                   List<UUID> productIds,
+                                   List<Integer> quantities,
+                                   PaymentMethod paymentMethod) {
+        if (productIds == null || productIds.isEmpty()) {
+            throw new IllegalArgumentException("Debe agregar al menos un producto a la venta.");
+        }
+        if (quantities == null || quantities.size() != productIds.size()) {
+            throw new IllegalArgumentException("La cantidad de productos e ítems no coincide.");
+        }
+
+        // 1. Obtener sucursal
+        Office office = null;
+        if (officeId != null) {
+            office = officeRepository.findActive(officeId).orElse(null);
+        }
+        if (office == null) {
+            office = officeRepository.findAllByDeletedFalse().stream().findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No hay sucursales activas registradas."));
+        }
+
+        // 2. Resolver empleado autenticado
+        Employee employee = null;
+        if (employeeUsername != null) {
+            Optional<User> empUserOpt = userRepository.findByUsernameIgnoreCaseAndDeletedFalse(employeeUsername);
+            if (empUserOpt.isPresent() && empUserOpt.get().getPerson() instanceof Employee emp) {
+                employee = emp;
+            }
+        }
+
+        // 3. Resolver cliente (Consumidor Final o por DNI)
+        Client client = null;
+        if (clientDni != null && !clientDni.trim().isBlank()) {
+            String cleanDni = clientDni.trim();
+            client = clientRepository.findAllByDeletedFalse().stream()
+                    .filter(c -> cleanDni.equalsIgnoreCase(c.getIdNumber()))
+                    .findFirst()
+                    .orElse(null);
+            if (client == null) {
+                // Crear cliente con ese DNI y nombre
+                String fName = (clientName != null && !clientName.trim().isBlank()) ? clientName.trim() : "Cliente";
+                client = new Client();
+                client.setFirstName(fName);
+                client.setLastName("Mostrador");
+                client.setIdType(IDType.DNI);
+                client.setIdNumber(cleanDni);
+                client.setDateOfBirth(LocalDate.of(2000, 1, 1));
+                client.setClientNumber("CLI-" + cleanDni);
+                client.setDeleted(false);
+                client = clientRepository.save(client);
+            }
+        }
+
+        if (client == null) {
+            // Consumidor Final predeterminado
+            client = clientRepository.findAllByDeletedFalse().stream()
+                    .filter(c -> "00000000".equals(c.getIdNumber()) || "Consumidor".equalsIgnoreCase(c.getFirstName()))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        Client c = new Client();
+                        c.setFirstName("Consumidor");
+                        c.setLastName("Final");
+                        c.setIdType(IDType.DNI);
+                        c.setIdNumber("00000000");
+                        c.setDateOfBirth(LocalDate.of(2000, 1, 1));
+                        c.setClientNumber("CLI-CONSUMIDOR-FINAL");
+                        c.setDeleted(false);
+                        return clientRepository.save(c);
+                    });
+        }
+
+        // 4. Verificar stock y calcular total
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        List<Product> products = new ArrayList<>();
+        for (int i = 0; i < productIds.size(); i++) {
+            UUID pId = productIds.get(i);
+            int qty = quantities.get(i);
+            if (qty <= 0) {
+                throw new IllegalArgumentException("La cantidad de cada ítem debe ser mayor a cero.");
+            }
+
+            Product product = productRepository.findActive(pId)
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + pId));
+
+            // Verificar stock en la sucursal
+            if (!stockService.hasAvailableStock(pId, office.getId(), qty)) {
+                throw new IllegalStateException("Stock insuficiente en " + office.getName() + " para el producto: " + product.getName());
+            }
+
+            Optional<PriceHistory> priceHistory = priceHistoryRepository
+                    .findFirstByProductIdAndDeletedFalseOrderByStartDateDesc(product.getId());
+            BigDecimal unitPrice = priceHistory.map(ph -> ph.getPrice()).orElse(BigDecimal.ZERO);
+            product.setCurrentPrice(unitPrice);
+            products.add(product);
+
+            totalAmount = totalAmount.add(unitPrice.multiply(BigDecimal.valueOf(qty)));
+        }
+
+        // 5. Crear orden
+        SaleOrder order = SaleOrder.builder()
+                .client(client)
+                .employee(employee)
+                .office(office)
+                .date(LocalDateTime.now())
+                .totalAmount(totalAmount)
+                .status(OrderStatus.DELIVERED)
+                .deleted(false)
+                .build();
+        SaleOrder savedOrder = saleOrderRepository.save(order);
+
+        // 6. Crear detalles de orden y descontar stock
+        for (int i = 0; i < products.size(); i++) {
+            Product p = products.get(i);
+            int qty = quantities.get(i);
+            BigDecimal unitPrice = p.getCurrentPrice();
+            BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(qty));
+
+            OrderDetail detail = OrderDetail.builder()
+                    .order(savedOrder)
+                    .product(p)
+                    .quantity(qty)
+                    .unitPrice(unitPrice)
+                    .total(subtotal)
+                    .deleted(false)
+                    .build();
+            orderDetailRepository.save(detail);
+
+            // Descontar stock inmediatamente
+            stockService.decrementStock(p.getId(), office.getId(), qty);
+        }
+
+        // 7. Registrar pago
+        PaymentMethod finalMethod = paymentMethod != null ? paymentMethod : PaymentMethod.CASH;
+        paymentService.registerPayment(savedOrder, totalAmount, finalMethod);
+
+        return savedOrder;
     }
 }

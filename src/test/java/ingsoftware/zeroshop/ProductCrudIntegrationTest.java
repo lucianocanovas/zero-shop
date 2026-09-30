@@ -4,7 +4,6 @@ import ingsoftware.zeroshop.entity.catalog.PriceHistory;
 import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.entity.catalog.SubCategory;
 import ingsoftware.zeroshop.enums.Size;
-import ingsoftware.zeroshop.repository.catalog.PriceHistoryRepository;
 import ingsoftware.zeroshop.repository.catalog.ProductRepository;
 import ingsoftware.zeroshop.repository.catalog.SubCategoryRepository;
 import ingsoftware.zeroshop.service.catalog.ProductService;
@@ -29,9 +28,6 @@ public class ProductCrudIntegrationTest {
 
     @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
-    private PriceHistoryRepository priceHistoryRepository;
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;

@@ -8,7 +8,6 @@ import ingsoftware.zeroshop.enums.OrderStatus;
 import ingsoftware.zeroshop.enums.PaymentMethod;
 import ingsoftware.zeroshop.repository.catalog.ProductRepository;
 import ingsoftware.zeroshop.repository.org.OfficeRepository;
-import ingsoftware.zeroshop.service.org.StockService;
 import ingsoftware.zeroshop.service.transaction.SaleOrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +30,6 @@ public class PurchaseFlowIntegrationTest {
 
     @Autowired
     private OfficeRepository officeRepository;
-
-    @Autowired
-    private StockService stockService;
 
     @Autowired
     private ingsoftware.zeroshop.service.catalog.ProductService productService;

@@ -59,8 +59,9 @@ public class ProductController {
 
     // GET /offers: Muestra la sección de ofertas especiales
     @GetMapping("/offers")
-    public String getOffers() {
-        // LOGICA PARA OBTENER PRODUCTOS EN OFERTA (será implementada por otra persona)
+    public String getOffers(Model model) {
+        List<Product> products = productService.findOnSaleProducts();
+        model.addAttribute("products", products);
         return "client/offers";
     }
 

@@ -89,41 +89,11 @@
                                     </td>
                                 </tr>
 
-                                <!-- Filas de demostración / Fallback -->
+                                <!-- Estado Vacío -->
                                 <tr th:if="${users == null or users.empty}">
-                                    <td class="fw-semibold text-dark">admin@zeroshop.com</td>
-                                    <td>Luciano Cánovas</td>
-                                    <td><span class="badge bg-danger-subtle text-danger">ADMIN</span></td>
-                                    <td><span class="badge bg-success-subtle text-success">Activo</span></td>
-                                    <td class="text-end">
-                                        <div class="btn-group btn-group-sm">
-                                            <a th:href="@{/dashboard/admin/users/00000000-0000-0000-0000-000000000001}" class="btn btn-outline-secondary" title="Editar"><i class="bi bi-pencil"></i></a>
-                                            <button type="button" class="btn btn-outline-danger" title="Eliminar"><i class="bi bi-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr th:if="${users == null or users.empty}">
-                                    <td class="fw-semibold text-dark">empleado1@zeroshop.com</td>
-                                    <td>Gonzalo López</td>
-                                    <td><span class="badge bg-primary-subtle text-primary">EMPLOYEE</span></td>
-                                    <td><span class="badge bg-success-subtle text-success">Activo</span></td>
-                                    <td class="text-end">
-                                        <div class="btn-group btn-group-sm">
-                                            <a th:href="@{/dashboard/admin/users/00000000-0000-0000-0000-000000000002}" class="btn btn-outline-secondary" title="Editar"><i class="bi bi-pencil"></i></a>
-                                            <button type="button" class="btn btn-outline-danger" title="Eliminar"><i class="bi bi-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr th:if="${users == null or users.empty}">
-                                    <td class="fw-semibold text-dark">juan.perez@email.com</td>
-                                    <td>Juan Pérez</td>
-                                    <td><span class="badge bg-light text-dark border">CLIENT</span></td>
-                                    <td><span class="badge bg-success-subtle text-success">Activo</span></td>
-                                    <td class="text-end">
-                                        <div class="btn-group btn-group-sm">
-                                            <a th:href="@{/dashboard/admin/users/00000000-0000-0000-0000-000000000003}" class="btn btn-outline-secondary" title="Editar"><i class="bi bi-pencil"></i></a>
-                                            <button type="button" class="btn btn-outline-danger" title="Eliminar"><i class="bi bi-trash"></i></button>
-                                        </div>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-2 d-block mb-1"></i>
+                                        No hay usuarios registrados aún.
                                     </td>
                                 </tr>
                             </tbody>

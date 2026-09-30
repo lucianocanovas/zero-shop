@@ -69,116 +69,15 @@
                 </div>
             </div>
 
-            <!-- Demostración oficial según especificación del TP: Hombres, Mujeres, Niños, Niñas -->
-            <div class="col-12 col-md-6 col-lg-3" th:if="${categories == null or categories.empty}">
-                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="rounded-3 bg-primary-subtle text-primary p-3 fs-3 d-flex align-items-center justify-content-center">
-                            <i class="bi bi-gender-male"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold text-dark mb-0">Hombres</h5>
-                            <span class="text-muted small">Línea Deportiva</span>
-                        </div>
-                    </div>
-                    <p class="text-secondary small mb-3 flex-grow-1">Indumentaria deportiva, zapatillas de running y accesorios para entrenamiento masculino.</p>
-                    <div class="mb-3">
-                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
-                        <div class="d-flex flex-wrap gap-1">
-                            <a th:href="@{/products(search='Ropa')}" class="badge bg-light text-dark border text-decoration-none">Ropa</a>
-                            <a th:href="@{/products(search='Calzado')}" class="badge bg-light text-dark border text-decoration-none">Calzado</a>
-                            <a th:href="@{/products(search='Accesorios')}" class="badge bg-light text-dark border text-decoration-none">Accesorios</a>
-                        </div>
-                    </div>
-                    <div class="mt-auto pt-3 border-top">
-                        <a th:href="@{/products(search='Hombres')}" class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Colección
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-3" th:if="${categories == null or categories.empty}">
-                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="rounded-3 bg-danger-subtle text-danger p-3 fs-3 d-flex align-items-center justify-content-center">
-                            <i class="bi bi-gender-female"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold text-dark mb-0">Mujeres</h5>
-                            <span class="text-muted small">Línea Deportiva</span>
-                        </div>
-                    </div>
-                    <p class="text-secondary small mb-3 flex-grow-1">Tops, calzas, zapatillas ultralivianas y accesorios funcionales de alto rendimiento.</p>
-                    <div class="mb-3">
-                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
-                        <div class="d-flex flex-wrap gap-1">
-                            <a th:href="@{/products(search='Ropa')}" class="badge bg-light text-dark border text-decoration-none">Ropa</a>
-                            <a th:href="@{/products(search='Calzado')}" class="badge bg-light text-dark border text-decoration-none">Calzado</a>
-                            <a th:href="@{/products(search='Accesorios')}" class="badge bg-light text-dark border text-decoration-none">Accesorios</a>
-                        </div>
-                    </div>
-                    <div class="mt-auto pt-3 border-top">
-                        <a th:href="@{/products(search='Mujeres')}" class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Colección
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-3" th:if="${categories == null or categories.empty}">
-                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="rounded-3 bg-success-subtle text-success p-3 fs-3 d-flex align-items-center justify-content-center">
-                            <i class="bi bi-person"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold text-dark mb-0">Niños</h5>
-                            <span class="text-muted small">Línea Infantil</span>
-                        </div>
-                    </div>
-                    <p class="text-secondary small mb-3 flex-grow-1">Ropa deportiva resistente, zapatillas escolares y complementos para actividades físicas.</p>
-                    <div class="mb-3">
-                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
-                        <div class="d-flex flex-wrap gap-1">
-                            <a th:href="@{/products(search='Ropa')}" class="badge bg-light text-dark border text-decoration-none">Ropa</a>
-                            <a th:href="@{/products(search='Calzado')}" class="badge bg-light text-dark border text-decoration-none">Calzado</a>
-                            <a th:href="@{/products(search='Accesorios')}" class="badge bg-light text-dark border text-decoration-none">Accesorios</a>
-                        </div>
-                    </div>
-                    <div class="mt-auto pt-3 border-top">
-                        <a th:href="@{/products(search='Niños')}" class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Colección
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-3" th:if="${categories == null or categories.empty}">
-                <div class="card card-hover h-100 border-0 shadow-sm p-4 d-flex flex-column">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="rounded-3 bg-warning-subtle text-warning-emphasis p-3 fs-3 d-flex align-items-center justify-content-center">
-                            <i class="bi bi-person-heart"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold text-dark mb-0">Niñas</h5>
-                            <span class="text-muted small">Línea Infantil</span>
-                        </div>
-                    </div>
-                    <p class="text-secondary small mb-3 flex-grow-1">Conjuntos deportivos, calzado cómodo y accesorios diseñados para el movimiento diario.</p>
-                    <div class="mb-3">
-                        <div class="small fw-semibold text-muted mb-2">Subcategorías:</div>
-                        <div class="d-flex flex-wrap gap-1">
-                            <a th:href="@{/products(search='Ropa')}" class="badge bg-light text-dark border text-decoration-none">Ropa</a>
-                            <a th:href="@{/products(search='Calzado')}" class="badge bg-light text-dark border text-decoration-none">Calzado</a>
-                            <a th:href="@{/products(search='Accesorios')}" class="badge bg-light text-dark border text-decoration-none">Accesorios</a>
-                        </div>
-                    </div>
-                    <div class="mt-auto pt-3 border-top">
-                        <a th:href="@{/products(search='Niñas')}" class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-arrow-right-circle me-1"></i>Ver Colección
-                        </a>
-                    </div>
+            <!-- Estado Vacío cuando no existen categorías en la base de datos -->
+            <div class="col-12" th:if="${categories == null or categories.empty}">
+                <div class="text-center py-5 bg-white rounded-3 shadow-sm p-4">
+                    <i class="bi bi-tags display-4 text-muted mb-3 d-block"></i>
+                    <h5 class="fw-bold text-dark">No hay categorías disponibles</h5>
+                    <p class="text-muted small mb-3">En este momento no hay categorías registradas en el catálogo.</p>
+                    <a th:href="@{/products}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-grid me-1"></i>Ver Catálogo
+                    </a>
                 </div>
             </div>
         </div>

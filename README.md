@@ -106,3 +106,19 @@ src/main/resources/
  ├── static/       # CSS, JS e imágenes
  └── templates/    # Vistas HTML Thymeleaf
 ```
+
+---
+
+## Documentación del Proyecto
+
+El directorio `docs/` contiene la documentación exhaustiva del sistema:
+
+- **[docs/TESTS.md](docs/TESTS.md):** Estrategia, arquitectura y catálogo completo de las 70 pruebas (Unitarias, Integración, Carga y Concurrencia).
+- **[docs/PATTERN.md](docs/PATTERN.md):** Documentación formal de los 9 patrones de diseño y arquitectura de software implementados.
+- **[docs/CONTROLLERS.md](docs/CONTROLLERS.md):** Especificación de controladores, endpoints, métodos HTTP y roles de acceso.
+- **[docs/SERVICES.md](docs/SERVICES.md):** Detalle de los servicios de la capa de negocio.
+- **[docs/REPOSITORY.md](docs/REPOSITORY.md):** Catálogo de repositorios Spring Data JPA y métodos de consulta.
+- **[docs/ENTITIES.md](docs/ENTITIES.md):** Modelo de datos relacional y entidades del dominio.
+- **[docs/VIEWS.md](docs/VIEWS.md):** Mapa de navegación y plantillas de presentación Thymeleaf.
+- **[docs/LOAD_TESTING.md](docs/LOAD_TESTING.md):** Metodología de pruebas de estrés y plan de Apache JMeter (`docs/zeroshop_load_test.jmx`).
+

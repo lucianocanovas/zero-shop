@@ -38,6 +38,7 @@
   - Client
   - Employee
   - Supplier
+  - SupplierProduct
   - User
   - Contact
   - ContactEmail

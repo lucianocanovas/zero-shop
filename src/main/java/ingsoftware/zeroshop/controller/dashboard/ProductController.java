@@ -69,8 +69,10 @@ public class ProductController {
     public String createProduct(@ModelAttribute Product product,
                                 @RequestParam(name = "basePrice", required = false) BigDecimal basePrice,
                                 @RequestParam(name = "subCategoryId", required = false) UUID subCategoryId,
+                                @RequestParam(name = "onSale", defaultValue = "false") Boolean onSale,
                                 RedirectAttributes redirectAttributes) {
         try {
+            product.setOnSale(Boolean.TRUE.equals(onSale));
             productService.createProduct(product, basePrice, subCategoryId);
             redirectAttributes.addFlashAttribute("successMessage", "Producto creado exitosamente.");
             return "redirect:/dashboard/products";
@@ -87,8 +89,10 @@ public class ProductController {
                                 @ModelAttribute Product product,
                                 @RequestParam(name = "basePrice", required = false) BigDecimal basePrice,
                                 @RequestParam(name = "subCategoryId", required = false) UUID subCategoryId,
+                                @RequestParam(name = "onSale", defaultValue = "false") Boolean onSale,
                                 RedirectAttributes redirectAttributes) {
         try {
+            product.setOnSale(Boolean.TRUE.equals(onSale));
             productService.updateProduct(id, product, basePrice, subCategoryId);
             redirectAttributes.addFlashAttribute("successMessage", "Producto actualizado exitosamente.");
             return "redirect:/dashboard/products";
@@ -138,9 +142,11 @@ public class ProductController {
     @PostMapping("/dashboard/products/{id}/prices")
     public String addProductPrice(@PathVariable("id") UUID id,
                                   @RequestParam("price") BigDecimal price,
+                                  @RequestParam(name = "reason", required = false) String reason,
+                                  @RequestParam(name = "onSale", required = false) Boolean onSale,
                                   RedirectAttributes redirectAttributes) {
         try {
-            productService.addProductPrice(id, price);
+            productService.addProductPrice(id, price, reason, onSale);
             redirectAttributes.addFlashAttribute("successMessage", "Precio registrado exitosamente.");
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());

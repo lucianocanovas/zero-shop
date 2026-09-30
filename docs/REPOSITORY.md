@@ -63,10 +63,11 @@
 
 - **`UserRepository`**
   - `Optional<User> find(UUID id)` / `Optional<User> findActive(UUID id)`
-  - `Optional<User> findByEmailIgnoreCase(String email)`
-  - `Optional<User> findByEmailIgnoreCaseAndDeletedFalse(String email)`
-  - `boolean existsByEmailIgnoreCase(String email)`
-  - `boolean existsByEmailIgnoreCaseAndIdNot(String email, UUID id)`
+  - `Optional<User> findByUsernameIgnoreCase(String username)`
+  - `Optional<User> findByUsernameIgnoreCaseAndDeletedFalse(String username)`
+  - `boolean existsByUsernameIgnoreCase(String username)`
+  - `boolean existsByUsernameIgnoreCaseAndIdNot(String username, UUID id)`
+  - `List<User> findAllByDeletedFalse()`
 
 - **`PersonRepository`**
   - `Optional<Person> find(UUID id)` / `Optional<Person> findActive(UUID id)`

@@ -49,8 +49,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="text-muted small fw-semibold text-uppercase">Ventas del Mes</span>
-                                    <h3 class="fw-bold text-dark mt-1 mb-0">$485.200</h3>
-                                    <span class="text-success small"><i class="bi bi-arrow-up-right me-1"></i>+12.5% vs mes anterior</span>
+                                    <h3 class="fw-bold text-dark mt-1 mb-0" th:text="'$' + ${#numbers.formatDecimal(salesThisMonth != null ? salesThisMonth : 0, 1, 2)}">$0.00</h3>
+                                    <span class="text-success small"><i class="bi bi-calendar-check me-1"></i>Período actual</span>
                                 </div>
                                 <div class="rounded-3 bg-primary-subtle text-primary p-3 fs-3">
                                     <i class="bi bi-currency-dollar"></i>
@@ -63,9 +63,9 @@
                         <div class="card border-0 shadow-sm p-3 h-100">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <span class="text-muted small fw-semibold text-uppercase">Órdenes Nuevas</span>
-                                    <h3 class="fw-bold text-dark mt-1 mb-0">24</h3>
-                                    <span class="text-muted small">8 pendientes de envío</span>
+                                    <span class="text-muted small fw-semibold text-uppercase">Órdenes del Mes</span>
+                                    <h3 class="fw-bold text-dark mt-1 mb-0" th:text="${newOrdersCount != null ? newOrdersCount : 0}">0</h3>
+                                    <span class="text-muted small" th:text="${pendingOrdersCount != null ? pendingOrdersCount : 0} + ' en gestión o pendientes'">0 pendientes</span>
                                 </div>
                                 <div class="rounded-3 bg-success-subtle text-success p-3 fs-3">
                                     <i class="bi bi-receipt"></i>
@@ -79,8 +79,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="text-muted small fw-semibold text-uppercase">Catálogo Activo</span>
-                                    <h3 class="fw-bold text-dark mt-1 mb-0">128</h3>
-                                    <span class="text-muted small">Productos publicados</span>
+                                    <h3 class="fw-bold text-dark mt-1 mb-0" th:text="${activeCatalogCount != null ? activeCatalogCount : 0}">0</h3>
+                                    <span class="text-muted small">Artículos registrados</span>
                                 </div>
                                 <div class="rounded-3 bg-info-subtle text-info p-3 fs-3">
                                     <i class="bi bi-box-seam"></i>
@@ -94,11 +94,11 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="text-muted small fw-semibold text-uppercase">Alertas de Stock</span>
-                                    <h3 class="fw-bold text-danger mt-1 mb-0">3</h3>
-                                    <span class="text-danger small">Reposición requerida</span>
+                                    <h3 class="fw-bold mt-1 mb-0" th:classappend="${stockAlertsCount > 0 ? 'text-danger' : 'text-success'}" th:text="${stockAlertsCount != null ? stockAlertsCount : 0}">0</h3>
+                                    <span class="small" th:classappend="${stockAlertsCount > 0 ? 'text-danger' : 'text-success'}" th:text="${stockAlertsCount > 0 ? 'Reposición requerida' : 'Inventario normal'}">Inventario</span>
                                 </div>
-                                <div class="rounded-3 bg-warning-subtle text-warning-emphasis p-3 fs-3">
-                                    <i class="bi bi-exclamation-triangle"></i>
+                                <div class="rounded-3 p-3 fs-3" th:classappend="${stockAlertsCount > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'}">
+                                    <i class="bi" th:classappend="${stockAlertsCount > 0 ? 'bi-exclamation-triangle' : 'bi-shield-check'}"></i>
                                 </div>
                             </div>
                         </div>
@@ -125,31 +125,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td class="fw-bold">#ZR-89312</td>
-                                            <td>Juan Pérez</td>
-                                            <td class="fw-bold">$24.990,00</td>
-                                            <td><span class="badge bg-primary-subtle text-primary">En Tránsito</span></td>
+                                        <tr th:each="order : ${recentOrders}" th:if="${recentOrders != null and !recentOrders.empty}">
+                                            <td class="fw-bold" th:text="'#' + ${#strings.substring(order.id.toString(), 0, 8)}">#ZR-89312</td>
+                                            <td th:text="${order.client != null ? (order.client.firstName + ' ' + (order.client.lastName != null ? order.client.lastName : '')) : 'Consumidor Final'}">Cliente</td>
+                                            <td class="fw-bold text-dark" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : 0, 1, 2)}">$0.00</td>
+                                            <td>
+                                                <span class="badge"
+                                                      th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success-subtle text-success' :
+                                                                       (order.status.name() == 'PAID' ? 'bg-primary-subtle text-primary' :
+                                                                       (order.status.name() == 'CANCELLED' ? 'bg-danger-subtle text-danger' :
+                                                                       'bg-warning-subtle text-warning-emphasis'))}"
+                                                      th:text="${order.status.displayName}">
+                                                    Estado
+                                                </span>
+                                            </td>
                                             <td class="text-end">
-                                                <a th:href="@{/dashboard/sale-orders}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a>
+                                                <a th:href="@{/dashboard/sale-orders/{id}(id=${order.id})}" class="btn btn-outline-secondary btn-sm" title="Ver Detalle"><i class="bi bi-eye"></i></a>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td class="fw-bold">#ZR-89311</td>
-                                            <td>María González</td>
-                                            <td class="fw-bold">$18.500,00</td>
-                                            <td><span class="badge bg-warning-subtle text-warning-emphasis">Pendiente</span></td>
-                                            <td class="text-end">
-                                                <a th:href="@{/dashboard/sale-orders}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold">#ZR-89310</td>
-                                            <td>Carlos López</td>
-                                            <td class="fw-bold">$32.000,00</td>
-                                            <td><span class="badge bg-success-subtle text-success">Entregado</span></td>
-                                            <td class="text-end">
-                                                <a th:href="@{/dashboard/sale-orders}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a>
+                                        <tr th:if="${recentOrders == null or recentOrders.empty}">
+                                            <td colspan="5" class="text-center py-4 text-muted">
+                                                <i class="bi bi-inbox fs-3 d-block mb-1"></i>
+                                                No hay órdenes de venta registradas en el sistema.
                                             </td>
                                         </tr>
                                     </tbody>
@@ -166,28 +163,18 @@
                                 <a th:href="@{/dashboard/stock}" class="btn btn-outline-secondary btn-sm">Ajustes</a>
                             </div>
                             <div class="card-body p-3">
-                                <div class="d-flex flex-column gap-3">
-                                    <div class="p-2 border rounded-3 bg-light d-flex justify-content-between align-items-center">
+                                <div class="d-flex flex-column gap-3" th:if="${criticalStockProducts != null and !criticalStockProducts.empty}">
+                                    <div class="p-2 border rounded-3 bg-light d-flex justify-content-between align-items-center" th:each="prod : ${criticalStockProducts}">
                                         <div>
-                                            <div class="fw-bold text-dark small">Auriculares Pro Wireless</div>
-                                            <span class="text-danger small fw-semibold">Quedan solo 2 unidades</span>
+                                            <div class="fw-bold text-dark small" th:text="${prod.name + (prod.size != null ? ' (Talle ' + prod.size + ')' : '')}">Producto</div>
+                                            <span class="small fw-semibold" th:classappend="${prod.stock <= 2 ? 'text-danger' : 'text-warning-emphasis'}" th:text="${prod.stock == 0 ? 'Sin existencias en stock' : 'Quedan solo ' + prod.stock + ' unidades'}">Quedan 2 unidades</span>
                                         </div>
                                         <a th:href="@{/dashboard/purchase-orders}" class="btn btn-outline-primary btn-sm">Pedir</a>
                                     </div>
-                                    <div class="p-2 border rounded-3 bg-light d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="fw-bold text-dark small">Zapatillas Urbanas Zero (Talle 41)</div>
-                                            <span class="text-danger small fw-semibold">Quedan solo 1 unidad</span>
-                                        </div>
-                                        <a th:href="@{/dashboard/purchase-orders}" class="btn btn-outline-primary btn-sm">Pedir</a>
-                                    </div>
-                                    <div class="p-2 border rounded-3 bg-light d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="fw-bold text-dark small">Mochila Porta Notebook</div>
-                                            <span class="text-warning-emphasis small fw-semibold">Stock bajo: 4 unidades</span>
-                                        </div>
-                                        <a th:href="@{/dashboard/purchase-orders}" class="btn btn-outline-primary btn-sm">Pedir</a>
-                                    </div>
+                                </div>
+                                <div class="text-center py-4 text-muted" th:if="${criticalStockProducts == null or criticalStockProducts.empty}">
+                                    <i class="bi bi-check-circle fs-3 text-success d-block mb-1"></i>
+                                    <span class="small">Todo el inventario activo se encuentra con niveles adecuados de stock.</span>
                                 </div>
                             </div>
                         </div>

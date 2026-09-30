@@ -34,5 +34,51 @@ public class DatabaseMigrationRunner implements ApplicationRunner {
         } catch (Exception e) {
             log.warn("No se pudo alterar constraint office_id: {}", e.getMessage());
         }
+
+        try {
+            jdbcTemplate.execute("ALTER TABLE person_addresses ALTER COLUMN id SET DEFAULT gen_random_uuid()");
+            jdbcTemplate.execute("ALTER TABLE person_addresses ALTER COLUMN deleted SET DEFAULT false");
+            log.info("Tabla person_addresses actualizada para permitir inserción de join table.");
+        } catch (Exception e) {
+            log.warn("No se pudo alterar defaults de person_addresses: {}", e.getMessage());
+        }
+
+        try {
+            jdbcTemplate.execute("ALTER TABLE person_contacts ALTER COLUMN id SET DEFAULT gen_random_uuid()");
+            jdbcTemplate.execute("ALTER TABLE person_contacts ALTER COLUMN deleted SET DEFAULT false");
+            log.info("Tabla person_contacts actualizada para permitir inserción de join table.");
+        } catch (Exception e) {
+            log.warn("No se pudo alterar defaults de person_contacts: {}", e.getMessage());
+        }
+
+        try {
+            jdbcTemplate.execute("ALTER TABLE supplier_addresses ALTER COLUMN id SET DEFAULT gen_random_uuid()");
+            jdbcTemplate.execute("ALTER TABLE supplier_addresses ALTER COLUMN deleted SET DEFAULT false");
+            log.info("Tabla supplier_addresses actualizada para permitir inserción de join table.");
+        } catch (Exception e) {
+            log.warn("No se pudo alterar defaults de supplier_addresses: {}", e.getMessage());
+        }
+
+        try {
+            jdbcTemplate.execute("ALTER TABLE supplier_contacts ALTER COLUMN id SET DEFAULT gen_random_uuid()");
+            jdbcTemplate.execute("ALTER TABLE supplier_contacts ALTER COLUMN deleted SET DEFAULT false");
+            log.info("Tabla supplier_contacts actualizada para permitir inserción de join table.");
+        } catch (Exception e) {
+            log.warn("No se pudo alterar defaults de supplier_contacts: {}", e.getMessage());
+        }
+
+        try {
+            jdbcTemplate.execute("ALTER TABLE office_addresses ALTER COLUMN id SET DEFAULT gen_random_uuid()");
+            jdbcTemplate.execute("ALTER TABLE office_addresses ALTER COLUMN deleted SET DEFAULT false");
+            log.info("Tabla office_addresses verificada para join table.");
+        } catch (Exception ignored) {
+        }
+
+        try {
+            jdbcTemplate.execute("ALTER TABLE office_contacts ALTER COLUMN id SET DEFAULT gen_random_uuid()");
+            jdbcTemplate.execute("ALTER TABLE office_contacts ALTER COLUMN deleted SET DEFAULT false");
+            log.info("Tabla office_contacts verificada para join table.");
+        } catch (Exception ignored) {
+        }
     }
 }

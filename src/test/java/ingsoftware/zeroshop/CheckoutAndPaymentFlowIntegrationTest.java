@@ -2,7 +2,6 @@ package ingsoftware.zeroshop;
 
 import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.entity.org.Office;
-import ingsoftware.zeroshop.entity.org.Stock;
 import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.Payment;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
@@ -144,7 +143,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
     public void testPurchaseFlowWithCash() {
         SaleOrder cart = saleOrderService.addProductToCart(clientUsername, product1.getId(), 2);
         BigDecimal expectedTotal = cart.getTotalAmount();
-        int initialStock = stockService.getStock(product1.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int initialStock = stockService.getStock(product1.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
 
         // Checkout en efectivo
         String redirectUrl = saleOrderService.processCheckout(
@@ -177,7 +176,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
         assertEquals(expectedTotal, payment.getAmount());
 
         // Stock no se descuenta hasta que se confirme el pago en efectivo
-        int currentStock = stockService.getStock(product1.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int currentStock = stockService.getStock(product1.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
         assertEquals(initialStock, currentStock, "El stock no debe descontarse antes de cobrar el efectivo");
 
         // Empleado cobra el pedido -> cambia estado a PAID
@@ -186,7 +185,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
         assertEquals(OrderStatus.PAID, order.getStatus());
 
         // Ahora sí se descuenta el stock
-        int finalStock = stockService.getStock(product1.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int finalStock = stockService.getStock(product1.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
         assertEquals(initialStock - 2, finalStock, "El stock debe disminuir en 2 unidades");
 
         // Transiciones adicionales del ciclo de vida del pedido
@@ -202,7 +201,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
     public void testPurchaseFlowWithCreditCard() {
         SaleOrder cart = saleOrderService.addProductToCart(clientUsername, product1.getId(), 3);
         BigDecimal expectedTotal = cart.getTotalAmount();
-        int initialStock = stockService.getStock(product1.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int initialStock = stockService.getStock(product1.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
 
         String redirectUrl = saleOrderService.processCheckout(
                 clientUsername,
@@ -228,7 +227,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
         assertEquals(expectedTotal, payments.get(0).getAmount());
 
         // Stock descontado inmediatamente
-        int finalStock = stockService.getStock(product1.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int finalStock = stockService.getStock(product1.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
         assertEquals(initialStock - 3, finalStock, "El stock debe descontarse inmediatamente");
     }
 
@@ -237,7 +236,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
     public void testPurchaseFlowWithDebitCard() {
         SaleOrder cart = saleOrderService.addProductToCart(clientUsername, product2.getId(), 1);
         BigDecimal expectedTotal = cart.getTotalAmount();
-        int initialStock = stockService.getStock(product2.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int initialStock = stockService.getStock(product2.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
 
         String redirectUrl = saleOrderService.processCheckout(
                 clientUsername,
@@ -262,7 +261,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
         assertEquals(PaymentMethod.DEBIT, payments.get(0).getMethod());
         assertEquals(expectedTotal, payments.get(0).getAmount());
 
-        int finalStock = stockService.getStock(product2.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int finalStock = stockService.getStock(product2.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
         assertEquals(initialStock - 1, finalStock);
     }
 
@@ -270,7 +269,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
     @DisplayName("Flujo de Compra con MERCADO PAGO: Invocación de SDK para crear preferencia y posterior confirmación de pago")
     public void testPurchaseFlowWithMercadoPago() {
         SaleOrder cart = saleOrderService.addProductToCart(clientUsername, product1.getId(), 2);
-        int initialStock = stockService.getStock(product1.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int initialStock = stockService.getStock(product1.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
 
         // Checkout solicitando Mercado Pago como medio de pago
         String redirectUrl = saleOrderService.processCheckout(
@@ -302,7 +301,7 @@ public class CheckoutAndPaymentFlowIntegrationTest {
         assertEquals(PaymentMethod.MERCADO_PAGO, payments.get(0).getMethod());
 
         // Verificar descuento de stock en la sucursal
-        int finalStock = stockService.getStock(product1.getId(), office.getId()).map(ingsoftware.zeroshop.entity.org.Stock::getQuantity).orElse(0);
+        int finalStock = stockService.getStock(product1.getId(), office.getId()).map(s -> s.getQuantity()).orElse(0);
         assertEquals(initialStock - 2, finalStock, "El stock debe descontarse tras el pago por Mercado Pago");
 
         // El cliente debe ver la orden en su lista de compras confirmadas

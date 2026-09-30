@@ -42,28 +42,28 @@
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <span class="text-muted small text-uppercase fw-semibold">Total Productos en Stock</span>
-                            <h3 class="fw-bold text-dark mb-0 mt-1">450 unidades</h3>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${totalStockUnits} + ' unidades'">0 unidades</h3>
                             <span class="text-muted small">Inventario general</span>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <span class="text-muted small text-uppercase fw-semibold">Stock Bien (&gt; 50%)</span>
-                            <h3 class="fw-bold text-success mb-0 mt-1">82%</h3>
+                            <h3 class="fw-bold text-success mb-0 mt-1" th:text="${pctGood} + '%'">0%</h3>
                             <span class="text-success small">Abastecimiento óptimo</span>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <span class="text-muted small text-uppercase fw-semibold">Stock Regular (20% - 50%)</span>
-                            <h3 class="fw-bold text-warning-emphasis mb-0 mt-1">12%</h3>
+                            <h3 class="fw-bold text-warning-emphasis mb-0 mt-1" th:text="${pctRegular} + '%'">0%</h3>
                             <span class="text-warning-emphasis small">En monitoreo</span>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-lg-3">
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <span class="text-muted small text-uppercase fw-semibold">Stock Malo (&lt; 20%)</span>
-                            <h3 class="fw-bold text-danger mb-0 mt-1">6%</h3>
+                            <h3 class="fw-bold text-danger mb-0 mt-1" th:text="${pctBad} + '%'">0%</h3>
                             <span class="text-danger small">Reposición al 50% por WhatsApp</span>
                         </div>
                     </div>
@@ -89,63 +89,33 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Caso: Malo (< 20%). Stock = 4 / 50 (8%). Falta 21 para llegar al 50% (25). WhatsApp prearmado. -->
-                                <tr class="table-danger-subtle">
-                                    <td class="fw-semibold text-dark">Sucursal Central</td>
-                                    <td>
-                                        <div class="fw-bold text-dark">Campera Deportiva Rompeviento</div>
-                                        <small class="text-muted">SKU: ZR-2081 • Talle M</small>
+                                <tr th:if="${stockDetails == null or stockDetails.empty}">
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No hay registros de existencias disponibles en el inventario.
                                     </td>
-                                    <td class="fw-bold text-danger">4 unidades</td>
-                                    <td>8% de 50 cap.</td>
-                                    <td><span class="badge bg-danger">Malo (&lt; 20%)</span></td>
+                                </tr>
+                                <tr th:each="item : ${stockDetails}" th:classappend="${item.trafficLight == 'MALO' ? 'table-danger-subtle' : ''}">
+                                    <td class="fw-semibold text-dark" th:text="${item.officeName}">Sucursal Central</td>
                                     <td>
-                                        <div class="small fw-semibold text-dark">Distribuidora Textil S.A.</div>
-                                        <span class="text-muted small">+54 9 11 4444-1234</span>
+                                        <div class="fw-bold text-dark" th:text="${item.productName}">Campera Deportiva Rompeviento</div>
+                                        <small class="text-muted" th:text="'SKU: ' + ${item.productCode} + (${item.productSize != null and !item.productSize.empty} ? ' • Talle ' + ${item.productSize} : '')">SKU: ZR-2081 • Talle M</small>
+                                    </td>
+                                    <td class="fw-bold" th:classappend="${item.trafficLight == 'MALO' ? 'text-danger' : (item.trafficLight == 'REGULAR' ? 'text-warning-emphasis' : 'text-success')}" th:text="${item.quantity} + ' unidades'">4 unidades</td>
+                                    <td th:text="${item.percentage} + '% de ' + ${item.capacity} + ' cap.'">8% de 50 cap.</td>
+                                    <td>
+                                        <span class="badge" th:classappend="${item.trafficLight == 'MALO' ? 'bg-danger' : (item.trafficLight == 'REGULAR' ? 'bg-warning text-dark' : 'bg-success')}" th:text="${item.trafficLight == 'MALO' ? 'Malo (< 20%)' : (item.trafficLight == 'REGULAR' ? 'Regular (20-50%)' : 'Bien (> 50%)')}">Malo (&lt; 20%)</span>
+                                    </td>
+                                    <td>
+                                        <div class="small fw-semibold text-dark" th:text="${item.supplierName != null ? item.supplierName : 'Sin proveedor asignado'}">Distribuidora Textil S.A.</div>
+                                        <span class="text-muted small" th:text="${item.supplierPhone != null ? item.supplierPhone : '-'}">+54 9 11 4444-1234</span>
                                     </td>
                                     <td class="text-end">
-                                        <!-- Enlace directo a WhatsApp solicitando la cantidad exacta para llegar al 50% -->
-                                        <a href="https://wa.me/5491144441234?text=Hola,%20desde%20Zero%20Shop%20Mendoza%20te%20solicitamos%20el%20envio%20urgente%20de%2021%20unidades%20de%20Campera%20Deportiva%20Rompeviento%20(ZR-2081)%20para%20alcanzar%20el%2050%%20de%20stock%20en%20Sucursal%20Central." target="_blank" class="btn btn-success btn-sm fw-semibold">
-                                            <i class="bi bi-whatsapp me-1"></i>Pedir 21 un. al 50%
+                                        <a th:if="${item.trafficLight == 'MALO' and item.whatsappUrl != null}" th:href="${item.whatsappUrl}" target="_blank" class="btn btn-success btn-sm fw-semibold">
+                                            <i class="bi bi-whatsapp me-1"></i><span th:text="'Pedir ' + ${item.neededUnits} + ' un. al 50%'">Pedir 21 un. al 50%</span>
                                         </a>
-                                    </td>
-                                </tr>
-
-                                <!-- Caso: Regular (20% - 50%). Stock = 15 / 50 (30%). -->
-                                <tr>
-                                    <td class="fw-semibold text-dark">Sucursal Norte</td>
-                                    <td>
-                                        <div class="fw-bold text-dark">Mochila Sport Backpack Zero</div>
-                                        <small class="text-muted">SKU: ZR-3310</small>
-                                    </td>
-                                    <td class="fw-bold text-warning-emphasis">15 unidades</td>
-                                    <td>30% de 50 cap.</td>
-                                    <td><span class="badge bg-warning text-dark">Regular (20-50%)</span></td>
-                                    <td>
-                                        <div class="small fw-semibold text-dark">Distribuidora Textil S.A.</div>
-                                        <span class="text-muted small">+54 9 11 4444-1234</span>
-                                    </td>
-                                    <td class="text-end">
-                                        <span class="text-muted small">Bajo seguimiento</span>
-                                    </td>
-                                </tr>
-
-                                <!-- Caso: Bien (> 50%). Stock = 35 / 50 (70%). -->
-                                <tr>
-                                    <td class="fw-semibold text-dark">Sucursal Central</td>
-                                    <td>
-                                        <div class="fw-bold text-dark">Zapatillas Running Zero Pro</div>
-                                        <small class="text-muted">SKU: ZR-1049 • Talle 42</small>
-                                    </td>
-                                    <td class="fw-bold text-success">35 unidades</td>
-                                    <td>70% de 50 cap.</td>
-                                    <td><span class="badge bg-success">Bien (&gt; 50%)</span></td>
-                                    <td>
-                                        <div class="small fw-semibold text-dark">Importaciones Calzado Mendoza</div>
-                                        <span class="text-muted small">+54 9 261 488-9900</span>
-                                    </td>
-                                    <td class="text-end">
-                                        <span class="text-muted small"><i class="bi bi-check2 text-success me-1"></i>Óptimo</span>
+                                        <span th:if="${item.trafficLight == 'REGULAR'}" class="text-muted small">Bajo seguimiento</span>
+                                        <span th:if="${item.trafficLight == 'BIEN'}" class="text-muted small"><i class="bi bi-check2 text-success me-1"></i>Óptimo</span>
                                     </td>
                                 </tr>
                             </tbody>

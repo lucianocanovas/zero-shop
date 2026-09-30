@@ -245,7 +245,20 @@ public class ProductService {
         return priceHistoryRepository.findByProductIdAndDeletedFalseOrderByStartDateDesc(productId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Product> findOnSaleProducts() {
+        List<Product> products = productRepository.findByOnSaleTrueAndDeletedFalse();
+        for (Product product : products) {
+            enrichProductData(product);
+        }
+        return products;
+    }
+
     public PriceHistory addProductPrice(UUID productId, BigDecimal price) {
+        return addProductPrice(productId, price, null, null);
+    }
+
+    public PriceHistory addProductPrice(UUID productId, BigDecimal price, String reason, Boolean onSale) {
         Product product = findActiveById(productId);
         Optional<PriceHistory> currentPriceOpt = priceHistoryRepository.findFirstByProductIdAndDeletedFalseOrderByStartDateDesc(productId);
         currentPriceOpt.ifPresent(p -> {
@@ -259,13 +272,24 @@ public class ProductService {
             .startDate(LocalDateTime.now())
             .deleted(false)
             .build();
-        return priceHistoryRepository.save(newPrice);
+        PriceHistory savedPrice = priceHistoryRepository.save(newPrice);
+        product.setCurrentPrice(price);
+
+        // Si el motivo es promoción o se activó la bandera onSale
+        if (Boolean.FALSE.equals(onSale) || (reason != null && reason.equalsIgnoreCase("FIN_PROMOCION"))) {
+            product.setOnSale(false);
+        } else if (Boolean.TRUE.equals(onSale) || (reason != null && reason.toUpperCase().contains("PROMOCION"))) {
+            product.setOnSale(true);
+        }
+        productRepository.save(product);
+
+        return savedPrice;
     }
 
     private void enrichProductData(Product product) {
         Optional<PriceHistory> priceHistory = priceHistoryRepository
             .findFirstByProductIdAndDeletedFalseOrderByStartDateDesc(product.getId());
-        product.setCurrentPrice(priceHistory.map(PriceHistory::getPrice).orElse(BigDecimal.ZERO));
+        product.setCurrentPrice(priceHistory.map(ph -> ph.getPrice()).orElse(BigDecimal.ZERO));
 
         Integer totalStock = stockRepository.getTotalQuantityByProductId(product.getId());
         product.setStock(totalStock != null ? totalStock : 0);

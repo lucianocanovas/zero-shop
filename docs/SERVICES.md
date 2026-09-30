@@ -132,6 +132,10 @@
   - Procesamiento y registro de pagos (`Payment`) con diversos medios (Efectivo, Mercado Pago, etc.).
   - Emisión y persistencia de comprobantes fiscales y facturas (`Invoice`, `InvoiceDetail`).
 
+- **`MercadoPagoService`**
+  - Integración con SDK Java oficial de Mercado Pago para generación de `PreferenceRequest`.
+  - Configuración de ítems, montos en ARS, datos del pagador y URLs de retorno (`success`, `failure`, `pending`).
+
 ---
 
 ### 7. Módulo report (`ingsoftware.zeroshop.service.report`)

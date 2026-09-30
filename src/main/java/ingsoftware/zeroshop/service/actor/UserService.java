@@ -120,13 +120,17 @@ public class UserService {
 
             Person savedPerson = prepareOrReactivatePerson(currentPerson, cleanIdNumber, firstName, lastName, dateOfBirth, idType, Role.CLIENT);
 
+            String verificationCode = String.format("%06d", new java.util.Random().nextInt(999999));
             existingUser.setPerson(savedPerson);
             existingUser.setPassword(passwordEncoder.encode(password));
             existingUser.setRole(Role.CLIENT);
+            existingUser.setVerificationCode(verificationCode);
+            existingUser.setVerified(false);
             existingUser.setDeleted(false);
             User savedUser = userRepository.save(existingUser);
 
             if (emailService != null) {
+                emailService.sendVerificationCodeEmail(normalizedEmail, verificationCode, "http://localhost:8080/verify?email=" + normalizedEmail);
                 emailService.sendWelcomeEmail(normalizedEmail, firstName.trim());
             }
 
@@ -140,20 +144,69 @@ public class UserService {
 
         Person savedPerson = prepareOrReactivatePerson(null, cleanIdNumber, firstName, lastName, dateOfBirth, idType, Role.CLIENT);
 
+        String verificationCode = String.format("%06d", new java.util.Random().nextInt(999999));
         User user = new User();
         user.setUsername(normalizedEmail);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(Role.CLIENT);
         user.setPerson(savedPerson);
+        user.setVerificationCode(verificationCode);
+        user.setVerified(false);
         user.setDeleted(false);
 
         User savedUser = userRepository.save(user);
 
         if (emailService != null) {
+            emailService.sendVerificationCodeEmail(normalizedEmail, verificationCode, "http://localhost:8080/verify?email=" + normalizedEmail);
             emailService.sendWelcomeEmail(normalizedEmail, firstName.trim());
         }
 
         return savedUser;
+    }
+
+    /**
+     * Verifica la cuenta del cliente validando el código de 6 dígitos enviado por correo.
+     */
+    @Transactional
+    public boolean verifyAccount(String email, String code) {
+        if (email == null || code == null) {
+            return false;
+        }
+        String normalizedEmail = email.trim().toLowerCase();
+        Optional<User> userOpt = userRepository.findByUsernameIgnoreCase(normalizedEmail);
+        if (userOpt.isEmpty()) {
+            return false;
+        }
+        User user = userOpt.get();
+        if (user.getVerificationCode() != null && user.getVerificationCode().trim().equals(code.trim())) {
+            user.setVerified(true);
+            user.setVerificationCode(null);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Reenvía un nuevo código de activación al correo del usuario.
+     */
+    @Transactional
+    public String resendVerificationCode(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("El correo electrónico es requerido.");
+        }
+        String normalizedEmail = email.trim().toLowerCase();
+        User user = userRepository.findByUsernameIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con el correo: " + email));
+
+        String newCode = String.format("%06d", new java.util.Random().nextInt(999999));
+        user.setVerificationCode(newCode);
+        userRepository.save(user);
+
+        if (emailService != null) {
+            emailService.sendVerificationCodeEmail(normalizedEmail, newCode, "http://localhost:8080/verify?email=" + normalizedEmail);
+        }
+        return newCode;
     }
 
     /**

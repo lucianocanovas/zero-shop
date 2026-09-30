@@ -24,7 +24,7 @@ public class Employee extends Person {
     @Column(name = "hire_date")
     private LocalDate hireDate;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
     @JoinTable(
         name = "office_employees",
         joinColumns = @JoinColumn(name = "employee_id"),

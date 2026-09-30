@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import ingsoftware.zeroshop.entity.location.Address;
+import ingsoftware.zeroshop.enums.Gender;
 import ingsoftware.zeroshop.enums.IDType;
 
 @Entity 
@@ -29,6 +30,10 @@ public abstract class Person {
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender")
+    private Gender gender;
 
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;

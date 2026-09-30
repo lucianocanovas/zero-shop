@@ -109,6 +109,15 @@
                                                 <input type="number" id="basePrice" name="basePrice" class="form-control" th:value="${product?.currentPrice}" step="0.01" min="0" required>
                                             </div>
                                         </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-check form-switch p-3 bg-light rounded-3 border">
+                                                <input class="form-check-input ms-0 me-2" type="checkbox" id="onSale" name="onSale" value="true" th:checked="${product?.onSale == true}">
+                                                <label class="form-check-label fw-bold text-dark" for="onSale">
+                                                    <i class="bi bi-fire text-danger me-1"></i>Producto en Oferta / Promoción Especial
+                                                </label>
+                                                <div class="form-text small text-muted">Al activar esta opción, el producto se identificará como oferta en el panel y en la tienda online.</div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">

@@ -104,33 +104,20 @@
             </div>
 
             <div class="row g-3">
-                <div class="col-6 col-md-3">
-                    <a th:href="@{/categories}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
-                        <div class="fs-1 text-primary mb-2"><i class="bi bi-gender-male"></i></div>
-                        <h6 class="fw-bold text-dark mb-1">Hombres</h6>
-                        <span class="text-muted small">Ropa, Calzado, Accesorios</span>
+                <div class="col-6 col-md-3" th:each="cat : ${categories}" th:if="${categories != null and !categories.empty}">
+                    <a th:href="@{/products(categoryId=${cat.id})}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
+                        <div class="fs-1 text-primary mb-2">
+                            <i th:class="${cat.name.toLowerCase().contains('hombre') ? 'bi bi-gender-male text-primary' :
+                                           (cat.name.toLowerCase().contains('mujer') ? 'bi bi-gender-female text-danger' :
+                                           (cat.name.toLowerCase().contains('niño') or cat.name.toLowerCase().contains('nino') ? 'bi bi-person text-success' :
+                                           (cat.name.toLowerCase().contains('niña') or cat.name.toLowerCase().contains('nina') ? 'bi bi-person-heart text-warning' : 'bi bi-tags text-info')))}"></i>
+                        </div>
+                        <h6 class="fw-bold text-dark mb-1" th:text="${cat.name}">Categoría</h6>
+                        <span class="text-muted small" th:text="${cat.description != null and !cat.description.empty ? cat.description : 'Colección Zero'}">Colección Zero</span>
                     </a>
                 </div>
-                <div class="col-6 col-md-3">
-                    <a th:href="@{/categories}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
-                        <div class="fs-1 text-danger mb-2"><i class="bi bi-gender-female"></i></div>
-                        <h6 class="fw-bold text-dark mb-1">Mujeres</h6>
-                        <span class="text-muted small">Ropa, Calzado, Accesorios</span>
-                    </a>
-                </div>
-                <div class="col-6 col-md-3">
-                    <a th:href="@{/categories}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
-                        <div class="fs-1 text-success mb-2"><i class="bi bi-person"></i></div>
-                        <h6 class="fw-bold text-dark mb-1">Niños</h6>
-                        <span class="text-muted small">Ropa, Calzado, Accesorios</span>
-                    </a>
-                </div>
-                <div class="col-6 col-md-3">
-                    <a th:href="@{/categories}" class="card card-hover text-decoration-none border-0 text-center p-4 h-100 bg-white">
-                        <div class="fs-1 text-warning mb-2"><i class="bi bi-person-heart"></i></div>
-                        <h6 class="fw-bold text-dark mb-1">Niñas</h6>
-                        <span class="text-muted small">Ropa, Calzado, Accesorios</span>
-                    </a>
+                <div class="col-12 text-center py-4 text-muted" th:if="${categories == null or categories.empty}">
+                    <p class="mb-0">No hay categorías registradas en el sistema.</p>
                 </div>
             </div>
         </section>
@@ -152,18 +139,27 @@
                 <!-- Iteración real si vienen productos del controlador -->
                 <div class="col-12 col-sm-6 col-lg-3" th:each="product : ${products}" th:if="${products != null and !products.empty}">
                     <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
-                        <img th:src="${product.images != null and !product.images.empty ? product.images[0].url : '/assets/product-placeholder.jpg'}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Producto">
+                        <div class="position-relative">
+                            <img th:src="${product.images != null and !product.images.empty ? product.images[0].url : (product.imageUrl != null and !product.imageUrl.blank ? product.imageUrl : '/assets/product-placeholder.jpg')}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Producto">
+                            <span class="position-absolute top-0 end-0 m-2 badge bg-danger" th:if="${product.onSale}">
+                                <i class="bi bi-fire me-1"></i>Oferta
+                            </span>
+                        </div>
                         <div class="card-body p-3 d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge bg-light text-muted border" th:text="${product.subCategory?.name != null ? product.subCategory.name : 'Deportivo'}">Subcategoría</span>
-                                <span class="badge bg-danger-subtle text-danger" th:if="${product.onSale}">Oferta</span>
+                                <span class="badge bg-light text-muted border" th:text="${product.subCategory != null ? (product.category != null ? product.category.name + ' • ' + product.subCategory.name : product.subCategory.name) : 'Deportivo'}">Subcategoría</span>
+                                <span class="badge bg-danger-subtle text-danger" th:if="${product.onSale}">En Promoción</span>
+                                <span class="badge bg-success-subtle text-success" th:unless="${product.onSale}">En Stock</span>
                             </div>
                             <h6 class="card-title fw-bold text-dark mb-1 text-truncate" th:text="${product.name}">Nombre del Producto</h6>
                             <p class="card-text text-muted small text-truncate mb-2" th:text="${product.description}">Descripción breve del producto.</p>
                             <span class="small text-muted mb-2">Talle: <strong th:text="${product.size != null ? product.size : 'M'}">M</strong></span>
                             
                             <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                                <span class="h5 fw-bold text-primary mb-0" th:text="'$' + ${#numbers.formatDecimal(product.currentPrice != null ? product.currentPrice : 0, 1, 2)}">$0.00</span>
+                                <div>
+                                    <span class="text-muted small d-block" th:if="${product.onSale}">Precio Promocional</span>
+                                    <span class="h5 fw-bold mb-0" th:classappend="${product.onSale ? 'text-danger' : 'text-primary'}" th:text="'$' + ${#numbers.formatDecimal(product.currentPrice != null ? product.currentPrice : 0, 1, 2)}">$0.00</span>
+                                </div>
                                 <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-eye"></i> Detalle
                                 </a>
@@ -172,80 +168,12 @@
                     </div>
                 </div>
 
-                <!-- Fallbacks ajustados al integrador (ropa deportiva unisex) -->
-                <div class="col-12 col-sm-6 col-lg-3" th:if="${products == null or products.empty}">
-                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
-                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Zapatillas Deportivas">
-                        <div class="card-body p-3 d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge bg-light text-muted border">Calzado • Hombres</span>
-                                <span class="badge bg-success-subtle text-success">Stock Disponible</span>
-                            </div>
-                            <h6 class="card-title fw-bold text-dark mb-1">Zapatillas Running Zero Pro</h6>
-                            <p class="card-text text-muted small text-truncate mb-2">Amortiguación superior y suela antideslizante.</p>
-                            <span class="small text-muted mb-2">Talles: <strong>39 al 45</strong></span>
-                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                                <span class="h5 fw-bold text-primary mb-0">$24.990</span>
-                                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> Detalle</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3" th:if="${products == null or products.empty}">
-                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
-                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Campera Deportiva">
-                        <div class="card-body p-3 d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge bg-light text-muted border">Ropa • Unisex</span>
-                                <span class="badge bg-danger-subtle text-danger">En Oferta</span>
-                            </div>
-                            <h6 class="card-title fw-bold text-dark mb-1">Campera Deportiva Rompeviento</h6>
-                            <p class="card-text text-muted small text-truncate mb-2">Tela térmica transpirable con cierre termosellado.</p>
-                            <span class="small text-muted mb-2">Talle: <strong>M, L, XL</strong></span>
-                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                                <span class="h5 fw-bold text-primary mb-0">$18.500</span>
-                                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> Detalle</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3" th:if="${products == null or products.empty}">
-                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
-                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Calza Mujer">
-                        <div class="card-body p-3 d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge bg-light text-muted border">Ropa • Mujeres</span>
-                                <span class="badge bg-success-subtle text-success">Stock Disponible</span>
-                            </div>
-                            <h6 class="card-title fw-bold text-dark mb-1">Calza Deportiva Tiro Alto</h6>
-                            <p class="card-text text-muted small text-truncate mb-2">Compresión anatómica con bolsillo lateral.</p>
-                            <span class="small text-muted mb-2">Talle: <strong>S, M, L</strong></span>
-                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                                <span class="h5 fw-bold text-primary mb-0">$14.200</span>
-                                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> Detalle</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-sm-6 col-lg-3" th:if="${products == null or products.empty}">
-                    <div class="card card-hover h-100 border-0 shadow-sm d-flex flex-column">
-                        <img th:src="@{/assets/product-placeholder.jpg}" src="/assets/product-placeholder.jpg" class="product-card-img" alt="Mochila Deportiva">
-                        <div class="card-body p-3 d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge bg-light text-muted border">Accesorios • Unisex</span>
-                                <span class="badge bg-success-subtle text-success">Stock Disponible</span>
-                            </div>
-                            <h6 class="card-title fw-bold text-dark mb-1">Mochila Sport Backpack Zero</h6>
-                            <p class="card-text text-muted small text-truncate mb-2">Impermeable con compartimento para calzado.</p>
-                            <span class="small text-muted mb-2">Capacidad: <strong>25 Litros</strong></span>
-                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                                <span class="h5 fw-bold text-primary mb-0">$16.800</span>
-                                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i> Detalle</a>
-                            </div>
-                        </div>
+                <!-- Mensaje cuando no hay productos registrados en la BD -->
+                <div class="col-12 text-center py-5" th:if="${products == null or products.empty}">
+                    <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+                        <i class="bi bi-box-seam fs-1 text-muted mb-2"></i>
+                        <h5 class="fw-bold text-dark mb-1">Catálogo en Actualización</h5>
+                        <p class="text-muted small mb-0">Actualmente no hay artículos publicados en la base de datos. Consulta más tarde.</p>
                     </div>
                 </div>
             </div>

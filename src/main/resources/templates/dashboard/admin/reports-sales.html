@@ -37,16 +37,16 @@
                     </a>
                 </div>
 
-                <!-- Filtro de Fechas (Ej.: del 01/03/2026 al 31/03/2026) -->
+                <!-- Filtro de Fechas -->
                 <div class="card border-0 shadow-sm p-3 mb-4">
                     <form method="get" class="row g-2 align-items-end">
                         <div class="col-12 col-sm-4">
                             <label for="startDate" class="form-label">Fecha Desde</label>
-                            <input type="date" id="startDate" name="startDate" class="form-control" value="2026-03-01">
+                            <input type="date" id="startDate" name="startDate" class="form-control" th:value="${startDate}">
                         </div>
                         <div class="col-12 col-sm-4">
                             <label for="endDate" class="form-label">Fecha Hasta</label>
-                            <input type="date" id="endDate" name="endDate" class="form-control" value="2026-03-31">
+                            <input type="date" id="endDate" name="endDate" class="form-control" th:value="${endDate}">
                         </div>
                         <div class="col-12 col-sm-4 d-flex gap-2">
                             <button type="submit" class="btn btn-primary flex-fill">
@@ -64,13 +64,13 @@
                     <div class="col-12 col-md-6">
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <span class="text-muted small text-uppercase fw-semibold">Total Facturado en el Período</span>
-                            <h3 class="fw-bold text-primary mb-0 mt-1">$580.490,00</h3>
+                            <h3 class="fw-bold text-primary mb-0 mt-1" th:text="'$' + ${#numbers.formatDecimal(totalBilled != null ? totalBilled : 0, 1, 2)}">$0,00</h3>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="card border-0 shadow-sm p-3 bg-white">
                             <span class="text-muted small text-uppercase fw-semibold">Cantidad Total de Compras</span>
-                            <h3 class="fw-bold text-dark mb-0 mt-1">28 órdenes de clientes</h3>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${totalOrders} + ' órdenes de clientes'">0 órdenes de clientes</h3>
                         </div>
                     </div>
                 </div>
@@ -94,41 +94,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="fw-bold text-dark">#ZR-89312</td>
-                                    <td class="small text-muted">22/03/2026 10:30</td>
-                                    <td>Zapatillas Running Zero Pro</td>
-                                    <td><span class="badge bg-light text-dark border">Hombres • Calzado</span></td>
-                                    <td class="text-center fw-bold">1</td>
-                                    <td><i class="bi bi-wallet-fill text-info me-1"></i>Mercado Pago</td>
-                                    <td class="text-end fw-bold text-primary">$24.990,00</td>
+                                <tr th:if="${salesDetails == null or salesDetails.empty}">
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No se registraron ventas en el período seleccionado.
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td class="fw-bold text-dark">#ZR-89311</td>
-                                    <td class="small text-muted">20/03/2026 16:15</td>
-                                    <td>Campera Deportiva Rompeviento</td>
-                                    <td><span class="badge bg-light text-dark border">Hombres • Ropa</span></td>
-                                    <td class="text-center fw-bold">1</td>
-                                    <td><i class="bi bi-cash me-1 text-success"></i>Efectivo</td>
-                                    <td class="text-end fw-bold text-primary">$18.500,00</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold text-dark">#ZR-89310</td>
-                                    <td class="small text-muted">18/03/2026 11:45</td>
-                                    <td>Calza Deportiva Tiro Alto</td>
-                                    <td><span class="badge bg-light text-dark border">Mujeres • Ropa</span></td>
-                                    <td class="text-center fw-bold">2</td>
-                                    <td><i class="bi bi-credit-card me-1 text-primary"></i>Tarjeta Débito</td>
-                                    <td class="text-end fw-bold text-primary">$28.400,00</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold text-dark">#ZR-89309</td>
-                                    <td class="small text-muted">15/03/2026 09:20</td>
-                                    <td>Mochila Sport Backpack Zero</td>
-                                    <td><span class="badge bg-light text-dark border">Niños • Accesorios</span></td>
-                                    <td class="text-center fw-bold">1</td>
-                                    <td><i class="bi bi-wallet-fill text-info me-1"></i>Mercado Pago</td>
-                                    <td class="text-end fw-bold text-primary">$16.800,00</td>
+                                <tr th:each="item : ${salesDetails}">
+                                    <td class="fw-bold text-dark" th:text="${item.orderId}">#ZR-89312</td>
+                                    <td class="small text-muted" th:text="${item.date != null ? #temporals.format(item.date, 'dd/MM/yyyy HH:mm') : '-'}">22/03/2026 10:30</td>
+                                    <td th:text="${item.productName}">Zapatillas Running Zero Pro</td>
+                                    <td><span class="badge bg-light text-dark border" th:text="${item.categoryName}">Calzado</span></td>
+                                    <td class="text-center fw-bold" th:text="${item.quantity}">1</td>
+                                    <td>
+                                        <span th:text="${item.paymentMethod}">Mercado Pago</span>
+                                    </td>
+                                    <td class="text-end fw-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(item.amount != null ? item.amount : 0, 1, 2)}">$0,00</td>
                                 </tr>
                             </tbody>
                         </table>

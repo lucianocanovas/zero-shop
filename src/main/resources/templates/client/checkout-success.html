@@ -33,7 +33,7 @@
                     <div class="bg-light rounded-3 p-3 mb-4 text-start small">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Número de Pedido:</span>
-                            <span class="fw-bold text-dark" th:text="${order != null ? '#' + order.id : '#ZR-89312'}">#ZR-89312</span>
+                            <span class="fw-bold text-dark" th:text="${order != null ? '#' + #strings.substring(order.id.toString(), 0, 8) : '-'}">-</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Estado Oficial:</span>

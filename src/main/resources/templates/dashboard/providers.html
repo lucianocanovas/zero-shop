@@ -87,45 +87,11 @@
                                     </td>
                                 </tr>
 
-                                <!-- Fallbacks / Demostración -->
+                                <!-- Estado Vacío -->
                                 <tr th:if="${providers == null or providers.isEmpty()}">
-                                    <td class="fw-bold text-dark">Distribuidora Textil S.A.</td>
-                                    <td class="text-muted">30-71123456-8</td>
-                                    <td>contacto@distribuidoratextil.com</td>
-                                    <td>
-                                        <a href="https://wa.me/5491144441234" target="_blank"
-                                            class="text-success text-decoration-none">
-                                            <i class="bi bi-whatsapp me-1"></i>+54 9 11 4444-1234
-                                        </a>
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="btn-group btn-group-sm">
-                                            <a th:href="@{/dashboard/providers/00000000-0000-0000-0000-000000000001}"
-                                                class="btn btn-outline-secondary" title="Editar"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <button type="button" class="btn btn-outline-danger" title="Eliminar"><i
-                                                    class="bi bi-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr th:if="${providers == null or providers.isEmpty()}">
-                                    <td class="fw-bold text-dark">Importaciones Electrónica Express</td>
-                                    <td class="text-muted">30-68991234-2</td>
-                                    <td>pedidos@e-express.com</td>
-                                    <td>
-                                        <a href="https://wa.me/5491155559876" target="_blank"
-                                            class="text-success text-decoration-none">
-                                            <i class="bi bi-whatsapp me-1"></i>+54 9 11 5555-9876
-                                        </a>
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="btn-group btn-group-sm">
-                                            <a th:href="@{/dashboard/providers/00000000-0000-0000-0000-000000000002}"
-                                                class="btn btn-outline-secondary" title="Editar"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <button type="button" class="btn btn-outline-danger" title="Eliminar"><i
-                                                    class="bi bi-trash"></i></button>
-                                        </div>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-2 d-block mb-1"></i>
+                                        No hay proveedores registrados aún.
                                     </td>
                                 </tr>
                             </tbody>

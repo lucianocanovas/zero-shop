@@ -31,6 +31,12 @@ public class User {
     @JoinColumn(name = "person_id", referencedColumnName = "id", unique = true)
     private Person person;
 
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    @Column(name = "verified")
+    private Boolean verified = true;
+
     @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;
 }

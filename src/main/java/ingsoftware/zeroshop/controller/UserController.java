@@ -82,8 +82,8 @@ public class UserController {
         return "redirect:/dashboard/admin/users";
     }
 
-    // Método para mostrar la vista del perfil propio del usuario autenticado
-    @GetMapping({"/profile", "/user.html"})
+    // Método para mostrar la vista del perfil de usuario legado
+    @GetMapping("/user.html")
     public String viewProfile(Authentication authentication, Model model) {
         // Verificar si el usuario está autenticado
         if (!isAuthenticated(authentication)) {
@@ -91,12 +91,12 @@ public class UserController {
         }
 
         User user = userService.getByEmail(authentication.getName());
-        addProfileModel(model, user, false, "/profile");
+        addProfileModel(model, user, false, "/user.html");
         return "user";
     }
 
-    // Método para actualizar el perfil propio del usuario autenticado
-    @PostMapping({"/profile", "/user.html"})
+    // Método para actualizar el perfil de usuario legado
+    @PostMapping("/user.html")
     public String updateProfile(Authentication authentication,
                                 @ModelAttribute ProfileForm form,
                                 RedirectAttributes redirectAttributes) {
@@ -114,7 +114,7 @@ public class UserController {
         } catch (IllegalArgumentException exception) {
             redirectAttributes.addFlashAttribute("error", exception.getMessage());
         }
-        return "redirect:/profile";
+        return "redirect:/user.html";
     }
 
     // Método auxiliar para preparar el modelo de la vista de perfil o edición de usuario
@@ -138,11 +138,6 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), authentication.getAuthorities());
         updatedAuthentication.setDetails(authentication.getDetails());
         SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
-    }
-
-    // Método para obtener el primer nombre del usuario autenticado
-    private String getUserName(Authentication authentication) {
-        return userService.getUserFirstName(authentication.getName());
     }
 
     // Método para verificar si el usuario está autenticado

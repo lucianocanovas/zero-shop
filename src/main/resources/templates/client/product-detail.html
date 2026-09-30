@@ -50,13 +50,13 @@
 
                     <!-- Precio Oficial -->
                     <div class="d-flex align-items-baseline gap-2 mb-3">
-                        <span class="h1 fw-bold text-primary mb-0" th:text="'$' + ${#numbers.formatDecimal(product?.currentPrice != null ? product.currentPrice : 24990, 1, 2)}">$24.990,00</span>
-                        <span class="badge bg-light text-muted border">Precio Actualizado</span>
+                        <span class="h1 fw-bold mb-0" th:classappend="${product?.onSale ? 'text-danger' : 'text-primary'}" th:text="'$' + ${#numbers.formatDecimal(product?.currentPrice != null ? product.currentPrice : 0, 1, 2)}">$0.00</span>
+                        <span class="badge bg-danger text-white" th:if="${product?.onSale == true}"><i class="bi bi-fire me-1"></i>Precio Promocional</span>
+                        <span class="badge bg-light text-muted border" th:unless="${product?.onSale == true}">Precio Actualizado</span>
                     </div>
 
                     <!-- Descripción Corta -->
-                    <p class="text-secondary mb-4" th:text="${product?.description != null ? product.description : 'Artículo confeccionado con materiales ultralivianos y resistentes para entrenamiento de alto impacto y uso diario.'}">
-                        Artículo confeccionado con materiales ultralivianos y resistentes para entrenamiento de alto impacto y uso diario.
+                    <p class="text-secondary mb-4" th:text="${product?.description != null ? product.description : ''}">
                     </p>
 
                     <!-- Formulario de Compra -->
@@ -98,7 +98,7 @@
                             </div>
                             <div class="col-auto">
                                 <span class="badge bg-success-subtle text-success">
-                                    <i class="bi bi-boxes me-1"></i><span th:text="${product?.stock != null ? product.stock : 18}">18</span> unidades disponibles
+                                    <i class="bi bi-boxes me-1"></i><span th:text="${product?.stock != null ? product.stock : 0}">0</span> unidades disponibles
                                 </span>
                             </div>
                         </div>
