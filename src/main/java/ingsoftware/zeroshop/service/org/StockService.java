@@ -72,6 +72,15 @@ public class StockService {
         return stockRepository.findByProductIdAndOfficeIdAndDeletedFalse(productId, officeId);
     }
 
+    public int getProductStockInOffice(UUID productId, UUID officeId) {
+        if (productId == null || officeId == null) {
+            return 0;
+        }
+        return getStock(productId, officeId)
+            .map(stock -> stock.getQuantity() != null ? stock.getQuantity() : 0)
+            .orElse(0);
+    }
+
     public Stock getStockById(UUID id) {
         return stockRepository.findActive(id)
                 .orElseThrow(() -> new IllegalArgumentException("Registro de stock no encontrado con ID: " + id));

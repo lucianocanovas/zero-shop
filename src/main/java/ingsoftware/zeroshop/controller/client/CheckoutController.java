@@ -4,7 +4,7 @@ import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
 import ingsoftware.zeroshop.enums.PaymentMethod;
-import ingsoftware.zeroshop.repository.org.OfficeRepository;
+import ingsoftware.zeroshop.service.org.OfficeService;
 import ingsoftware.zeroshop.service.transaction.SaleOrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +21,11 @@ import java.util.UUID;
 public class CheckoutController {
 
     private final SaleOrderService saleOrderService;
-    private final OfficeRepository officeRepository;
+    private final OfficeService officeService;
 
-    public CheckoutController(SaleOrderService saleOrderService, OfficeRepository officeRepository) {
+    public CheckoutController(SaleOrderService saleOrderService, OfficeService officeService) {
         this.saleOrderService = saleOrderService;
-        this.officeRepository = officeRepository;
+        this.officeService = officeService;
     }
 
     // GET /checkout: Muestra la página de finalización de compra con el carrito del cliente
@@ -37,7 +37,7 @@ public class CheckoutController {
 
         SaleOrder cart = saleOrderService.getOrCreateCart(principal.getName());
         List<OrderDetail> cartItems = saleOrderService.getOrderDetails(cart.getId());
-        List<Office> offices = officeRepository.findAllByDeletedFalse();
+        List<Office> offices = officeService.getAllOffices();
 
         model.addAttribute("cart", cart);
         model.addAttribute("cartItems", cartItems);

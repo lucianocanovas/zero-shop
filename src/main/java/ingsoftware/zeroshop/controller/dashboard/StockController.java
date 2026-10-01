@@ -3,8 +3,8 @@ package ingsoftware.zeroshop.controller.dashboard;
 import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.org.Stock;
-import ingsoftware.zeroshop.repository.catalog.ProductRepository;
-import ingsoftware.zeroshop.repository.org.OfficeRepository;
+import ingsoftware.zeroshop.service.catalog.ProductService;
+import ingsoftware.zeroshop.service.org.OfficeService;
 import ingsoftware.zeroshop.service.org.StockService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -21,15 +21,15 @@ import java.util.UUID;
 public class StockController {
 
     private final StockService stockService;
-    private final ProductRepository productRepository;
-    private final OfficeRepository officeRepository;
+    private final ProductService productService;
+    private final OfficeService officeService;
 
     public StockController(StockService stockService,
-                           ProductRepository productRepository,
-                           OfficeRepository officeRepository) {
+                           ProductService productService,
+                           OfficeService officeService) {
         this.stockService = stockService;
-        this.productRepository = productRepository;
-        this.officeRepository = officeRepository;
+        this.productService = productService;
+        this.officeService = officeService;
     }
 
     // GET /dashboard/stock: Muestra el listado de existencias de inventario con búsqueda, filtros y paginación
@@ -43,8 +43,8 @@ public class StockController {
             Model model) {
         int pageNum = (page != null && page > 0) ? page : 1;
         List<Stock> stocks = stockService.getAllActiveStock();
-        List<Product> products = productRepository.findAllByDeletedFalse();
-        List<Office> offices = officeRepository.findAllByDeletedFalse();
+        List<Product> products = productService.findAllActive();
+        List<Office> offices = officeService.getAllOffices();
 
         if (search != null && !search.trim().isBlank()) {
             String q = search.trim().toLowerCase();

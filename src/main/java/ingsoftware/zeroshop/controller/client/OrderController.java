@@ -1,6 +1,8 @@
 package ingsoftware.zeroshop.controller.client;
 
+import ingsoftware.zeroshop.dto.PageResult;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
+import ingsoftware.zeroshop.enums.OrderStatus;
 import ingsoftware.zeroshop.service.transaction.PaymentService;
 import ingsoftware.zeroshop.service.transaction.SaleOrderService;
 import org.springframework.stereotype.Controller;
@@ -36,7 +38,7 @@ public class OrderController {
     @Transactional(readOnly = true)
     public String getOrders(
             @RequestParam(name = "search", required = false) String search,
-            @RequestParam(name = "status", required = false) ingsoftware.zeroshop.enums.OrderStatus status,
+            @RequestParam(name = "status", required = false) OrderStatus status,
             @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
             Model model, Principal principal) {
         if (principal == null) {
@@ -74,13 +76,13 @@ public class OrderController {
                 })
                 .toList();
 
-        ingsoftware.zeroshop.dto.PageResult<SaleOrder> pageResult = ingsoftware.zeroshop.dto.PageResult.of(orders, pageNum, 5);
+        PageResult<SaleOrder> pageResult = PageResult.of(orders, pageNum, 5);
 
         model.addAttribute("orders", pageResult.getContent());
         model.addAttribute("pageResult", pageResult);
         model.addAttribute("search", search);
         model.addAttribute("status", status);
-        model.addAttribute("statuses", ingsoftware.zeroshop.enums.OrderStatus.values());
+        model.addAttribute("statuses", OrderStatus.values());
 
         return "client/orders";
     }

@@ -7,10 +7,10 @@ import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
 import ingsoftware.zeroshop.enums.OrderStatus;
 import ingsoftware.zeroshop.enums.PaymentMethod;
-import ingsoftware.zeroshop.repository.org.OfficeRepository;
-import ingsoftware.zeroshop.repository.org.StockRepository;
-import ingsoftware.zeroshop.repository.transaction.SaleOrderRepository;
+import ingsoftware.zeroshop.service.actor.UserService;
 import ingsoftware.zeroshop.service.catalog.ProductService;
+import ingsoftware.zeroshop.service.org.OfficeService;
+import ingsoftware.zeroshop.service.org.StockService;
 import ingsoftware.zeroshop.service.transaction.SaleOrderService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -24,33 +24,30 @@ import java.util.*;
 @Controller("dashboardEmployeeController")
 public class EmployeeController {
 
-    private final OfficeRepository officeRepository;
+    private final OfficeService officeService;
     private final ProductService productService;
-    private final StockRepository stockRepository;
+    private final StockService stockService;
     private final SaleOrderService saleOrderService;
-    private final SaleOrderRepository saleOrderRepository;
-    private final ingsoftware.zeroshop.repository.actor.ClientRepository clientRepository;
+    private final UserService userService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public EmployeeController(OfficeRepository officeRepository,
+    public EmployeeController(OfficeService officeService,
                               ProductService productService,
-                              StockRepository stockRepository,
+                              StockService stockService,
                               SaleOrderService saleOrderService,
-                              SaleOrderRepository saleOrderRepository,
-                              ingsoftware.zeroshop.repository.actor.ClientRepository clientRepository) {
-        this.officeRepository = officeRepository;
+                              UserService userService) {
+        this.officeService = officeService;
         this.productService = productService;
-        this.stockRepository = stockRepository;
+        this.stockService = stockService;
         this.saleOrderService = saleOrderService;
-        this.saleOrderRepository = saleOrderRepository;
-        this.clientRepository = clientRepository;
+        this.userService = userService;
     }
 
     // GET /dashboard/employee: Panel principal o escritorio del empleado
     @GetMapping({"/dashboard/employee", "/dashboard/employee/"})
     public String employeeDesk(Model model) {
         model.addAttribute("title", "Escritorio del Empleado - Zero Shop");
-        Office office = officeRepository.findAllByDeletedFalse().stream().findFirst().orElse(null);
+        Office office = officeService.getAllOffices().stream().findFirst().orElse(null);
         model.addAttribute("officeName", office != null ? office.getName() : "Sucursal Central");
         return "dashboard/employee/index";
     }
@@ -59,10 +56,10 @@ public class EmployeeController {
     @GetMapping("/dashboard/employee/desk")
     public String employeeDeskDetails(@RequestParam(value = "officeId", required = false) UUID officeId,
                                       Model model) {
-        List<Office> offices = officeRepository.findAllByDeletedFalse();
+        List<Office> offices = officeService.getAllOffices();
         Office currentOffice = null;
         if (officeId != null) {
-            currentOffice = officeRepository.findActive(officeId).orElse(null);
+            currentOffice = officeService.getOfficeById(officeId);
         }
         if (currentOffice == null) {
             currentOffice = offices.stream().findFirst().orElse(null);
@@ -76,9 +73,7 @@ public class EmployeeController {
         for (Product p : rawProducts) {
             int officeStock = 0;
             if (activeOfficeId != null) {
-                officeStock = stockRepository.findByProductIdAndOfficeIdAndDeletedFalse(p.getId(), activeOfficeId)
-                        .map(s -> s.getQuantity())
-                        .orElse(0);
+                officeStock = stockService.getProductStockInOffice(p.getId(), activeOfficeId);
             }
             deskProducts.add(DeskProductDTO.builder()
                     .id(p.getId())
@@ -102,7 +97,7 @@ public class EmployeeController {
         // Cargar últimas órdenes registradas en esta sucursal
         List<SaleOrder> recentSales = new ArrayList<>();
         if (activeOfficeId != null) {
-            recentSales = saleOrderRepository.findByOfficeIdAndDeletedFalse(activeOfficeId).stream()
+            recentSales = saleOrderService.getOrdersByOffice(activeOfficeId).stream()
                     .filter(o -> o.getStatus() == OrderStatus.DELIVERED || o.getStatus() == OrderStatus.PAID)
                     .sorted((o1, o2) -> {
                         if (o1.getDate() == null) return 1;
@@ -192,9 +187,7 @@ public class EmployeeController {
                     || (p.getCategory() != null && p.getCategory().getName() != null && p.getCategory().getName().toLowerCase().contains(clean));
 
             if (matches) {
-                int stock = stockRepository.findByProductIdAndOfficeIdAndDeletedFalse(p.getId(), officeId)
-                        .map(s -> s.getQuantity())
-                        .orElse(0);
+                int stock = stockService.getProductStockInOffice(p.getId(), officeId);
 
                 result.add(DeskProductDTO.builder()
                         .id(p.getId())
@@ -219,9 +212,7 @@ public class EmployeeController {
             return Map.of("found", false);
         }
         String cleanDni = dni.trim();
-        return clientRepository.findAllByDeletedFalse().stream()
-                .filter(c -> cleanDni.equalsIgnoreCase(c.getIdNumber()))
-                .findFirst()
+        return userService.findClientByDni(cleanDni)
                 .map(c -> {
                     Map<String, Object> map = new HashMap<>();
                     map.put("found", true);

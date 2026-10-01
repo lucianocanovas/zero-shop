@@ -59,6 +59,7 @@
 ---
 
 ## 3. Controladores Comunes del Dashboard (`ingsoftware.zeroshop.controller.dashboard`)
+
 *Acceso autorizado para roles `ADMIN` y `EMPLOYEE`.*
 
 - **`DashboardController`**
@@ -113,6 +114,7 @@
 ---
 
 ## 4. Controladores Exclusivos de Administración (`ingsoftware.zeroshop.controller.dashboard.admin`)
+
 *Acceso restringido únicamente a usuarios con rol `ADMIN`.*
 
 - **`UserController`**
@@ -140,6 +142,7 @@
 ---
 
 ## 5. Controladores Exclusivos de Empleados (`ingsoftware.zeroshop.controller.dashboard.employee`)
+
 *Acceso restringido a rol `EMPLOYEE`.*
 
 - **`EmployeeController`**

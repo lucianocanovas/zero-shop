@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import ingsoftware.zeroshop.entity.actor.Client;
 import ingsoftware.zeroshop.entity.actor.Employee;
 import ingsoftware.zeroshop.entity.actor.Person;
 import ingsoftware.zeroshop.entity.location.Address;

@@ -37,9 +37,6 @@ public class UserServiceIntegrationTest {
     private ingsoftware.zeroshop.repository.actor.PersonRepository personRepository;
 
     @Autowired
-    private ingsoftware.zeroshop.repository.actor.ClientRepository clientRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Test

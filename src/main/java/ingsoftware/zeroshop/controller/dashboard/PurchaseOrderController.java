@@ -5,9 +5,9 @@ import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.PurchaseOrder;
-import ingsoftware.zeroshop.repository.actor.SupplierRepository;
-import ingsoftware.zeroshop.repository.catalog.ProductRepository;
-import ingsoftware.zeroshop.repository.org.OfficeRepository;
+import ingsoftware.zeroshop.service.actor.SupplierService;
+import ingsoftware.zeroshop.service.catalog.ProductService;
+import ingsoftware.zeroshop.service.org.OfficeService;
 import ingsoftware.zeroshop.service.transaction.PurchaseOrderService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -25,18 +25,18 @@ import java.util.UUID;
 public class PurchaseOrderController {
 
     private final PurchaseOrderService purchaseOrderService;
-    private final SupplierRepository supplierRepository;
-    private final OfficeRepository officeRepository;
-    private final ProductRepository productRepository;
+    private final SupplierService supplierService;
+    private final OfficeService officeService;
+    private final ProductService productService;
 
     public PurchaseOrderController(PurchaseOrderService purchaseOrderService,
-                                   SupplierRepository supplierRepository,
-                                   OfficeRepository officeRepository,
-                                   ProductRepository productRepository) {
+                                   SupplierService supplierService,
+                                   OfficeService officeService,
+                                   ProductService productService) {
         this.purchaseOrderService = purchaseOrderService;
-        this.supplierRepository = supplierRepository;
-        this.officeRepository = officeRepository;
-        this.productRepository = productRepository;
+        this.supplierService = supplierService;
+        this.officeService = officeService;
+        this.productService = productService;
     }
 
     // GET /dashboard/purchase-orders: Lista todas las órdenes de compra a proveedores con búsqueda, filtros y paginación
@@ -51,9 +51,9 @@ public class PurchaseOrderController {
             Model model) {
         int pageNum = (page != null && page > 0) ? page : 1;
         List<PurchaseOrder> orders = purchaseOrderService.getAllPurchaseOrders();
-        List<Supplier> suppliers = supplierRepository.findAllByDeletedFalse();
-        List<Office> offices = officeRepository.findAllByDeletedFalse();
-        List<Product> products = productRepository.findAllByDeletedFalse();
+        List<Supplier> suppliers = supplierService.getAllSuppliers();
+        List<Office> offices = officeService.getAllOffices();
+        List<Product> products = productService.findAllActive();
 
         if (search != null && !search.trim().isBlank()) {
             String q = search.trim().toLowerCase();
@@ -108,9 +108,9 @@ public class PurchaseOrderController {
     // GET /dashboard/purchase-orders/new: Muestra el formulario para emitir una nueva orden de compra
     @GetMapping("/dashboard/purchase-orders/new")
     public String newPurchaseOrderForm(Model model) {
-        List<Supplier> suppliers = supplierRepository.findAllByDeletedFalse();
-        List<Office> offices = officeRepository.findAllByDeletedFalse();
-        List<Product> products = productRepository.findAllByDeletedFalse();
+        List<Supplier> suppliers = supplierService.getAllSuppliers();
+        List<Office> offices = officeService.getAllOffices();
+        List<Product> products = productService.findAllActive();
 
         model.addAttribute("suppliers", suppliers);
         model.addAttribute("offices", offices);

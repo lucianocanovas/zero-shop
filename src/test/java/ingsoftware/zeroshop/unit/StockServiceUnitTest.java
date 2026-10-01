@@ -3,9 +3,11 @@ package ingsoftware.zeroshop.unit;
 import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.org.Stock;
+import ingsoftware.zeroshop.repository.actor.UserRepository;
 import ingsoftware.zeroshop.repository.catalog.ProductRepository;
 import ingsoftware.zeroshop.repository.org.OfficeRepository;
 import ingsoftware.zeroshop.repository.org.StockRepository;
+import ingsoftware.zeroshop.service.notification.EmailService;
 import ingsoftware.zeroshop.service.org.StockService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,10 +37,10 @@ public class StockServiceUnitTest {
     private OfficeRepository officeRepository;
 
     @Mock
-    private ingsoftware.zeroshop.repository.actor.UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Mock
-    private ingsoftware.zeroshop.service.notification.EmailService emailService;
+    private EmailService emailService;
 
     @InjectMocks
     private StockService stockService;

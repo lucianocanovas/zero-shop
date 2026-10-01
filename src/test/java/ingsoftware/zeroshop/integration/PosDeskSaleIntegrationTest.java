@@ -2,7 +2,6 @@ package ingsoftware.zeroshop.integration;
 
 import ingsoftware.zeroshop.entity.actor.Client;
 import ingsoftware.zeroshop.entity.catalog.Product;
-import ingsoftware.zeroshop.entity.location.City;
 import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.org.Stock;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
@@ -11,11 +10,8 @@ import ingsoftware.zeroshop.enums.OfficeType;
 import ingsoftware.zeroshop.enums.PaymentMethod;
 import ingsoftware.zeroshop.enums.Size;
 import ingsoftware.zeroshop.repository.actor.ClientRepository;
-import ingsoftware.zeroshop.repository.catalog.ProductRepository;
-import ingsoftware.zeroshop.repository.location.CityRepository;
 import ingsoftware.zeroshop.repository.org.OfficeRepository;
 import ingsoftware.zeroshop.repository.org.StockRepository;
-import ingsoftware.zeroshop.repository.transaction.SaleOrderRepository;
 import ingsoftware.zeroshop.service.catalog.ProductService;
 import ingsoftware.zeroshop.service.transaction.SaleOrderService;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,9 +51,6 @@ public class PosDeskSaleIntegrationTest {
     private OfficeRepository officeRepository;
 
     @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
     private ProductService productService;
 
     @Autowired
@@ -65,9 +58,6 @@ public class PosDeskSaleIntegrationTest {
 
     @Autowired
     private ClientRepository clientRepository;
-
-    @Autowired
-    private SaleOrderRepository saleOrderRepository;
 
     private MockMvc mockMvc;
     private Office testOffice;

@@ -1,7 +1,7 @@
 package ingsoftware.zeroshop.controller.client;
 
 import ingsoftware.zeroshop.entity.catalog.Product;
-import ingsoftware.zeroshop.repository.catalog.CategoryRepository;
+import ingsoftware.zeroshop.service.catalog.CatalogService;
 import ingsoftware.zeroshop.service.catalog.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +17,11 @@ import java.util.UUID;
 public class ProductController {
 
     private final ProductService productService;
-    private final CategoryRepository categoryRepository;
+    private final CatalogService catalogService;
 
-    public ProductController(ProductService productService, CategoryRepository categoryRepository) {
+    public ProductController(ProductService productService, CatalogService catalogService) {
         this.productService = productService;
-        this.categoryRepository = categoryRepository;
+        this.catalogService = catalogService;
     }
 
     // GET /products: Muestra el catálogo general de productos
@@ -61,7 +61,7 @@ public class ProductController {
 
         model.addAttribute("products", pageResult.getContent());
         model.addAttribute("pageResult", pageResult);
-        model.addAttribute("categories", categoryRepository.findAllByDeletedFalse());
+        model.addAttribute("categories", catalogService.getAllActiveCategories());
         model.addAttribute("search", search);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("subCategory", subCategory);
@@ -122,7 +122,7 @@ public class ProductController {
 
         model.addAttribute("products", pageResult.getContent());
         model.addAttribute("pageResult", pageResult);
-        model.addAttribute("categories", categoryRepository.findAllByDeletedFalse());
+        model.addAttribute("categories", catalogService.getAllActiveCategories());
         model.addAttribute("search", search);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("maxPrice", maxPrice);

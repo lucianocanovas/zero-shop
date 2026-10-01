@@ -3,6 +3,7 @@ package ingsoftware.zeroshop.controller.dashboard;
 import ingsoftware.zeroshop.entity.transaction.Invoice;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
 import ingsoftware.zeroshop.enums.OrderStatus;
+import ingsoftware.zeroshop.service.org.OfficeService;
 import ingsoftware.zeroshop.service.transaction.PaymentService;
 import ingsoftware.zeroshop.service.transaction.SaleOrderService;
 import org.springframework.stereotype.Controller;
@@ -19,14 +20,14 @@ public class OrderController {
 
     private final SaleOrderService saleOrderService;
     private final PaymentService paymentService;
-    private final ingsoftware.zeroshop.repository.org.OfficeRepository officeRepository;
+    private final OfficeService officeService;
 
     public OrderController(SaleOrderService saleOrderService,
                            PaymentService paymentService,
-                           ingsoftware.zeroshop.repository.org.OfficeRepository officeRepository) {
+                           OfficeService officeService) {
         this.saleOrderService = saleOrderService;
         this.paymentService = paymentService;
-        this.officeRepository = officeRepository;
+        this.officeService = officeService;
     }
 
     // GET /dashboard/sale-orders: Lista todas las órdenes de los clientes con búsqueda, filtros y paginación
@@ -79,7 +80,7 @@ public class OrderController {
         model.addAttribute("orders", pageResult.getContent());
         model.addAttribute("pageResult", pageResult);
         model.addAttribute("statuses", OrderStatus.values());
-        model.addAttribute("offices", officeRepository.findAllByDeletedFalse());
+        model.addAttribute("offices", officeService.getAllOffices());
         model.addAttribute("search", search);
         model.addAttribute("status", status);
         model.addAttribute("officeId", officeId);

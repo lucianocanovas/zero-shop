@@ -1,5 +1,6 @@
 package ingsoftware.zeroshop.controller.client;
 
+import ingsoftware.zeroshop.dto.PageResult;
 import ingsoftware.zeroshop.entity.catalog.Category;
 import ingsoftware.zeroshop.entity.catalog.SubCategory;
 import ingsoftware.zeroshop.service.catalog.CatalogService;
@@ -87,7 +88,7 @@ public class CategoryController {
                     .toList();
         }
 
-        ingsoftware.zeroshop.dto.PageResult<CategoryViewDto> pageResult = ingsoftware.zeroshop.dto.PageResult.of(categoryViews, pageNum, 4);
+        PageResult<CategoryViewDto> pageResult = PageResult.of(categoryViews, pageNum, 4);
 
         model.addAttribute("categories", pageResult.getContent());
         model.addAttribute("pageResult", pageResult);

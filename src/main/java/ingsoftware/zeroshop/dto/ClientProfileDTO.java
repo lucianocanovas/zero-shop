@@ -38,4 +38,8 @@ public class ClientProfileDTO {
     // 3. Cuenta y Seguridad
     private String email;
     private String password;
+
+    // 4. Preferencias de Comunicación
+    @Builder.Default
+    private Boolean emailPromotionsEnabled = true;
 }

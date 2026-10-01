@@ -1,7 +1,6 @@
 package ingsoftware.zeroshop.unit;
 
 import ingsoftware.zeroshop.service.storage.FileStorageService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

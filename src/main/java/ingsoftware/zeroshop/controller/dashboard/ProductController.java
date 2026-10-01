@@ -1,14 +1,16 @@
 package ingsoftware.zeroshop.controller.dashboard;
 
+import ingsoftware.zeroshop.dto.PageResult;
 import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.enums.Size;
-import ingsoftware.zeroshop.repository.catalog.CategoryRepository;
-import ingsoftware.zeroshop.repository.catalog.SubCategoryRepository;
+import ingsoftware.zeroshop.service.catalog.CatalogService;
 import ingsoftware.zeroshop.service.catalog.ProductService;
+import ingsoftware.zeroshop.service.storage.FileStorageService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
@@ -19,17 +21,14 @@ import java.util.UUID;
 public class ProductController {
 
     private final ProductService productService;
-    private final CategoryRepository categoryRepository;
-    private final SubCategoryRepository subCategoryRepository;
-    private final ingsoftware.zeroshop.service.storage.FileStorageService fileStorageService;
+    private final CatalogService catalogService;
+    private final FileStorageService fileStorageService;
 
     public ProductController(ProductService productService,
-                             CategoryRepository categoryRepository,
-                             SubCategoryRepository subCategoryRepository,
-                             ingsoftware.zeroshop.service.storage.FileStorageService fileStorageService) {
+                             CatalogService catalogService,
+                             FileStorageService fileStorageService) {
         this.productService = productService;
-        this.categoryRepository = categoryRepository;
-        this.subCategoryRepository = subCategoryRepository;
+        this.catalogService = catalogService;
         this.fileStorageService = fileStorageService;
     }
 
@@ -93,12 +92,12 @@ public class ProductController {
             }
         }
 
-        ingsoftware.zeroshop.dto.PageResult<Product> pageResult = ingsoftware.zeroshop.dto.PageResult.of(products, pageNum, 10);
+        PageResult<Product> pageResult = PageResult.of(products, pageNum, 10);
 
         model.addAttribute("products", pageResult.getContent());
         model.addAttribute("pageResult", pageResult);
-        model.addAttribute("categories", categoryRepository.findAllByDeletedFalse());
-        model.addAttribute("subCategories", subCategoryRepository.findAllWithCategoryByDeletedFalse());
+        model.addAttribute("categories", catalogService.getAllActiveCategories());
+        model.addAttribute("subCategories", catalogService.getAllActiveSubCategoriesWithCategory());
         model.addAttribute("sizes", Size.values());
         model.addAttribute("search", search);
         model.addAttribute("categoryId", categoryId);
@@ -115,8 +114,8 @@ public class ProductController {
     @GetMapping("/dashboard/products/new")
     public String newProductForm(Model model) {
         model.addAttribute("product", new Product());
-        model.addAttribute("categories", categoryRepository.findAllByDeletedFalse());
-        model.addAttribute("subCategories", subCategoryRepository.findAllWithCategoryByDeletedFalse());
+        model.addAttribute("categories", catalogService.getAllActiveCategories());
+        model.addAttribute("subCategories", catalogService.getAllActiveSubCategoriesWithCategory());
         model.addAttribute("sizes", Size.values());
         return "dashboard/product-new";
     }
@@ -127,8 +126,8 @@ public class ProductController {
         try {
             Product product = productService.findActiveById(id);
             model.addAttribute("product", product);
-            model.addAttribute("categories", categoryRepository.findAllByDeletedFalse());
-            model.addAttribute("subCategories", subCategoryRepository.findAllWithCategoryByDeletedFalse());
+            model.addAttribute("categories", catalogService.getAllActiveCategories());
+            model.addAttribute("subCategories", catalogService.getAllActiveSubCategoriesWithCategory());
             model.addAttribute("sizes", Size.values());
             return "dashboard/product-edit";
         } catch (IllegalArgumentException ex) {
@@ -141,7 +140,7 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping({"/dashboard/products", "/dashboard/products/"})
     public String createProduct(@ModelAttribute Product product,
-                                @RequestParam(name = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
+                                @RequestParam(name = "imageFile", required = false) MultipartFile imageFile,
                                 @RequestParam(name = "basePrice", required = false) BigDecimal basePrice,
                                 @RequestParam(name = "subCategoryId", required = false) UUID subCategoryId,
                                 @RequestParam(name = "onSale", defaultValue = "false") Boolean onSale,
@@ -166,7 +165,7 @@ public class ProductController {
     @RequestMapping(value = "/dashboard/products/{id}", method = {RequestMethod.PUT, RequestMethod.POST})
     public String updateProduct(@PathVariable("id") UUID id,
                                 @ModelAttribute Product product,
-                                @RequestParam(name = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
+                                @RequestParam(name = "imageFile", required = false) MultipartFile imageFile,
                                 @RequestParam(name = "basePrice", required = false) BigDecimal basePrice,
                                 @RequestParam(name = "subCategoryId", required = false) UUID subCategoryId,
                                 @RequestParam(name = "onSale", defaultValue = "false") Boolean onSale,

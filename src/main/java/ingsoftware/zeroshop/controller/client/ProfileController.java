@@ -5,58 +5,38 @@ import ingsoftware.zeroshop.entity.actor.*;
 import ingsoftware.zeroshop.entity.location.Address;
 import ingsoftware.zeroshop.entity.location.City;
 import ingsoftware.zeroshop.enums.ContactType;
-import ingsoftware.zeroshop.enums.IDType;
 import ingsoftware.zeroshop.enums.PhoneType;
-import ingsoftware.zeroshop.enums.Role;
-import ingsoftware.zeroshop.repository.actor.ClientRepository;
-import ingsoftware.zeroshop.repository.actor.EmployeeRepository;
-import ingsoftware.zeroshop.repository.actor.PersonRepository;
-import ingsoftware.zeroshop.repository.actor.UserRepository;
-import ingsoftware.zeroshop.repository.location.CityRepository;
 import ingsoftware.zeroshop.service.actor.UserService;
+import ingsoftware.zeroshop.service.location.LocationService;
+import ingsoftware.zeroshop.service.notification.NewsletterService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
 public class ProfileController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final PersonRepository personRepository;
-    private final ClientRepository clientRepository;
-    private final EmployeeRepository employeeRepository;
-    private final CityRepository cityRepository;
-    private final ingsoftware.zeroshop.repository.location.CountryRepository countryRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final LocationService locationService;
+    private final NewsletterService newsletterService;
 
     public ProfileController(UserService userService,
-                             UserRepository userRepository,
-                             PersonRepository personRepository,
-                             ClientRepository clientRepository,
-                             EmployeeRepository employeeRepository,
-                             CityRepository cityRepository,
-                             ingsoftware.zeroshop.repository.location.CountryRepository countryRepository,
-                             PasswordEncoder passwordEncoder) {
+                             LocationService locationService,
+                             NewsletterService newsletterService) {
         this.userService = userService;
-        this.userRepository = userRepository;
-        this.personRepository = personRepository;
-        this.clientRepository = clientRepository;
-        this.employeeRepository = employeeRepository;
-        this.cityRepository = cityRepository;
-        this.countryRepository = countryRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.locationService = locationService;
+        this.newsletterService = newsletterService;
     }
 
     // GET /profile: Muestra el perfil del cliente/usuario con sus direcciones y contactos
@@ -73,6 +53,7 @@ public class ProfileController {
 
         ClientProfileDTO profile = new ClientProfileDTO();
         profile.setEmail(user.getUsername());
+        profile.setEmailPromotionsEnabled(user.getEmailPromotionsEnabled() == null || user.getEmailPromotionsEnabled());
 
         Person person = user.getPerson();
         java.util.List<Address> addresses = new ArrayList<>();
@@ -135,7 +116,7 @@ public class ProfileController {
         model.addAttribute("profile", profile);
         model.addAttribute("addresses", addresses);
         model.addAttribute("contacts", contacts);
-        model.addAttribute("countries", countryRepository.findAll());
+        model.addAttribute("countries", locationService.findAllCountries());
         model.addAttribute("contactTypes", ContactType.values());
         model.addAttribute("phoneTypes", PhoneType.values());
         return "client/profile";
@@ -150,56 +131,85 @@ public class ProfileController {
             return "redirect:/login";
         }
 
-        User user = userService.getByEmail(authentication.getName());
-        if (user == null) {
-            return "redirect:/login";
-        }
-
         try {
-            if (form.getFirstName() == null || form.getFirstName().trim().isBlank()) {
-                throw new IllegalArgumentException("El nombre es obligatorio.");
-            }
-            if (form.getLastName() == null || form.getLastName().trim().isBlank()) {
-                throw new IllegalArgumentException("El apellido es obligatorio.");
-            }
-            if (form.getEmail() == null || form.getEmail().trim().isBlank()) {
-                throw new IllegalArgumentException("El correo electrónico es obligatorio.");
-            }
-
-            String newEmail = form.getEmail().trim().toLowerCase();
-            if (!newEmail.equals(user.getUsername().toLowerCase())) {
-                Optional<User> other = userRepository.findByUsernameIgnoreCase(newEmail);
-                if (other.isPresent() && !other.get().getId().equals(user.getId())
-                        && (other.get().getDeleted() == null || !other.get().getDeleted())) {
-                    throw new IllegalArgumentException("El correo electrónico ya está registrado por otro usuario.");
-                }
-                user.setUsername(newEmail);
-            }
-
-            if (form.getPassword() != null && !form.getPassword().isBlank()) {
-                if (form.getPassword().trim().length() < 6) {
-                    throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres.");
-                }
-                user.setPassword(passwordEncoder.encode(form.getPassword().trim()));
-            }
-
-            Person person = getOrCreatePerson(user);
-            person.setFirstName(form.getFirstName().trim());
-            person.setLastName(form.getLastName().trim());
-            person.setGender(form.getGender());
-            if (form.getDateOfBirth() != null) {
-                person.setDateOfBirth(form.getDateOfBirth());
-            }
-
-            personRepository.save(person);
-            User savedUser = userRepository.save(user);
+            User savedUser = userService.updateUserProfile(authentication.getName(), form);
             refreshAuthentication(authentication, savedUser);
-
             redirectAttributes.addFlashAttribute("success", "¡Datos personales actualizados correctamente!");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error inesperado al guardar el perfil: " + e.getMessage());
+        }
+
+        return "redirect:/profile";
+    }
+
+    // POST /profile/promotions/toggle: Activa o desactiva las promociones por email vía slider
+    @PostMapping("/profile/promotions/toggle")
+    @ResponseBody
+    public ResponseEntity<?> toggleEmailPromotions(
+            @RequestParam(name = "enabled", required = false) Boolean enabled,
+            Authentication authentication) {
+        if (!isAuthenticated(authentication)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("success", false, "message", "No autenticado"));
+        }
+        try {
+            boolean newStatus = userService.toggleEmailPromotions(authentication.getName(), enabled);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "enabled", newStatus,
+                    "message", newStatus ? "Promociones por email activadas correctamente." : "Promociones por email desactivadas."
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Usuario no encontrado"));
+        }
+    }
+
+    // POST /profile/promotions/test-email: Envía un email promocional de prueba al usuario actual
+    @PostMapping("/profile/promotions/test-email")
+    public Object sendTestEmail(
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            @RequestHeader(value = "Accept", required = false) String acceptHeader,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+        boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(requestedWith) || (acceptHeader != null && acceptHeader.contains("application/json"));
+
+        if (!isAuthenticated(authentication)) {
+            if (isAjax) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("success", false, "message", "Debes iniciar sesión para realizar esta acción."));
+            }
+            return "redirect:/login";
+        }
+
+        User user = userService.getByEmail(authentication.getName());
+        if (user == null) {
+            if (isAjax) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("success", false, "message", "Usuario no encontrado."));
+            }
+            return "redirect:/login";
+        }
+
+        try {
+            newsletterService.sendTestPromotionalEmail(user.getUsername());
+            if (isAjax) {
+                return ResponseEntity.ok(Map.of(
+                        "success", true,
+                        "message", "Email promocional de prueba enviado exitosamente a: " + user.getUsername()
+                ));
+            }
+            redirectAttributes.addFlashAttribute("success", "Email promocional de prueba enviado exitosamente a: " + user.getUsername());
+        } catch (Exception e) {
+            if (isAjax) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "message", "No se pudo enviar el correo de prueba: " + e.getMessage()
+                ));
+            }
+            redirectAttributes.addFlashAttribute("error", "No se pudo enviar el correo de prueba: " + e.getMessage());
         }
 
         return "redirect:/profile";
@@ -218,40 +228,20 @@ public class ProfileController {
                              @RequestParam(value = "cityName", required = false) String cityName,
                              RedirectAttributes redirectAttributes) {
         if (!isAuthenticated(authentication)) return "redirect:/login";
-        User user = userService.getByEmail(authentication.getName());
-        if (user == null) return "redirect:/login";
 
         try {
-            if (street == null || street.trim().isBlank()) throw new IllegalArgumentException("La calle es obligatoria.");
-            if (number == null || number.trim().isBlank()) throw new IllegalArgumentException("El número es obligatorio.");
-
-            Person person = getOrCreatePerson(user);
-
             City city = null;
             if (cityId != null) {
-                city = cityRepository.findById(cityId).orElse(null);
+                city = locationService.findCityById(cityId).orElse(null);
             }
             if (city == null && cityName != null && !cityName.trim().isBlank()) {
-                city = cityRepository.findByNameIgnoreCaseAndDeletedFalse(cityName.trim()).orElse(null);
+                city = locationService.findCityByName(cityName.trim()).orElse(null);
             }
             if (city == null) {
-                city = cityRepository.findAllByDeletedFalse().stream().findFirst().orElse(null);
+                city = locationService.findFirstCity().orElse(null);
             }
 
-            Address address = Address.builder()
-                    .street(street.trim())
-                    .number(number.trim())
-                    .floor(floor != null && !floor.trim().isBlank() ? floor.trim() : null)
-                    .apartment(apartment != null && !apartment.trim().isBlank() ? apartment.trim() : null)
-                    .zipCode(zipCode != null && !zipCode.trim().isBlank() ? zipCode.trim() : "5500")
-                    .observations(observations != null && !observations.trim().isBlank() ? observations.trim() : null)
-                    .city(city)
-                    .deleted(false)
-                    .build();
-
-            person.getAddress().add(address);
-            personRepository.save(person);
-
+            userService.addAddressToUserProfile(authentication.getName(), street, number, floor, apartment, zipCode, observations, city);
             redirectAttributes.addFlashAttribute("success", "¡Dirección agregada correctamente!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al agregar dirección: " + e.getMessage());
@@ -266,19 +256,11 @@ public class ProfileController {
                                 @PathVariable("addressId") UUID addressId,
                                 RedirectAttributes redirectAttributes) {
         if (!isAuthenticated(authentication)) return "redirect:/login";
-        User user = userService.getByEmail(authentication.getName());
-        if (user == null || user.getPerson() == null) return "redirect:/profile";
-
-        Person person = user.getPerson();
-        if (person.getAddress() != null) {
-            for (Address a : person.getAddress()) {
-                if (a.getId() != null && a.getId().equals(addressId)) {
-                    a.setDeleted(true);
-                    break;
-                }
-            }
-            personRepository.save(person);
+        try {
+            userService.deleteAddressFromUserProfile(authentication.getName(), addressId);
             redirectAttributes.addFlashAttribute("success", "¡Dirección eliminada correctamente!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar dirección: " + e.getMessage());
         }
         return "redirect:/profile";
     }
@@ -294,38 +276,9 @@ public class ProfileController {
                              @RequestParam(value = "observation", required = false) String observation,
                              RedirectAttributes redirectAttributes) {
         if (!isAuthenticated(authentication)) return "redirect:/login";
-        User user = userService.getByEmail(authentication.getName());
-        if (user == null) return "redirect:/login";
 
         try {
-            Person person = getOrCreatePerson(user);
-            ContactType cType = contactType != null ? contactType : ContactType.PERSONAL;
-            String obs = (observation != null && !observation.trim().isBlank()) ? observation.trim() : null;
-
-            if ("EMAIL".equalsIgnoreCase(contactCategory)) {
-                if (email == null || email.trim().isBlank()) {
-                    throw new IllegalArgumentException("El correo electrónico de contacto es obligatorio.");
-                }
-                ContactEmail ce = new ContactEmail();
-                ce.setEmail(email.trim());
-                ce.setContactType(cType);
-                ce.setObservation(obs != null ? obs : "Email de contacto");
-                ce.setDeleted(false);
-                person.getContact().add(ce);
-            } else {
-                if (phoneNumber == null || phoneNumber.trim().isBlank()) {
-                    throw new IllegalArgumentException("El número de teléfono es obligatorio.");
-                }
-                ContactPhone cp = new ContactPhone();
-                cp.setPhoneNumber(phoneNumber.trim());
-                cp.setPhoneType(phoneType != null ? phoneType : PhoneType.MOBILE);
-                cp.setContactType(cType);
-                cp.setObservation(obs != null ? obs : "Teléfono de contacto");
-                cp.setDeleted(false);
-                person.getContact().add(cp);
-            }
-
-            personRepository.save(person);
+            userService.addContactToUserProfile(authentication.getName(), contactCategory, phoneNumber, phoneType, email, contactType, observation);
             redirectAttributes.addFlashAttribute("success", "¡Contacto agregado correctamente!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al agregar contacto: " + e.getMessage());
@@ -340,63 +293,13 @@ public class ProfileController {
                                 @PathVariable("contactId") UUID contactId,
                                 RedirectAttributes redirectAttributes) {
         if (!isAuthenticated(authentication)) return "redirect:/login";
-        User user = userService.getByEmail(authentication.getName());
-        if (user == null || user.getPerson() == null) return "redirect:/profile";
-
-        Person person = user.getPerson();
-        if (person.getContact() != null) {
-            for (Contact c : person.getContact()) {
-                if (c.getId() != null && c.getId().equals(contactId)) {
-                    c.setDeleted(true);
-                    break;
-                }
-            }
-            personRepository.save(person);
+        try {
+            userService.deleteContactFromUserProfile(authentication.getName(), contactId);
             redirectAttributes.addFlashAttribute("success", "¡Contacto eliminado correctamente!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al eliminar contacto: " + e.getMessage());
         }
         return "redirect:/profile";
-    }
-
-    private Person getOrCreatePerson(User user) {
-        Person person = user.getPerson();
-        if (person == null) {
-            String firstName = user.getUsername() != null ? user.getUsername().split("@")[0] : "Usuario";
-            if (user.getRole() == Role.CLIENT) {
-                Client client = new Client();
-                client.setFirstName(firstName);
-                client.setLastName("");
-                client.setGender(null);
-                client.setDateOfBirth(LocalDate.of(2000, 1, 1));
-                client.setIdType(IDType.DNI);
-                client.setIdNumber(String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits()) % 90000000L + 10000000L));
-                client.setClientNumber("CLI-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-                client.setDeleted(false);
-                client.setAddress(new ArrayList<>());
-                client.setContact(new ArrayList<>());
-                person = clientRepository.save(client);
-            } else {
-                Employee employee = new Employee();
-                employee.setFirstName(firstName);
-                employee.setLastName("");
-                employee.setGender(null);
-                employee.setDateOfBirth(LocalDate.of(2000, 1, 1));
-                employee.setIdType(IDType.DNI);
-                employee.setIdNumber(String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits()) % 90000000L + 10000000L));
-                employee.setDeleted(false);
-                employee.setAddress(new ArrayList<>());
-                employee.setContact(new ArrayList<>());
-                person = employeeRepository.save(employee);
-            }
-            user.setPerson(person);
-            userRepository.save(user);
-        }
-        if (person.getAddress() == null) {
-            person.setAddress(new ArrayList<>());
-        }
-        if (person.getContact() == null) {
-            person.setContact(new ArrayList<>());
-        }
-        return person;
     }
 
     private boolean isAuthenticated(Authentication authentication) {

@@ -20,17 +20,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import ingsoftware.zeroshop.repository.location.CityRepository;
-import ingsoftware.zeroshop.repository.location.CountryRepository;
+import ingsoftware.zeroshop.service.location.LocationService;
 
 @Controller("dashboardAdminOfficeController")
 public class OfficeController {
 
     @Autowired
-    private CountryRepository countryRepository;
-
-    @Autowired
-    private CityRepository cityRepository;
+    private LocationService locationService;
 
     @Autowired
     private OfficeService officeService;
@@ -105,7 +101,7 @@ public class OfficeController {
     @GetMapping({"/dashboard/offices/new", "/dashboard/admin/offices/new"})
     public String newOfficeForm(Model model) {
         model.addAttribute("officeDTO", new OfficeFormDTO());
-        model.addAttribute("countries", countryRepository.findAll());
+        model.addAttribute("countries", locationService.findAllCountries());
         return "dashboard/admin/office-new";
     }
 
@@ -139,7 +135,7 @@ public class OfficeController {
         model.addAttribute("office", office);
         model.addAttribute("addresses", addresses);
         model.addAttribute("contacts", contacts);
-        model.addAttribute("countries", countryRepository.findAll());
+        model.addAttribute("countries", locationService.findAllCountries());
         model.addAttribute("officeTypes", ingsoftware.zeroshop.enums.OfficeType.values());
         model.addAttribute("contactTypes", ingsoftware.zeroshop.enums.ContactType.values());
         model.addAttribute("phoneTypes", ingsoftware.zeroshop.enums.PhoneType.values());
@@ -184,9 +180,9 @@ public class OfficeController {
             if (street == null || street.trim().isBlank()) throw new IllegalArgumentException("La calle es obligatoria.");
             if (number == null || number.trim().isBlank()) throw new IllegalArgumentException("El número es obligatorio.");
 
-            City city = (cityId != null) ? cityRepository.findById(cityId).orElse(null) : null;
+            City city = (cityId != null) ? locationService.findCityById(cityId).orElse(null) : null;
             if (city == null) {
-                city = cityRepository.findAllByDeletedFalse().stream().findFirst().orElse(null);
+                city = locationService.findFirstCity().orElse(null);
             }
             Address address = Address.builder()
                     .street(street.trim())

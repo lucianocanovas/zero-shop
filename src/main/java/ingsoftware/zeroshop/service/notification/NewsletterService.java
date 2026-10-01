@@ -61,7 +61,8 @@ public class NewsletterService {
         }
 
         List<User> clients = userRepository.findAllByDeletedFalse().stream()
-                .filter(u -> u.getRole() == Role.CLIENT && u.getUsername() != null && !u.getUsername().isBlank())
+                .filter(u -> u.getRole() == Role.CLIENT && u.getUsername() != null && !u.getUsername().isBlank()
+                        && (u.getEmailPromotionsEnabled() == null || u.getEmailPromotionsEnabled()))
                 .toList();
 
         if (clients.isEmpty()) {
@@ -87,30 +88,61 @@ public class NewsletterService {
     }
 
     /**
+     * Envía un email promocional de prueba a un destinatario específico (ej. el cliente actual desde su perfil).
+     * Si no hay productos en oferta en este momento, utiliza productos activos destacados para ilustrar la plantilla.
+     */
+    @Transactional(readOnly = true)
+    public void sendTestPromotionalEmail(String recipientEmail) {
+        if (recipientEmail == null || recipientEmail.isBlank()) {
+            throw new IllegalArgumentException("El correo del destinatario es obligatorio.");
+        }
+
+        List<Product> products = productRepository.findByOnSaleTrueAndDeletedFalse();
+        if (products.isEmpty()) {
+            products = productRepository.findAllByDeletedFalse().stream().limit(3).toList();
+        }
+
+        String htmlContent = buildNewsletterHtml(products);
+        String subject = "🔥 [Prueba] ¡Ofertas Exclusivas en Zero Shop Mendoza!";
+        emailService.sendHtmlEmail(recipientEmail, subject, htmlContent);
+        log.info("Email promocional de prueba enviado exitosamente a: {}", recipientEmail);
+    }
+
+    /**
      * Genera el HTML embebido para la presentación visual de productos en oferta.
      */
     public String buildNewsletterHtml(List<Product> products) {
         StringBuilder itemsHtml = new StringBuilder();
-        for (Product p : products) {
-            String name = p.getName() != null ? p.getName() : "Artículo Deportivo";
-            String desc = p.getDescription() != null ? p.getDescription() : "Diseño exclusivo Zero Shop";
-            String price = p.getCurrentPrice() != null ? "$" + p.getCurrentPrice() : "Consultar precio";
-            String size = p.getSize() != null ? p.getSize().name() : "-";
-            String imageUrl = (p.getImageUrl() != null && !p.getImageUrl().isBlank())
-                    ? p.getImageUrl()
-                    : "https://placehold.co/300x200/0d6efd/ffffff?text=ZERO+OFERTA";
-
+        if (products == null || products.isEmpty()) {
             itemsHtml.append("""
-                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                    <img src="%s" alt="%s" style="width:100%%; max-height:220px; object-fit:cover; display:block;" />
-                    <div style="padding:16px;">
-                        <span style="background:#ef4444; color:#ffffff; font-size:11px; font-weight:bold; padding:3px 8px; border-radius:20px; text-transform:uppercase;">EN OFERTA</span>
-                        <h3 style="margin:10px 0 6px 0; font-size:18px; color:#1e293b;">%s</h3>
-                        <p style="margin:0 0 10px 0; font-size:13px; color:#64748b;">%s (Talle: %s)</p>
-                        <div style="font-size:20px; font-weight:bold; color:#0f172a;">%s</div>
-                    </div>
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:24px; text-align:center; margin-bottom:20px;">
+                    <p style="color:#64748b; font-size:15px; margin:0;">
+                        Estamos preparando nuevas ofertas y promociones exclusivas en indumentaria deportiva. ¡Mantente atento a nuestros próximos lanzamientos!
+                    </p>
                 </div>
-            """.formatted(imageUrl, name, name, desc, size, price));
+            """);
+        } else {
+            for (Product p : products) {
+                String name = p.getName() != null ? p.getName() : "Artículo Deportivo";
+                String desc = p.getDescription() != null ? p.getDescription() : "Diseño exclusivo Zero Shop";
+                String price = p.getCurrentPrice() != null ? "$" + p.getCurrentPrice() : "Consultar precio";
+                String size = p.getSize() != null ? p.getSize().name() : "-";
+                String imageUrl = (p.getImageUrl() != null && !p.getImageUrl().isBlank())
+                        ? p.getImageUrl()
+                        : "https://placehold.co/300x200/0d6efd/ffffff?text=ZERO+OFERTA";
+
+                itemsHtml.append("""
+                    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <img src="%s" alt="%s" style="width:100%%; max-height:220px; object-fit:cover; display:block;" />
+                        <div style="padding:16px;">
+                            <span style="background:#ef4444; color:#ffffff; font-size:11px; font-weight:bold; padding:3px 8px; border-radius:20px; text-transform:uppercase;">EN OFERTA</span>
+                            <h3 style="margin:10px 0 6px 0; font-size:18px; color:#1e293b;">%s</h3>
+                            <p style="margin:0 0 10px 0; font-size:13px; color:#64748b;">%s (Talle: %s)</p>
+                            <div style="font-size:20px; font-weight:bold; color:#0f172a;">%s</div>
+                        </div>
+                    </div>
+                """.formatted(imageUrl, name, name, desc, size, price));
+            }
         }
 
         return """

@@ -618,4 +618,11 @@ public class SaleOrderService {
 
         return savedOrder;
     }
+
+    public List<SaleOrder> getOrdersByOffice(UUID officeId) {
+        if (officeId == null) {
+            return List.of();
+        }
+        return saleOrderRepository.findByOfficeIdAndDeletedFalse(officeId);
+    }
 }

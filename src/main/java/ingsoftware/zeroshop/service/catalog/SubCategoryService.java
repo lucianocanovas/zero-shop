@@ -6,6 +6,8 @@ import ingsoftware.zeroshop.repository.catalog.CategoryRepository;
 import ingsoftware.zeroshop.repository.catalog.SubCategoryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -128,6 +130,20 @@ public class SubCategoryService {
         subCategory.setDescription(description != null ? description.trim() : null);
         subCategory.setCategory(category);
         subCategoryRepository.save(subCategory);
+    }
+
+    public Optional<SubCategory> findActiveById(UUID id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return subCategoryRepository.findByIdAndDeletedFalse(id);
+    }
+
+    public List<SubCategory> findByCategoryId(UUID categoryId) {
+        if (categoryId == null) {
+            return List.of();
+        }
+        return subCategoryRepository.findByCategoryIdAndDeletedFalse(categoryId);
     }
 
 }

@@ -99,7 +99,7 @@ public class PaymentService {
         if (total.compareTo(BigDecimal.ZERO) <= 0 && details != null && !details.isEmpty()) {
             total = details.stream()
                     .map(d -> d.getTotal() != null ? d.getTotal() : BigDecimal.ZERO)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
         }
 
         // 4. Crear cabecera de Factura

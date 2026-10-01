@@ -6,8 +6,8 @@ import ingsoftware.zeroshop.entity.actor.ContactPhone;
 import ingsoftware.zeroshop.entity.actor.Supplier;
 import ingsoftware.zeroshop.entity.location.Address;
 import ingsoftware.zeroshop.entity.location.City;
-import ingsoftware.zeroshop.repository.location.CityRepository;
 import ingsoftware.zeroshop.service.actor.SupplierService;
+import ingsoftware.zeroshop.service.location.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +22,7 @@ public class ProviderController {
     private SupplierService supplierService;
 
     @Autowired
-    private ingsoftware.zeroshop.repository.location.CountryRepository countryRepository;
-
-    @Autowired
-    private CityRepository cityRepository;
+    private LocationService locationService;
 
     // GET /dashboard/providers: Lista los proveedores registrados con búsqueda, filtros y paginación
     @GetMapping("/dashboard/providers")
@@ -85,7 +82,7 @@ public class ProviderController {
     @GetMapping("/dashboard/providers/new")
     public String newProviderForm(Model model) {
         model.addAttribute("supplierDTO", new SupplierFormDTO());
-        model.addAttribute("countries", countryRepository.findAll());
+        model.addAttribute("countries", locationService.findAllCountries());
         return "dashboard/provider-new";
     }
 
@@ -121,7 +118,7 @@ public class ProviderController {
         model.addAttribute("providerId", supplier.getId());
         model.addAttribute("addresses", addresses);
         model.addAttribute("contacts", contacts);
-        model.addAttribute("countries", countryRepository.findAll());
+        model.addAttribute("countries", locationService.findAllCountries());
         model.addAttribute("contactTypes", ingsoftware.zeroshop.enums.ContactType.values());
         model.addAttribute("phoneTypes", ingsoftware.zeroshop.enums.PhoneType.values());
 
@@ -166,9 +163,9 @@ public class ProviderController {
             if (street == null || street.trim().isBlank()) throw new IllegalArgumentException("La calle es requerida.");
             if (number == null || number.trim().isBlank()) throw new IllegalArgumentException("El número de calle es requerido.");
 
-            City city = (cityId != null) ? cityRepository.findById(cityId).orElse(null) : null;
+            City city = (cityId != null) ? locationService.findCityById(cityId).orElse(null) : null;
             if (city == null) {
-                city = cityRepository.findAllByDeletedFalse().stream().findFirst().orElse(null);
+                city = locationService.findFirstCity().orElse(null);
             }
 
             Address address = Address.builder()

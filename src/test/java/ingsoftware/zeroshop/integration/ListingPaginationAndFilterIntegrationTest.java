@@ -12,12 +12,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import ingsoftware.zeroshop.repository.location.CountryRepository;
+import ingsoftware.zeroshop.repository.location.StateRepository;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -37,10 +38,10 @@ public class ListingPaginationAndFilterIntegrationTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private ingsoftware.zeroshop.repository.location.CountryRepository countryRepository;
+    private CountryRepository countryRepository;
 
     @Autowired
-    private ingsoftware.zeroshop.repository.location.StateRepository stateRepository;
+    private StateRepository stateRepository;
 
     private MockMvc mockMvc;
 
