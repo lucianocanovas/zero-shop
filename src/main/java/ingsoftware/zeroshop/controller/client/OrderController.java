@@ -52,6 +52,11 @@ public class OrderController {
         model.addAttribute("details", saleOrderService.getOrderDetails(id));
         model.addAttribute("payments", paymentService.getPaymentsByOrder(id));
 
+        paymentService.getInvoiceByOrderId(id).ifPresent(invoice -> {
+            model.addAttribute("invoice", invoice);
+            model.addAttribute("invoiceDetails", paymentService.getInvoiceDetails(invoice.getId()));
+        });
+
         return "client/order-detail";
     }
 

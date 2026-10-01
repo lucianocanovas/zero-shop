@@ -176,6 +176,11 @@
                             <strong class="text-dark">Estado Oficial:</strong> 
                             <span class="badge" th:classappend="${order.status.name() == 'PAID' ? 'bg-success' : 'bg-warning text-dark'}" th:text="${order.status.displayName}">PAGO REALIZADO</span>
                         </div>
+                        <div class="mb-2" th:if="${invoice != null}">
+                            <strong class="text-dark">Factura Emitida:</strong> 
+                            <span class="badge bg-success-subtle text-success border border-success-subtle font-monospace" th:text="${invoice.number}">FC-0001-00000001</span>
+                            <div class="text-muted small mt-1" th:text="'Emitida el ' + ${#temporals.format(invoice.date, 'dd/MM/yyyy HH:mm')}">22/09/2026</div>
+                        </div>
                         <div><strong class="text-dark">Comprobante:</strong> Notificación enviada al correo del cliente</div>
                     </div>
                 </div>

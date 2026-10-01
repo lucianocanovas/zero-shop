@@ -36,6 +36,30 @@ public class DatabaseMigrationRunner implements ApplicationRunner {
         }
 
         try {
+            jdbcTemplate.execute("ALTER TABLE users DROP CONSTRAINT IF EXISTS uk97ih1g5lcdf1s3fg7oo4e18jw");
+            jdbcTemplate.execute("ALTER TABLE users DROP CONSTRAINT IF EXISTS users_person_id_key");
+            jdbcTemplate.execute(
+                "DO $$ DECLARE r RECORD; BEGIN " +
+                "FOR r IN (SELECT conname FROM pg_constraint WHERE conrelid = 'users'::regclass AND contype = 'u' " +
+                "AND array_to_string(conkey, ',') = (SELECT attnum::text FROM pg_attribute WHERE attrelid = 'users'::regclass AND attname = 'person_id')) " +
+                "LOOP EXECUTE 'ALTER TABLE users DROP CONSTRAINT ' || quote_ident(r.conname); END LOOP; " +
+                "END $$;"
+            );
+            log.info("Restricción única de users.person_id eliminada para permitir múltiples usuarios por persona.");
+        } catch (Exception e) {
+            log.warn("Aviso al verificar constraint users.person_id: {}", e.getMessage());
+        }
+
+        try {
+            jdbcTemplate.execute("ALTER TABLE sale_orders DROP CONSTRAINT IF EXISTS fk48r5kf23juh8b8ryu7x06qqli");
+            jdbcTemplate.execute("ALTER TABLE sale_orders DROP CONSTRAINT IF EXISTS fk_sale_orders_client");
+            jdbcTemplate.execute("ALTER TABLE sale_orders ADD CONSTRAINT fk_sale_orders_client FOREIGN KEY (client_id) REFERENCES persons(id)");
+            log.info("Restricción sale_orders.client_id actualizada para referenciar persons(id).");
+        } catch (Exception e) {
+            log.warn("Aviso de migración sale_orders.client_id: {}", e.getMessage());
+        }
+
+        try {
             jdbcTemplate.execute("ALTER TABLE person_addresses ALTER COLUMN id SET DEFAULT gen_random_uuid()");
             jdbcTemplate.execute("ALTER TABLE person_addresses ALTER COLUMN deleted SET DEFAULT false");
             log.info("Tabla person_addresses actualizada para permitir inserción de join table.");

@@ -54,7 +54,7 @@ public class UserServiceUnitTest {
         String encodedPass = "$2a$10$encodedHashDummy";
 
         when(userRepository.findByUsernameIgnoreCase(email)).thenReturn(Optional.empty());
-        when(personRepository.existsByIdNumberAndDeletedFalse("35123456")).thenReturn(false);
+        when(personRepository.findByIdNumber("35123456")).thenReturn(Optional.empty());
         when(passwordEncoder.encode(rawPass)).thenReturn(encodedPass);
         when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -74,6 +74,60 @@ public class UserServiceUnitTest {
 
         verify(emailService, times(1)).sendVerificationCodeEmail(eq(email), eq(registered.getVerificationCode()), anyString());
         verify(emailService, times(1)).sendWelcomeEmail(eq(email), eq("Juan"));
+    }
+
+    @Test
+    @DisplayName("Unit: Registro reutiliza Persona existente sin duplicarla si tiene menos de 2 usuarios")
+    public void testRegisterClientReusesExistingPerson() {
+        String email = "segundo.usuario@example.com";
+        String rawPass = "Segura123";
+        String encodedPass = "$2a$10$encodedHashDummy";
+
+        Client existingPerson = new Client();
+        java.util.UUID personId = java.util.UUID.randomUUID();
+        existingPerson.setId(personId);
+        existingPerson.setIdNumber("35123456");
+        existingPerson.setFirstName("Juan");
+        existingPerson.setLastName("Perez");
+
+        when(userRepository.findByUsernameIgnoreCase(email)).thenReturn(Optional.empty());
+        when(personRepository.findByIdNumber("35123456")).thenReturn(Optional.of(existingPerson));
+        when(userRepository.countByPersonIdAndDeletedFalse(personId)).thenReturn(1L);
+        when(passwordEncoder.encode(rawPass)).thenReturn(encodedPass);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User registered = userService.registerClient(
+                "Juan", "Perez", IDType.DNI, "35123456",
+                LocalDate.of(1995, 5, 20), email, rawPass
+        );
+
+        assertNotNull(registered);
+        assertEquals(email, registered.getUsername());
+        assertSame(existingPerson, registered.getPerson(), "Debe vincularse a la misma instancia de Persona existente");
+        verify(clientRepository, never()).save(any());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Unit: Registro falla si la persona ya posee 2 usuarios activos vinculados")
+    public void testRegisterClientFailsWhenLimitOfTwoUsersReached() {
+        String email = "tercer.usuario@example.com";
+        Client existingPerson = new Client();
+        java.util.UUID personId = java.util.UUID.randomUUID();
+        existingPerson.setId(personId);
+        existingPerson.setIdNumber("35123456");
+
+        when(userRepository.findByUsernameIgnoreCase(email)).thenReturn(Optional.empty());
+        when(personRepository.findByIdNumber("35123456")).thenReturn(Optional.of(existingPerson));
+        when(userRepository.countByPersonIdAndDeletedFalse(personId)).thenReturn(2L);
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                userService.registerClient("Juan", "Perez", IDType.DNI, "35123456",
+                        LocalDate.of(1995, 5, 20), email, "Password123")
+        );
+
+        assertTrue(ex.getMessage().contains("ya posee el límite máximo de 2 usuarios vinculados"));
+        verify(userRepository, never()).save(any());
     }
 
     @Test

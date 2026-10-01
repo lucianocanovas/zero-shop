@@ -34,6 +34,12 @@ public class UserServiceIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    private ingsoftware.zeroshop.repository.actor.PersonRepository personRepository;
+
+    @Autowired
+    private ingsoftware.zeroshop.repository.actor.ClientRepository clientRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Test
@@ -220,5 +226,73 @@ public class UserServiceIntegrationTest {
         assertEquals("NombreNuevo", updated.getPerson().getFirstName());
         assertEquals("ApellidoNuevo", updated.getPerson().getLastName());
         assertTrue(passwordEncoder.matches("NewPassword123", updated.getPassword()));
+    }
+
+    @Test
+    @DisplayName("Persona: Se permite registrar hasta 2 usuarios vinculados a la misma Persona sin duplicar datos")
+    public void testPersonCanRegisterUpToTwoUsersWithoutDuplicatingPersonData() {
+        String dni = "77" + String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits())).substring(0, 6);
+        String email1 = "user1." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
+        String email2 = "user2." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
+        String email3 = "user3." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
+        LocalDate dob = LocalDate.of(1995, 8, 15);
+
+        // 1. Primer registro para esta persona
+        User user1 = userService.registerClient("Luciano", "Perez", IDType.DNI, dni, dob, email1, "Clave12345");
+        assertNotNull(user1);
+        assertNotNull(user1.getPerson());
+        UUID personId = user1.getPerson().getId();
+
+        // Verificar que solo existe 1 registro de persona con ese DNI
+        assertEquals(1, personRepository.findByIdNumber(dni).stream().count());
+
+        // 2. Segundo registro con OTRO email pero el MISMO DNI
+        User user2 = userService.registerClient("Luciano", "Perez", IDType.DNI, dni, dob, email2, "Clave67890");
+        assertNotNull(user2);
+        assertNotNull(user2.getPerson());
+        assertEquals(personId, user2.getPerson().getId(), "El segundo usuario debe estar vinculado a la misma persona");
+
+        // Verificar que NO se duplicaron los datos de la persona
+        assertEquals(1, personRepository.findByIdNumber(dni).stream().count(), "No debe haber duplicados en la tabla de personas");
+        assertEquals(2, userRepository.countByPersonIdAndDeletedFalse(personId), "Debe haber exactamente 2 usuarios activos vinculados");
+
+        // 3. Tercer intento de registro con el MISMO DNI -> debe fallar por superar el límite de 2
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            userService.registerClient("Luciano", "Perez", IDType.DNI, dni, dob, email3, "ClaveOtra123");
+        });
+        assertTrue(ex.getMessage().contains("ya posee el límite máximo de 2 usuarios vinculados"));
+
+        // Verificar que sigue habiendo exactamente 2 usuarios y 1 persona
+        assertEquals(2, userRepository.countByPersonIdAndDeletedFalse(personId));
+        assertEquals(1, personRepository.findByIdNumber(dni).stream().count());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Persona: Si una persona ya existe como Empleado, al registrarse como Cliente se vincula al Empleado existente sin duplicar")
+    public void testRegisterClientLinksToExistingEmployeeWithoutCreatingNewPerson() {
+        String dni = "88" + String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits())).substring(0, 6);
+        String empEmail = "empleado." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
+        String clientEmail = "cliente." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
+        LocalDate dob = LocalDate.of(1990, 4, 10);
+
+        // 1. Crear usuario empleado desde el panel de admin
+        User empUser = userService.createUser("Marcos", "Empleado", IDType.DNI, dni, dob, empEmail, "EmpPass123", Role.EMPLOYEE);
+        assertNotNull(empUser);
+        assertTrue(empUser.getPerson() instanceof Employee, "La persona debe ser de tipo Employee");
+        UUID employeePersonId = empUser.getPerson().getId();
+
+        // 2. Registrarse desde la web con ese mismo DNI
+        User clientUser = userService.registerClient("Marcos", "Empleado", IDType.DNI, dni, dob, clientEmail, "ClientPass123");
+        assertNotNull(clientUser);
+        assertEquals(employeePersonId, clientUser.getPerson().getId(), "El cliente debe reutilizar la misma Persona (Employee) ya existente");
+        assertEquals(2, userRepository.countByPersonIdAndDeletedFalse(employeePersonId), "Debe haber 2 usuarios vinculados a este empleado");
+
+        // 3. Intentar registrar un 3er usuario para el mismo empleado debe fallar
+        String thirdEmail = "tercero." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            userService.registerClient("Marcos", "Empleado", IDType.DNI, dni, dob, thirdEmail, "OtraPass123");
+        });
+        assertTrue(ex.getMessage().contains("ya posee el límite máximo de 2 usuarios vinculados"));
     }
 }

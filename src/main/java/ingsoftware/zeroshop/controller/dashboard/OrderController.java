@@ -1,5 +1,6 @@
 package ingsoftware.zeroshop.controller.dashboard;
 
+import ingsoftware.zeroshop.entity.transaction.Invoice;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
 import ingsoftware.zeroshop.enums.OrderStatus;
 import ingsoftware.zeroshop.service.transaction.PaymentService;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller("dashboardOrderController")
@@ -42,7 +44,40 @@ public class OrderController {
         model.addAttribute("payments", paymentService.getPaymentsByOrder(id));
         model.addAttribute("statuses", OrderStatus.values());
 
+        // Factura asociada
+        Optional<Invoice> invoiceOpt = paymentService.getInvoiceByOrderId(id);
+        if (invoiceOpt.isEmpty() && isOrderPaidOrCompleted(order.getStatus())) {
+            Invoice autoInvoice = paymentService.createInvoiceForOrder(order);
+            invoiceOpt = Optional.of(autoInvoice);
+        }
+
+        invoiceOpt.ifPresent(invoice -> {
+            model.addAttribute("invoice", invoice);
+            model.addAttribute("invoiceDetails", paymentService.getInvoiceDetails(invoice.getId()));
+        });
+
         return "dashboard/order-detail";
+    }
+
+    private boolean isOrderPaidOrCompleted(OrderStatus status) {
+        return status == OrderStatus.PAID
+                || status == OrderStatus.PENDING_SHIPPING
+                || status == OrderStatus.PENDING_DELIVERY
+                || status == OrderStatus.DELIVERED;
+    }
+
+    // POST /dashboard/sale-orders/:id/generate-invoice: Emitir factura manualmente
+    @PostMapping("/dashboard/sale-orders/{id}/generate-invoice")
+    public String generateInvoice(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes) {
+        try {
+            SaleOrder order = saleOrderService.getOrderById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + id));
+            Invoice invoice = paymentService.createInvoiceForOrder(order);
+            redirectAttributes.addFlashAttribute("successMessage", "¡Factura " + invoice.getNumber() + " generada exitosamente!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al emitir factura: " + e.getMessage());
+        }
+        return "redirect:/dashboard/sale-orders/" + id;
     }
 
     // POST /dashboard/sale-orders/:id/pay-cash: Registrar cobro en efectivo y descontar stock
@@ -50,7 +85,7 @@ public class OrderController {
     public String payOrderWithCash(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes) {
         try {
             saleOrderService.payOrderWithCash(id);
-            redirectAttributes.addFlashAttribute("successMessage", "¡Cobro en efectivo registrado exitosamente! Stock descontado del inventario.");
+            redirectAttributes.addFlashAttribute("successMessage", "¡Cobro en efectivo registrado y factura emitida exitosamente!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al registrar cobro en efectivo: " + e.getMessage());
         }

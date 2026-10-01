@@ -32,6 +32,7 @@ public class SecurityConfig {
                     "/styles/**",
                     "/scripts/**",
                     "/assets/**",
+                    "/uploads/**",
                     "/css/**",
                     "/js/**",
                     "/images/**",

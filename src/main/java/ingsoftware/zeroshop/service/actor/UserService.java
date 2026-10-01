@@ -97,31 +97,59 @@ public class UserService {
 
         String normalizedEmail = email.trim().toLowerCase();
 
-        // Verificar si el usuario ya existe
+        // 1. Verificar si el usuario ya existe y está activo
         Optional<User> existingUserOpt = userRepository.findByUsernameIgnoreCase(normalizedEmail);
-        if (existingUserOpt.isPresent()) {
-            User existingUser = existingUserOpt.get();
-            if (existingUser.getDeleted() != null && !existingUser.getDeleted()) {
-                throw new IllegalArgumentException("El correo electrónico ya se encuentra registrado.");
+        if (existingUserOpt.isPresent() && !Boolean.TRUE.equals(existingUserOpt.get().getDeleted())) {
+            throw new IllegalArgumentException("El correo electrónico ya se encuentra registrado.");
+        }
+
+        // 2. Buscar si la persona ya existe en la BBDD (sea como Client o Employee) mediante su documento
+        Optional<Person> existingPersonOpt = personRepository.findByIdNumber(cleanIdNumber);
+        Person personToLink;
+
+        if (existingPersonOpt.isPresent()) {
+            Person existingPerson = existingPersonOpt.get();
+
+            // Regla: Máximo 2 usuarios distintos asociados a la misma persona física
+            long activeUsersCount = userRepository.countByPersonIdAndDeletedFalse(existingPerson.getId());
+            boolean isSameUserReactivating = existingUserOpt.isPresent()
+                    && existingUserOpt.get().getPerson() != null
+                    && existingUserOpt.get().getPerson().getId().equals(existingPerson.getId());
+
+            if (activeUsersCount >= 2 && !isSameUserReactivating) {
+                throw new IllegalArgumentException("La persona con documento " + cleanIdNumber + " ya posee el límite máximo de 2 usuarios vinculados.");
             }
 
-            // El usuario existe pero estaba eliminado lógicamente -> Reactivar
-            Person currentPerson = existingUser.getPerson();
-            UUID currentPersonId = currentPerson != null ? currentPerson.getId() : null;
-            if (currentPersonId != null) {
-                if (personRepository.existsByIdNumberAndDeletedFalseAndIdNot(cleanIdNumber, currentPersonId)) {
-                    throw new IllegalArgumentException("El número de documento ya se encuentra registrado por otro usuario.");
-                }
+            // No se crea un objeto nuevo en BBDD; se reutiliza la persona existente
+            existingPerson.setDeleted(false);
+            if (isSameUserReactivating) {
+                existingPerson.setFirstName(firstName.trim());
+                existingPerson.setLastName(lastName.trim());
+                existingPerson.setDateOfBirth(dateOfBirth);
+                existingPerson.setIdType(idType);
+                personToLink = personRepository.save(existingPerson);
             } else {
-                if (personRepository.existsByIdNumberAndDeletedFalse(cleanIdNumber)) {
-                    throw new IllegalArgumentException("El número de documento ya se encuentra registrado.");
-                }
+                personToLink = existingPerson;
             }
+        } else {
+            // Si la persona no existe, como Person es abstracta, instanciamos un nuevo Client
+            Client newClient = new Client();
+            newClient.setClientNumber("CLI-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+            newClient.setFirstName(firstName.trim());
+            newClient.setLastName(lastName.trim());
+            newClient.setDateOfBirth(dateOfBirth);
+            newClient.setIdType(idType);
+            newClient.setIdNumber(cleanIdNumber);
+            newClient.setDeleted(false);
+            personToLink = clientRepository.save(newClient);
+        }
 
-            Person savedPerson = prepareOrReactivatePerson(currentPerson, cleanIdNumber, firstName, lastName, dateOfBirth, idType, Role.CLIENT);
+        String verificationCode = String.format("%06d", new java.util.Random().nextInt(999999));
 
-            String verificationCode = String.format("%06d", new java.util.Random().nextInt(999999));
-            existingUser.setPerson(savedPerson);
+        if (existingUserOpt.isPresent()) {
+            // Reactivar usuario previamente eliminado
+            User existingUser = existingUserOpt.get();
+            existingUser.setPerson(personToLink);
             existingUser.setPassword(passwordEncoder.encode(password));
             existingUser.setRole(Role.CLIENT);
             existingUser.setVerificationCode(verificationCode);
@@ -137,19 +165,12 @@ public class UserService {
             return savedUser;
         }
 
-        // Si es un usuario nuevo, validar que el documento no esté en uso por otra persona activa
-        if (personRepository.existsByIdNumberAndDeletedFalse(cleanIdNumber)) {
-            throw new IllegalArgumentException("El número de documento ya se encuentra registrado.");
-        }
-
-        Person savedPerson = prepareOrReactivatePerson(null, cleanIdNumber, firstName, lastName, dateOfBirth, idType, Role.CLIENT);
-
-        String verificationCode = String.format("%06d", new java.util.Random().nextInt(999999));
+        // Crear nuevo User y asociarlo a la persona
         User user = new User();
         user.setUsername(normalizedEmail);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(Role.CLIENT);
-        user.setPerson(savedPerson);
+        user.setPerson(personToLink);
         user.setVerificationCode(verificationCode);
         user.setVerified(false);
         user.setDeleted(false);
@@ -270,38 +291,50 @@ public class UserService {
             }
 
             // Usuario previamente borrado -> Reactivar
-            Person currentPerson = existingUser.getPerson();
-            UUID currentPersonId = currentPerson != null ? currentPerson.getId() : null;
-            if (currentPersonId != null) {
-                if (personRepository.existsByIdNumberAndDeletedFalseAndIdNot(cleanIdNumber, currentPersonId)) {
-                    throw new IllegalArgumentException("El número de documento ya se encuentra registrado por otro usuario.");
+            Optional<Person> existingPersonOpt = personRepository.findByIdNumber(cleanIdNumber);
+            Person personToLink;
+            if (existingPersonOpt.isPresent()) {
+                Person existingPerson = existingPersonOpt.get();
+                long activeUsersCount = userRepository.countByPersonIdAndDeletedFalse(existingPerson.getId());
+                boolean isSameUserReactivating = existingUser.getPerson() != null
+                        && existingUser.getPerson().getId().equals(existingPerson.getId());
+
+                if (activeUsersCount >= 2 && !isSameUserReactivating) {
+                    throw new IllegalArgumentException("La persona con documento " + cleanIdNumber + " ya posee el límite máximo de 2 usuarios vinculados.");
                 }
+                existingPerson.setDeleted(false);
+                personToLink = existingPerson;
             } else {
-                if (personRepository.existsByIdNumberAndDeletedFalse(cleanIdNumber)) {
-                    throw new IllegalArgumentException("El número de documento ya se encuentra registrado.");
-                }
+                personToLink = prepareOrReactivatePerson(existingUser.getPerson(), cleanIdNumber, firstName, lastName, dateOfBirth, idType, role);
             }
 
-            Person savedPerson = prepareOrReactivatePerson(currentPerson, cleanIdNumber, firstName, lastName, dateOfBirth, idType, role);
-
-            existingUser.setPerson(savedPerson);
+            existingUser.setPerson(personToLink);
             existingUser.setPassword(passwordEncoder.encode(password));
             existingUser.setRole(role);
             existingUser.setDeleted(false);
             return userRepository.save(existingUser);
         }
 
-        if (personRepository.existsByIdNumberAndDeletedFalse(cleanIdNumber)) {
-            throw new IllegalArgumentException("El número de documento ya se encuentra registrado.");
+        // Usuario nuevo: verificar si la persona ya existe en la base de datos (sea Client o Employee)
+        Optional<Person> existingPersonOpt = personRepository.findByIdNumber(cleanIdNumber);
+        Person personToLink;
+        if (existingPersonOpt.isPresent()) {
+            Person existingPerson = existingPersonOpt.get();
+            long activeUsersCount = userRepository.countByPersonIdAndDeletedFalse(existingPerson.getId());
+            if (activeUsersCount >= 2) {
+                throw new IllegalArgumentException("La persona con documento " + cleanIdNumber + " ya posee el límite máximo de 2 usuarios vinculados.");
+            }
+            existingPerson.setDeleted(false);
+            personToLink = existingPerson;
+        } else {
+            personToLink = prepareOrReactivatePerson(null, cleanIdNumber, firstName, lastName, dateOfBirth, idType, role);
         }
-
-        Person savedPerson = prepareOrReactivatePerson(null, cleanIdNumber, firstName, lastName, dateOfBirth, idType, role);
 
         User user = new User();
         user.setUsername(normalizedUsername);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(role);
-        user.setPerson(savedPerson);
+        user.setPerson(personToLink);
         user.setDeleted(false);
 
         return userRepository.save(user);
@@ -418,7 +451,20 @@ public class UserService {
         person.setDeleted(false);
 
         Person savedPerson;
-        if (person instanceof Client client) {
+        Optional<Person> existingPersonOpt = personRepository.findByIdNumber(person.getIdNumber().trim());
+        if (existingPersonOpt.isPresent()) {
+            Person existingPerson = existingPersonOpt.get();
+            long activeUsersCount = userRepository.countByPersonIdAndDeletedFalse(existingPerson.getId());
+            boolean isSameUserReactivating = existingUserOpt.isPresent()
+                    && existingUserOpt.get().getPerson() != null
+                    && existingUserOpt.get().getPerson().getId().equals(existingPerson.getId());
+
+            if (activeUsersCount >= 2 && !isSameUserReactivating) {
+                throw new IllegalArgumentException("La persona con documento " + person.getIdNumber() + " ya posee el límite máximo de 2 usuarios vinculados.");
+            }
+            existingPerson.setDeleted(false);
+            savedPerson = existingPerson;
+        } else if (person instanceof Client client) {
             if (client.getClientNumber() == null || client.getClientNumber().isBlank()) {
                 client.setClientNumber("CLI-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
             }
@@ -653,11 +699,15 @@ public class UserService {
         }
 
         user.setDeleted(true);
-        if (user.getPerson() != null) {
-            user.getPerson().setDeleted(true);
-            personRepository.save(user.getPerson());
-        }
         userRepository.save(user);
+
+        if (user.getPerson() != null) {
+            long remainingActiveUsers = userRepository.countByPersonIdAndDeletedFalse(user.getPerson().getId());
+            if (remainingActiveUsers == 0) {
+                user.getPerson().setDeleted(true);
+                personRepository.save(user.getPerson());
+            }
+        }
     }
 
     /**
@@ -674,11 +724,15 @@ public class UserService {
         }
 
         user.setDeleted(true);
-        if (user.getPerson() != null) {
-            user.getPerson().setDeleted(true);
-            personRepository.save(user.getPerson());
-        }
         userRepository.save(user);
+
+        if (user.getPerson() != null) {
+            long remainingActiveUsers = userRepository.countByPersonIdAndDeletedFalse(user.getPerson().getId());
+            if (remainingActiveUsers == 0) {
+                user.getPerson().setDeleted(true);
+                personRepository.save(user.getPerson());
+            }
+        }
     }
 
     private void validatePersonNames(String firstName, String lastName) {

@@ -8,6 +8,34 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
+    <style>
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #printableInvoice, #printableInvoice * {
+                visibility: visible !important;
+            }
+            #printableInvoice {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 15px !important;
+                background: white !important;
+                border: 2px solid #000 !important;
+            }
+            .modal, .modal-backdrop {
+                position: static !important;
+                display: block !important;
+                opacity: 1 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 <body class="bg-light">
 
@@ -112,6 +140,90 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Factura Electrónica Asociada -->
+                        <div class="card border-0 shadow-sm p-4 mt-4" th:if="${invoice != null}">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h5 class="fw-bold mb-0 text-dark">
+                                        <i class="bi bi-receipt-cutoff text-primary me-2"></i>Factura Electrónica Emitida
+                                    </h5>
+                                    <span class="text-muted small">Comprobante fiscal oficial asociado a esta orden de venta</span>
+                                </div>
+                                <span class="badge" 
+                                      th:classappend="${invoice.status.name() == 'PAID' ? 'bg-success' : (invoice.status.name() == 'PENDING' ? 'bg-warning text-dark' : 'bg-danger')}" 
+                                      th:text="${invoice.status.name() == 'PAID' ? 'FACTURA COBRADA / PAGADA' : invoice.status.name()}">
+                                    PAGADA
+                                </span>
+                            </div>
+
+                            <div class="row g-3 small bg-light p-3 rounded-3 mb-3 border">
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Número de Factura:</span>
+                                    <strong class="fs-6 text-primary font-monospace" th:text="${invoice.number}">FC-0001-00000001</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Fecha y Hora de Emisión:</span>
+                                    <strong class="text-dark" th:text="${invoice.date != null ? #temporals.format(invoice.date, 'dd/MM/yyyy HH:mm:ss') : '-'}">22/09/2026 14:30:00</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Monto Total Facturado:</span>
+                                    <strong class="text-success fs-6" th:text="'$' + ${#numbers.formatDecimal(invoice.totalAmount, 1, 2)}">$0.00</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Identificador Fiscal BBDD:</span>
+                                    <span class="text-muted font-monospace small" th:text="${invoice.id}">UUID</span>
+                                </div>
+                            </div>
+
+                            <!-- Desglose de Factura -->
+                            <div class="mt-2" th:if="${invoiceDetails != null and !invoiceDetails.empty}">
+                                <h6 class="fw-semibold small text-muted text-uppercase mb-2">Desglose de Ítems Facturados</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle small mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th class="text-center">Cant.</th>
+                                                <th class="text-end">Precio Unit.</th>
+                                                <th class="text-end">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="invDetail : ${invoiceDetails}">
+                                                <td th:text="${invDetail.product != null ? invDetail.product.name : 'Artículo'}">Producto</td>
+                                                <td class="text-center" th:text="${invDetail.quantity}">1</td>
+                                                <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(invDetail.unitPrice, 1, 2)}">$0.00</td>
+                                                <td class="text-end fw-bold" th:text="'$' + ${#numbers.formatDecimal(invDetail.total, 1, 2)}">$0.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 justify-content-end mt-3 pt-3 border-top">
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+                                    <i class="bi bi-file-earmark-text me-1"></i>Ver Factura Oficial
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="printInvoice()">
+                                    <i class="bi bi-printer me-1"></i>Imprimir Factura
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta de aviso si aún no está facturada -->
+                        <div class="card border-0 shadow-sm p-4 mt-4 border-start border-warning border-4" th:if="${invoice == null}">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-hourglass-split text-warning fs-2 me-3"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1 text-dark">Venta Sin Factura Emitida</h6>
+                                    <p class="text-muted small mb-0">
+                                        Esta orden de venta no cuenta con una factura asociada porque su cobro aún está pendiente (<span th:text="${order.status.displayName}">Estado</span>). 
+                                        La factura se creará y almacenará automáticamente en la base de datos en cuanto se confirme el pago de la orden.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Panel de Actualización de Estado (Estados Oficiales del TP) -->
@@ -119,7 +231,7 @@
                         <!-- Botón Cobro Rápido en Efectivo si está PENDING_PAYMENT -->
                         <div class="card border-0 shadow-sm p-4 mb-3" th:if="${order.status.name() == 'PENDING_PAYMENT'}">
                             <h5 class="fw-bold mb-2 text-success"><i class="bi bi-cash-stack me-2"></i>Pago en Efectivo</h5>
-                            <p class="text-muted small mb-3">Registra el cobro en efectivo y descuenta inmediatamente el stock en la sucursal asignada.</p>
+                            <p class="text-muted small mb-3">Registra el cobro en efectivo, emite la factura y descuenta inmediatamente el stock en la sucursal asignada.</p>
                             <form method="post" th:action="@{/dashboard/sale-orders/{id}/pay-cash(id=${order.id})}">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <button type="submit" class="btn btn-success w-100 fw-bold">
@@ -144,7 +256,7 @@
                                             PENDIENTE DE PAGO
                                         </option>
                                     </select>
-                                    <div class="form-text small mt-1">Si avanzas a <strong>PAGO REALIZADO</strong>, se descontará el stock en la sucursal seleccionada.</div>
+                                    <div class="form-text small mt-1">Si avanzas a <strong>PAGO REALIZADO</strong>, se emitirá la factura y se descontará el stock en la sucursal seleccionada.</div>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary w-100 mb-2">
@@ -155,16 +267,174 @@
 
                         <div class="card border-0 shadow-sm p-4 text-center">
                             <h6 class="fw-bold mb-2">Comprobante y Facturación</h6>
-                            <p class="text-muted small mb-3">Emite la factura electrónica de la venta</p>
-                            <button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="window.print()">
-                                <i class="bi bi-printer me-1"></i>Imprimir Comprobante
-                            </button>
+                            <div th:if="${invoice != null}">
+                                <div class="badge bg-success-subtle text-success border border-success-subtle mb-2 p-2 w-100">
+                                    <i class="bi bi-check-circle me-1"></i>Factura: <strong th:text="${invoice.number}">FC-0001-00000001</strong>
+                                </div>
+                                <p class="text-muted small mb-3">Factura emitida y registrada en la base de datos.</p>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+                                        <i class="bi bi-file-earmark-text me-1"></i>Ver Factura Oficial
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="printInvoice()">
+                                        <i class="bi bi-printer me-1"></i>Imprimir Comprobante
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${invoice == null}">
+                                <div class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle mb-2 p-2 w-100">
+                                    <i class="bi bi-hourglass-split me-1"></i>Pendiente de Facturación
+                                </div>
+                                <p class="text-muted small mb-3">Se emite automáticamente al confirmar el pago de la orden.</p>
+                                <form th:if="${order.status.name() != 'CANCELLED' and order.status.name() != 'ON_CART'}" 
+                                      method="post" th:action="@{/dashboard/sale-orders/{id}/generate-invoice(id=${order.id})}">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="bi bi-receipt me-1"></i>Emitir Factura Ahora
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
+
+    <!-- Modal de Factura Electrónica Formal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true" th:if="${invoice != null}">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white no-print">
+                    <h5 class="modal-title fw-bold" id="invoiceModalLabel">
+                        <i class="bi bi-receipt me-2"></i>Factura Oficial <span th:text="${invoice.number}">FC-0001-00000001</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Contenedor Imprimible de Factura Formal (Estilo Factura B) -->
+                    <div id="printableInvoice" class="bg-white p-4 border rounded">
+                        <!-- Cabecera Fiscal -->
+                        <div class="row align-items-center pb-3 border-bottom mb-3">
+                            <div class="col-5">
+                                <h4 class="fw-bold text-dark mb-1">ZERO SHOP S.A.</h4>
+                                <div class="small text-muted">
+                                    <strong>Indumentaria y Calzado Deportivo</strong><br>
+                                    Av. San Martín 1250, Mendoza, Argentina<br>
+                                    Tel: (0261) 420-9900 | info@zeroshop.com<br>
+                                    <strong>IVA Responsable Inscripto</strong>
+                                </div>
+                            </div>
+                            <div class="col-2 text-center">
+                                <div class="border border-2 border-dark rounded p-2 d-inline-block bg-light">
+                                    <span class="fs-2 fw-bold d-block lh-1">B</span>
+                                    <small class="fw-bold" style="font-size: 0.65rem;">COD. 006</small>
+                                </div>
+                                <div class="small text-muted fw-bold mt-1" style="font-size: 0.65rem;">ORIGINAL</div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <h4 class="fw-bold text-dark mb-1">FACTURA</h4>
+                                <div class="font-monospace fs-5 fw-bold text-primary" th:text="${invoice.number}">FC-0001-00000001</div>
+                                <div class="small text-muted mt-1">
+                                    <strong>Fecha de Emisión: </strong><span th:text="${#temporals.format(invoice.date, 'dd/MM/yyyy HH:mm')}">22/09/2026</span><br>
+                                    <strong>CUIT: </strong>30-71234567-8<br>
+                                    <strong>Ingresos Brutos: </strong>0987654-3<br>
+                                    <strong>Inicio de Actividades: </strong>01/01/2024
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datos del Cliente / Comprador -->
+                        <div class="row g-2 small p-2 bg-light rounded border mb-3">
+                            <div class="col-sm-6">
+                                <strong>Nombre / Razón Social: </strong>
+                                <span th:text="${order.client != null ? (order.client.firstName + ' ' + order.client.lastName) : 'Consumidor Final'}">Juan Pérez</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <strong>DNI / CUIT: </strong>
+                                <span th:text="${order.client != null && order.client.idNumber != null ? order.client.idNumber : '00000000'}">28392819</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <strong>Condición de IVA: </strong>Consumidor Final
+                            </div>
+                            <div class="col-sm-6">
+                                <strong>Condición de Venta: </strong>Contado / Acreditado
+                            </div>
+                            <div class="col-12" th:if="${order.shippingAddress != null}">
+                                <strong>Domicilio de Entrega: </strong>
+                                <span th:text="${order.shippingAddress.street + ' ' + order.shippingAddress.number + (order.shippingAddress.city != null ? ', ' + order.shippingAddress.city.name : '')}">Av. San Martín 1250, Mendoza</span>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Ítems Facturados -->
+                        <div class="table-responsive mb-3">
+                            <table class="table table-bordered table-sm align-middle small mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Descripción</th>
+                                        <th class="text-center">Cant.</th>
+                                        <th class="text-end">Precio Unit.</th>
+                                        <th class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${invoiceDetails}">
+                                        <td class="font-monospace text-muted" th:text="${item.product != null ? #strings.substring(item.product.id.toString(), 0, 8) : 'SKU'}">SKU</td>
+                                        <td class="fw-semibold" th:text="${item.product != null ? item.product.name : 'Artículo'}">Producto</td>
+                                        <td class="text-center" th:text="${item.quantity}">1</td>
+                                        <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(item.unitPrice, 1, 2)}">$0.00</td>
+                                        <td class="text-end fw-bold" th:text="'$' + ${#numbers.formatDecimal(item.total, 1, 2)}">$0.00</td>
+                                    </tr>
+                                    <tr th:if="${invoiceDetails == null or invoiceDetails.empty}" th:each="detail : ${details}">
+                                        <td class="font-monospace text-muted" th:text="${#strings.substring(detail.product.id.toString(), 0, 8)}">SKU</td>
+                                        <td class="fw-semibold" th:text="${detail.product.name}">Producto</td>
+                                        <td class="text-center" th:text="${detail.quantity}">1</td>
+                                        <td class="text-end" th:text="'$' + ${#numbers.formatDecimal(detail.unitPrice, 1, 2)}">$0.00</td>
+                                        <td class="text-end fw-bold" th:text="'$' + ${#numbers.formatDecimal(detail.total, 1, 2)}">$0.00</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="4" class="text-end fs-6">TOTAL FACTURADO:</th>
+                                        <td class="text-end fw-bold fs-6 text-primary" th:text="'$' + ${#numbers.formatDecimal(invoice.totalAmount, 1, 2)}">$0.00</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Pie Fiscal AFIP / CAE -->
+                        <div class="row align-items-center pt-3 border-top small text-muted">
+                            <div class="col-7">
+                                <div><strong>CAE Nº: </strong><span class="font-monospace">74382910492817</span></div>
+                                <div><strong>Fecha de Vto. de CAE: </strong><span th:text="${#temporals.format(invoice.date.plusDays(10), 'dd/MM/yyyy')}">02/10/2026</span></div>
+                                <div class="text-muted mt-1" style="font-size: 0.7rem;">Comprobante Autorizado por AFIP - Régimen de Facturación Electrónica</div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <div class="p-2 border rounded bg-light d-inline-block text-center" style="font-family: monospace; letter-spacing: 2px; font-size: 0.75rem;">
+                                    || | |||| | ||| |||| || | || ||||<br>
+                                    <span style="letter-spacing: 1px; font-size: 0.65rem;" th:text="${#strings.substring(invoice.id.toString(), 0, 16)}">30712345678006</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light no-print">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="printInvoice()">
+                        <i class="bi bi-printer me-1"></i>Imprimir Factura
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de impresión -->
+    <script>
+        function printInvoice() {
+            window.print();
+        }
+    </script>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

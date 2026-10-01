@@ -27,8 +27,8 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", referencedColumnName = "id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;
 
     @Column(name = "verification_code")

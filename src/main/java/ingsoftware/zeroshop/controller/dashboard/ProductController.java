@@ -20,13 +20,16 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryRepository categoryRepository;
     private final SubCategoryRepository subCategoryRepository;
+    private final ingsoftware.zeroshop.service.storage.FileStorageService fileStorageService;
 
     public ProductController(ProductService productService,
                              CategoryRepository categoryRepository,
-                             SubCategoryRepository subCategoryRepository) {
+                             SubCategoryRepository subCategoryRepository,
+                             ingsoftware.zeroshop.service.storage.FileStorageService fileStorageService) {
         this.productService = productService;
         this.categoryRepository = categoryRepository;
         this.subCategoryRepository = subCategoryRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     // GET /dashboard/products: Lista todos los productos en el dashboard (Admin y Employee)
@@ -67,11 +70,16 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping({"/dashboard/products", "/dashboard/products/"})
     public String createProduct(@ModelAttribute Product product,
+                                @RequestParam(name = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
                                 @RequestParam(name = "basePrice", required = false) BigDecimal basePrice,
                                 @RequestParam(name = "subCategoryId", required = false) UUID subCategoryId,
                                 @RequestParam(name = "onSale", defaultValue = "false") Boolean onSale,
                                 RedirectAttributes redirectAttributes) {
         try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String uploadedUrl = fileStorageService.storeProductImage(imageFile);
+                product.setImageUrl(uploadedUrl);
+            }
             product.setOnSale(Boolean.TRUE.equals(onSale));
             productService.createProduct(product, basePrice, subCategoryId);
             redirectAttributes.addFlashAttribute("successMessage", "Producto creado exitosamente.");
@@ -87,11 +95,16 @@ public class ProductController {
     @RequestMapping(value = "/dashboard/products/{id}", method = {RequestMethod.PUT, RequestMethod.POST})
     public String updateProduct(@PathVariable("id") UUID id,
                                 @ModelAttribute Product product,
+                                @RequestParam(name = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
                                 @RequestParam(name = "basePrice", required = false) BigDecimal basePrice,
                                 @RequestParam(name = "subCategoryId", required = false) UUID subCategoryId,
                                 @RequestParam(name = "onSale", defaultValue = "false") Boolean onSale,
                                 RedirectAttributes redirectAttributes) {
         try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String uploadedUrl = fileStorageService.storeProductImage(imageFile);
+                product.setImageUrl(uploadedUrl);
+            }
             product.setOnSale(Boolean.TRUE.equals(onSale));
             productService.updateProduct(id, product, basePrice, subCategoryId);
             redirectAttributes.addFlashAttribute("successMessage", "Producto actualizado exitosamente.");

@@ -81,27 +81,18 @@ public class SaleOrderService {
     }
 
     /**
-     * Obtiene o crea el cliente asociado al usuario autenticado.
+     * Obtiene o crea el cliente/persona asociado al usuario autenticado.
      */
     @Transactional
-    public Client getOrCreateClientForUser(String username) {
+    public Person getOrCreateClientForUser(String username) {
         User user = userRepository.findByUsernameIgnoreCaseAndDeletedFalse(username)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + username));
 
-        Person person = user.getPerson();
-        if (person instanceof Client client) {
-            return client;
+        if (user.getPerson() != null) {
+            return user.getPerson();
         }
 
-        // Si la persona ya existe pero no es instancia directa de Client
-        if (person != null) {
-            Optional<Client> existing = clientRepository.findActive(person.getId());
-            if (existing.isPresent()) {
-                return existing.get();
-            }
-        }
-
-        // Si la persona aún no está inicializada como cliente, se crea automáticamente
+        // Si la persona aún no está inicializada, se crea automáticamente como cliente
         Client newClient = new Client();
         newClient.setFirstName(user.getUsername().split("@")[0]);
         newClient.setLastName("Cliente");
@@ -123,7 +114,7 @@ public class SaleOrderService {
      */
     @Transactional
     public SaleOrder getOrCreateCart(String username) {
-        Client client = getOrCreateClientForUser(username);
+        Person client = getOrCreateClientForUser(username);
 
         return saleOrderRepository.findByClientIdAndStatusAndDeletedFalse(client.getId(), OrderStatus.ON_CART)
                 .orElseGet(() -> {
@@ -306,6 +297,7 @@ public class SaleOrderService {
             saleOrderRepository.save(order);
 
             paymentService.registerPayment(order, order.getTotalAmount(), paymentMethod != null ? paymentMethod : PaymentMethod.CREDIT);
+            paymentService.createInvoiceForOrder(order, details);
             decrementStockForOrder(order, details);
             sendOrderEmailNotification(order, details, username);
 
@@ -327,6 +319,7 @@ public class SaleOrderService {
 
             List<OrderDetail> details = orderDetailRepository.findByOrderIdAndDeletedFalse(order.getId());
             paymentService.registerPayment(order, order.getTotalAmount(), PaymentMethod.MERCADO_PAGO);
+            paymentService.createInvoiceForOrder(order, details);
             decrementStockForOrder(order, details);
 
             // Buscar email real del cliente si existe
@@ -355,6 +348,7 @@ public class SaleOrderService {
 
         List<OrderDetail> details = orderDetailRepository.findByOrderIdAndDeletedFalse(order.getId());
         paymentService.registerPayment(order, order.getTotalAmount(), PaymentMethod.CASH);
+        paymentService.createInvoiceForOrder(order, details);
         decrementStockForOrder(order, details);
 
         if (order.getClient() != null) {
@@ -420,7 +414,7 @@ public class SaleOrderService {
      * Lista todas las órdenes de un cliente (excluyendo el carrito en preparación).
      */
     public List<SaleOrder> getClientOrders(String username) {
-        Client client = getOrCreateClientForUser(username);
+        Person client = getOrCreateClientForUser(username);
         return saleOrderRepository.findByClientIdAndStatusNotAndDeletedFalseOrderByDateDesc(client.getId(), OrderStatus.ON_CART);
     }
 
@@ -440,10 +434,21 @@ public class SaleOrderService {
         order.setStatus(newStatus);
         saleOrderRepository.save(order);
 
-        // Si se cambia de PENDIENTE DE PAGO a PAGO REALIZADO (ej. cobro en efectivo), descontar stock
-        if (previousStatus == OrderStatus.PENDING_PAYMENT && newStatus == OrderStatus.PAID) {
+        // Si se cambia de PENDIENTE DE PAGO a PAGO REALIZADO (o estados posteriores), descontar stock
+        if (previousStatus == OrderStatus.PENDING_PAYMENT && (newStatus == OrderStatus.PAID 
+                || newStatus == OrderStatus.PENDING_SHIPPING 
+                || newStatus == OrderStatus.PENDING_DELIVERY 
+                || newStatus == OrderStatus.DELIVERED)) {
             List<OrderDetail> details = orderDetailRepository.findByOrderIdAndDeletedFalse(order.getId());
             decrementStockForOrder(order, details);
+            paymentService.createInvoiceForOrder(order, details);
+        } else if (newStatus == OrderStatus.PAID 
+                || newStatus == OrderStatus.PENDING_SHIPPING 
+                || newStatus == OrderStatus.PENDING_DELIVERY 
+                || newStatus == OrderStatus.DELIVERED) {
+            // Asegurar que si la orden está en estado pagado o posterior, tenga su factura emitida
+            List<OrderDetail> details = orderDetailRepository.findByOrderIdAndDeletedFalse(order.getId());
+            paymentService.createInvoiceForOrder(order, details);
         }
     }
 
@@ -473,6 +478,7 @@ public class SaleOrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         saleOrderRepository.save(order);
+        paymentService.cancelInvoiceForOrder(order.getId());
     }
 
     /**
@@ -615,9 +621,10 @@ public class SaleOrderService {
             stockService.decrementStock(p.getId(), office.getId(), qty);
         }
 
-        // 7. Registrar pago
+        // 7. Registrar pago y emitir factura
         PaymentMethod finalMethod = paymentMethod != null ? paymentMethod : PaymentMethod.CASH;
         paymentService.registerPayment(savedOrder, totalAmount, finalMethod);
+        paymentService.createInvoiceForOrder(savedOrder);
 
         return savedOrder;
     }

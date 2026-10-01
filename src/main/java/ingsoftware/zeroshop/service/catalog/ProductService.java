@@ -200,7 +200,9 @@ public class ProductService {
         existing.setName(formProduct.getName().trim());
         existing.setDescription(formProduct.getDescription());
         existing.setSize(formProduct.getSize());
-        existing.setImageUrl(formProduct.getImageUrl());
+        if (formProduct.getImageUrl() != null && !formProduct.getImageUrl().isBlank()) {
+            existing.setImageUrl(formProduct.getImageUrl().trim());
+        }
         if (formProduct.getOnSale() != null) {
             existing.setOnSale(formProduct.getOnSale());
         }

@@ -3,6 +3,7 @@ package ingsoftware.zeroshop.config;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ingsoftware.zeroshop.entity.actor.*;
+import ingsoftware.zeroshop.entity.actor.Contact;
 import ingsoftware.zeroshop.entity.catalog.*;
 import ingsoftware.zeroshop.entity.location.*;
 import ingsoftware.zeroshop.entity.org.*;
@@ -63,6 +64,8 @@ public class DataInitializer implements ApplicationRunner {
     private final SaleOrderRepository saleOrderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final PaymentRepository paymentRepository;
+    private final InvoiceRepository invoiceRepository;
+    private final InvoiceDetailRepository invoiceDetailRepository;
 
     public DataInitializer(JdbcTemplate jdbcTemplate,
                            PasswordEncoder passwordEncoder,
@@ -83,7 +86,9 @@ public class DataInitializer implements ApplicationRunner {
                            PurchaseOrderRepository purchaseOrderRepository,
                            SaleOrderRepository saleOrderRepository,
                            OrderDetailRepository orderDetailRepository,
-                           PaymentRepository paymentRepository) {
+                           PaymentRepository paymentRepository,
+                           InvoiceRepository invoiceRepository,
+                           InvoiceDetailRepository invoiceDetailRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.passwordEncoder = passwordEncoder;
         this.countryRepository = countryRepository;
@@ -104,6 +109,8 @@ public class DataInitializer implements ApplicationRunner {
         this.saleOrderRepository = saleOrderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.paymentRepository = paymentRepository;
+        this.invoiceRepository = invoiceRepository;
+        this.invoiceDetailRepository = invoiceDetailRepository;
     }
 
     private List<Contact> createContacts(Contact... contacts) {
@@ -155,7 +162,34 @@ public class DataInitializer implements ApplicationRunner {
             log.info("Base de datos poblada exitosamente con datos reales para toda la plataforma.");
         } else {
             log.info("La base de datos ya contiene datos registrados. Omitiendo repoblación automática.");
+            updateExistingProductSeedImages();
         }
+    }
+
+    private void updateExistingProductSeedImages() {
+        Map<String, String[]> updates = Map.ofEntries(
+            Map.entry("RUN-NIKE-01", new String[]{"Zapatillas Running Nike Air Zoom Pegasus", "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"}),
+            Map.entry("ADI-FORUM-02", new String[]{"Zapatillas Adidas Superstar Streetwear", "https://images.unsplash.com/photo-1593287073863-c992914cb3e3?w=800&q=80"}),
+            Map.entry("PUM-CAR-03", new String[]{"Zapatillas Urbanas Puma Smash V2 Leather", "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&q=80"}),
+            Map.entry("HOOD-FLEECE-04", new String[]{"Buzo Hoodie Canguro Fleece Premium", "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=800&q=80"}),
+            Map.entry("TSH-OVER-05", new String[]{"Remera Oversize Algodón 24/1 White", "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&q=80"}),
+            Map.entry("DEN-TRUCK-06", new String[]{"Campera Denim Trucker Vintage Unisex", "https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=800&q=80"}),
+            Map.entry("JOG-CARGO-07", new String[]{"Pantalón Jogger Cargo Slim Fit", "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&q=80"}),
+            Map.entry("CREW-BEIGE-08", new String[]{"Buzo Crewneck Beige Minimalist", "https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800&q=80"}),
+            Map.entry("MOC-URB-09", new String[]{"Mochila Urbana Porta Laptop Antirrobo 20L", "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"}),
+            Map.entry("CAP-STREET-10", new String[]{"Gorra Trucker Streetwear Bordada Curve", "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&q=80"}),
+            Map.entry("BAG-SPORT-11", new String[]{"Bolso Deportivo Gym & Travel Impermeable", "https://images.unsplash.com/photo-1448582649076-3981753123b5?w=800&q=80"}),
+            Map.entry("KID-SNEAK-12", new String[]{"Zapatillas Deportivas Niños Court Retro", "https://images.unsplash.com/photo-1605523741177-cd660595c2cf?w=800&q=80"})
+        );
+
+        updates.forEach((code, info) -> {
+            productRepository.findByCodeAndDeletedFalse(code).ifPresent(p -> {
+                p.setName(info[0]);
+                p.setImageUrl(info[1]);
+                productRepository.save(p);
+            });
+        });
+        log.info("Imágenes y nombres del catálogo inicial sincronizados con éxito.");
     }
 
     private void cleanAllData() {
@@ -178,6 +212,11 @@ public class DataInitializer implements ApplicationRunner {
         String[] migrations = {
             "ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_status_check",
             "ALTER TABLE sale_orders ALTER COLUMN office_id DROP NOT NULL",
+            "ALTER TABLE users DROP CONSTRAINT IF EXISTS uk97ih1g5lcdf1s3fg7oo4e18jw",
+            "ALTER TABLE users DROP CONSTRAINT IF EXISTS users_person_id_key",
+            "ALTER TABLE sale_orders DROP CONSTRAINT IF EXISTS fk48r5kf23juh8b8ryu7x06qqli",
+            "ALTER TABLE sale_orders DROP CONSTRAINT IF EXISTS fk_sale_orders_client",
+            "ALTER TABLE sale_orders ADD CONSTRAINT fk_sale_orders_client FOREIGN KEY (client_id) REFERENCES persons(id)",
             "ALTER TABLE person_addresses ALTER COLUMN id SET DEFAULT gen_random_uuid()",
             "ALTER TABLE person_addresses ALTER COLUMN deleted SET DEFAULT false",
             "ALTER TABLE person_contacts ALTER COLUMN id SET DEFAULT gen_random_uuid()",
@@ -576,51 +615,51 @@ public class DataInitializer implements ApplicationRunner {
                 new BigDecimal("145000.00"), new BigDecimal("115000.00"),
                 supCalzado, new BigDecimal("62000.00"), 45, 25, 18),
 
-            new ProdDef("ADI-FORUM-02", "Zapatillas Adidas Forum Low Streetwear",
-                "Diseño retro de básquet reinventado para el streetstyle urbano con cuero prémium y suela de caucho vulcanizado.",
-                Size.M, "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&q=80",
+            new ProdDef("ADI-FORUM-02", "Zapatillas Adidas Superstar Streetwear",
+                "Diseño clásico de las 3 tiras con puntera de caucho en relieve y cuero prémium para el streetstyle urbano.",
+                Size.M, "https://images.unsplash.com/photo-1593287073863-c992914cb3e3?w=800&q=80",
                 "Unisex_Calzado", false,
                 new BigDecimal("129000.00"), null,
                 supCalzado, new BigDecimal("70000.00"), 35, 20, 15),
 
-            new ProdDef("PUM-CAR-03", "Zapatillas Urbanas Puma Carina Street",
-                "Inspiradas en las playas de California de los 80, plantilla SoftFoam+ para confort prolongado todo el día.",
-                Size.S, "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&q=80",
+            new ProdDef("PUM-CAR-03", "Zapatillas Urbanas Puma Smash V2 Leather",
+                "Zapatillas urbanas de corte bajo en cuero sintético suave con franja clásica Puma y suela de caucho durable.",
+                Size.S, "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&q=80",
                 "Mujeres_Calzado", false,
                 new BigDecimal("98000.00"), null,
                 supCalzado, new BigDecimal("52000.00"), 40, 22, 12),
 
             new ProdDef("HOOD-FLEECE-04", "Buzo Hoodie Canguro Fleece Premium",
-                "Buzo con capucha confeccionado en algodón frisado de alto gramaje con bolsillo frontal tipo canguro y rib elastizado.",
-                Size.L, "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80",
+                "Buzo con capucha confeccionado en algodón frisado con bolsillo frontal tipo canguro, cordones de ajuste y rib elastizado.",
+                Size.L, "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=800&q=80",
                 "Hombres_Indumentaria", true,
                 new BigDecimal("85000.00"), new BigDecimal("68000.00"),
                 supTextil, new BigDecimal("34000.00"), 50, 30, 20),
 
             new ProdDef("TSH-OVER-05", "Remera Oversize Algodón 24/1 White",
                 "Corte moderno cuadrado oversize, tejido suave en jersey de algodón peinado 100% de máxima durabilidad.",
-                Size.M, "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80",
+                Size.M, "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&q=80",
                 "Unisex_Indumentaria", false,
                 new BigDecimal("32000.00"), null,
                 supTextil, new BigDecimal("16000.00"), 60, 35, 25),
 
             new ProdDef("DEN-TRUCK-06", "Campera Denim Trucker Vintage Unisex",
-                "Campera de jean rígido lavado medio con botones metálicos envejecidos y costuras en contraste.",
-                Size.L, "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800&q=80",
+                "Campera de jean rígido lavado con cuello en contraste, botones metálicos envejecidos y bolsillos frontales con solapa.",
+                Size.L, "https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=800&q=80",
                 "Unisex_Indumentaria", true,
                 new BigDecimal("120000.00"), new BigDecimal("96000.00"),
                 supTextil, new BigDecimal("48000.00"), 25, 15, 8),
 
             new ProdDef("JOG-CARGO-07", "Pantalón Jogger Cargo Slim Fit",
                 "Jogger elastizado con múltiples bolsillos funcionales en muslos y botamangas con puño elástico reforzado.",
-                Size.M, "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&q=80",
+                Size.M, "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&q=80",
                 "Hombres_Indumentaria", false,
                 new BigDecimal("54000.00"), null,
                 supTextil, new BigDecimal("27000.00"), 35, 20, 15),
 
             new ProdDef("CREW-BEIGE-08", "Buzo Crewneck Beige Minimalist",
-                "Cuello redondo clásico en algodón perchado, color neutro versátil de tacto ultra suave.",
-                Size.S, "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=800&q=80",
+                "Cuello redondo clásico en algodón perchado, color neutro beige versátil de tacto ultra suave.",
+                Size.S, "https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800&q=80",
                 "Mujeres_Indumentaria", false,
                 new BigDecimal("59000.00"), null,
                 supTextil, new BigDecimal("30000.00"), 30, 18, 10),
@@ -640,15 +679,15 @@ public class DataInitializer implements ApplicationRunner {
                 supAccesorios, new BigDecimal("9500.00"), 50, 30, 20),
 
             new ProdDef("BAG-SPORT-11", "Bolso Deportivo Gym & Travel Impermeable",
-                "Bolso espacioso con compartimento separado para zapatillas y correa acolchada desmontable.",
-                Size.L, "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&q=80",
+                "Bolso espacioso estilo duffle con asas de mano reforzadas y correa desmontable, ideal para entrenamiento y viajes.",
+                Size.L, "https://images.unsplash.com/photo-1448582649076-3981753123b5?w=800&q=80",
                 "Unisex_Accesorios", false,
                 new BigDecimal("42000.00"), null,
                 supAccesorios, new BigDecimal("21000.00"), 20, 12, 4), // 4 en Plaza Shopping (Stock crítico para semáforo)
 
-            new ProdDef("KID-SNEAK-12", "Zapatillas Deportivas Niños Velcro Flex",
-                "Calzado liviano con ajuste por abrojo para mayor comodidad y suela de goma antideslizante con amortiguación EVA.",
-                Size.S, "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&q=80",
+            new ProdDef("KID-SNEAK-12", "Zapatillas Deportivas Niños Court Retro",
+                "Calzado deportivo infantil de alto impacto con diseño urbano retro, amortiguación Air y suela de goma antideslizante.",
+                Size.S, "https://images.unsplash.com/photo-1605523741177-cd660595c2cf?w=800&q=80",
                 "Niños_Calzado", false,
                 new BigDecimal("48000.00"), null,
                 supCalzado, new BigDecimal("24000.00"), 25, 15, 8)
@@ -1321,6 +1360,33 @@ public class DataInitializer implements ApplicationRunner {
             .deleted(false)
             .build());
 
+        Invoice inv1 = invoiceRepository.save(Invoice.builder()
+            .number("FC-0001-00000001")
+            .date(LocalDateTime.now().minusDays(12))
+            .totalAmount(new BigDecimal("137000.00"))
+            .status(InvoiceStatus.PAID)
+            .order(so1)
+            .deleted(false)
+            .build());
+
+        invoiceDetailRepository.save(InvoiceDetail.builder()
+            .invoice(inv1)
+            .product(products.get(0))
+            .quantity(1)
+            .unitPrice(new BigDecimal("115000.00"))
+            .total(new BigDecimal("115000.00"))
+            .deleted(false)
+            .build());
+
+        invoiceDetailRepository.save(InvoiceDetail.builder()
+            .invoice(inv1)
+            .product(products.get(9))
+            .quantity(1)
+            .unitPrice(new BigDecimal("22000.00"))
+            .total(new BigDecimal("22000.00"))
+            .deleted(false)
+            .build());
+
         // 2. Venta a Juan Pérez (Pendiente de Envío, pagada con Mercado Pago)
         SaleOrder so2 = SaleOrder.builder()
             .client(juan)
@@ -1348,6 +1414,24 @@ public class DataInitializer implements ApplicationRunner {
             .amount(new BigDecimal("68000.00"))
             .date(LocalDateTime.now().minusDays(3))
             .method(PaymentMethod.MERCADO_PAGO)
+            .deleted(false)
+            .build());
+
+        Invoice inv2 = invoiceRepository.save(Invoice.builder()
+            .number("FC-0001-00000002")
+            .date(LocalDateTime.now().minusDays(3))
+            .totalAmount(new BigDecimal("68000.00"))
+            .status(InvoiceStatus.PAID)
+            .order(so2)
+            .deleted(false)
+            .build());
+
+        invoiceDetailRepository.save(InvoiceDetail.builder()
+            .invoice(inv2)
+            .product(products.get(3))
+            .quantity(1)
+            .unitPrice(new BigDecimal("68000.00"))
+            .total(new BigDecimal("68000.00"))
             .deleted(false)
             .build());
 
@@ -1387,6 +1471,33 @@ public class DataInitializer implements ApplicationRunner {
             .amount(new BigDecimal("113000.00"))
             .date(LocalDateTime.now().minusDays(6))
             .method(PaymentMethod.DEBIT)
+            .deleted(false)
+            .build());
+
+        Invoice inv3 = invoiceRepository.save(Invoice.builder()
+            .number("FC-0001-00000003")
+            .date(LocalDateTime.now().minusDays(6))
+            .totalAmount(new BigDecimal("113000.00"))
+            .status(InvoiceStatus.PAID)
+            .order(so3)
+            .deleted(false)
+            .build());
+
+        invoiceDetailRepository.save(InvoiceDetail.builder()
+            .invoice(inv3)
+            .product(products.get(8))
+            .quantity(1)
+            .unitPrice(new BigDecimal("49000.00"))
+            .total(new BigDecimal("49000.00"))
+            .deleted(false)
+            .build());
+
+        invoiceDetailRepository.save(InvoiceDetail.builder()
+            .invoice(inv3)
+            .product(products.get(4))
+            .quantity(2)
+            .unitPrice(new BigDecimal("32000.00"))
+            .total(new BigDecimal("64000.00"))
             .deleted(false)
             .build());
 
