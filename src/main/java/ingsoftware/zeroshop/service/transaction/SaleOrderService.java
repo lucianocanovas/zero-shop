@@ -1,6 +1,7 @@
 package ingsoftware.zeroshop.service.transaction;
 
 import ingsoftware.zeroshop.entity.actor.Client;
+import ingsoftware.zeroshop.entity.actor.ContactEmail;
 import ingsoftware.zeroshop.entity.actor.Employee;
 import ingsoftware.zeroshop.entity.actor.Person;
 import ingsoftware.zeroshop.entity.actor.User;
@@ -278,8 +279,10 @@ public class SaleOrderService {
         Address savedAddress = addressRepository.save(shippingAddress);
         order.setShippingAddress(savedAddress);
         order.setDate(LocalDateTime.now());
+        order.setPaymentMethod(paymentMethod);
 
         if (paymentMethod == PaymentMethod.MERCADO_PAGO) {
+            order.setStatus(OrderStatus.PENDING_PAYMENT);
             saleOrderRepository.save(order);
             // Crea preferencia y obtiene URL de pago en Mercado Pago
             return mercadoPagoService.createPreference(order, details);
@@ -315,6 +318,9 @@ public class SaleOrderService {
 
         if (order.getStatus() != OrderStatus.PAID) {
             order.setStatus(OrderStatus.PAID);
+            if (order.getPaymentMethod() == null) {
+                order.setPaymentMethod(PaymentMethod.MERCADO_PAGO);
+            }
             saleOrderRepository.save(order);
 
             List<OrderDetail> details = orderDetailRepository.findByOrderIdAndDeletedFalse(order.getId());
@@ -322,11 +328,31 @@ public class SaleOrderService {
             paymentService.createInvoiceForOrder(order, details);
             decrementStockForOrder(order, details);
 
-            // Buscar email real del cliente si existe
-            userRepository.findAllByDeletedFalse().stream()
-                    .filter(u -> u.getPerson() != null && u.getPerson().getId().equals(order.getClient().getId()))
-                    .findFirst()
-                    .ifPresent(u -> sendOrderEmailNotification(order, details, u.getUsername()));
+            // Buscar email real del cliente
+            String recipientEmail = null;
+            if (order.getClient() != null) {
+                recipientEmail = userRepository.findAllByDeletedFalse().stream()
+                        .filter(u -> u.getPerson() != null && u.getPerson().getId().equals(order.getClient().getId()))
+                        .map(User::getUsername)
+                        .findFirst()
+                        .orElse(null);
+
+                if (recipientEmail == null && order.getClient().getContact() != null) {
+                    recipientEmail = order.getClient().getContact().stream()
+                            .filter(c -> !c.isDeleted() && c instanceof ContactEmail)
+                            .map(c -> ((ContactEmail) c).getEmail())
+                            .filter(e -> e != null && !e.isBlank())
+                            .findFirst()
+                            .orElse(null);
+                }
+            }
+
+            if (recipientEmail != null && !recipientEmail.isBlank()) {
+                log.info("Enviando correo de confirmación de orden #{} a {}", order.getId(), recipientEmail);
+                sendOrderEmailNotification(order, details, recipientEmail);
+            } else {
+                log.warn("No se encontró email de cliente para notificar orden #{}", order.getId());
+            }
         }
         return order;
     }
@@ -344,6 +370,7 @@ public class SaleOrderService {
         }
 
         order.setStatus(OrderStatus.PAID);
+        order.setPaymentMethod(PaymentMethod.CASH);
         saleOrderRepository.save(order);
 
         List<OrderDetail> details = orderDetailRepository.findByOrderIdAndDeletedFalse(order.getId());
@@ -351,11 +378,26 @@ public class SaleOrderService {
         paymentService.createInvoiceForOrder(order, details);
         decrementStockForOrder(order, details);
 
+        String recipientEmail = null;
         if (order.getClient() != null) {
-            userRepository.findAllByDeletedFalse().stream()
+            recipientEmail = userRepository.findAllByDeletedFalse().stream()
                     .filter(u -> u.getPerson() != null && u.getPerson().getId().equals(order.getClient().getId()))
+                    .map(User::getUsername)
                     .findFirst()
-                    .ifPresent(u -> sendOrderEmailNotification(order, details, u.getUsername()));
+                    .orElse(null);
+
+            if (recipientEmail == null && order.getClient().getContact() != null) {
+                recipientEmail = order.getClient().getContact().stream()
+                        .filter(c -> !c.isDeleted() && c instanceof ContactEmail)
+                        .map(c -> ((ContactEmail) c).getEmail())
+                        .filter(e -> e != null && !e.isBlank())
+                        .findFirst()
+                        .orElse(null);
+            }
+        }
+
+        if (recipientEmail != null && !recipientEmail.isBlank()) {
+            sendOrderEmailNotification(order, details, recipientEmail);
         }
 
         return order;
@@ -589,12 +631,14 @@ public class SaleOrderService {
         }
 
         // 5. Crear orden
+        PaymentMethod finalMethod = paymentMethod != null ? paymentMethod : PaymentMethod.CASH;
         SaleOrder order = SaleOrder.builder()
                 .client(client)
                 .employee(employee)
                 .office(office)
                 .date(LocalDateTime.now())
                 .totalAmount(totalAmount)
+                .paymentMethod(finalMethod)
                 .status(OrderStatus.DELIVERED)
                 .deleted(false)
                 .build();
@@ -622,7 +666,6 @@ public class SaleOrderService {
         }
 
         // 7. Registrar pago y emitir factura
-        PaymentMethod finalMethod = paymentMethod != null ? paymentMethod : PaymentMethod.CASH;
         paymentService.registerPayment(savedOrder, totalAmount, finalMethod);
         paymentService.createInvoiceForOrder(savedOrder);
 

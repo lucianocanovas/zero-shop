@@ -5,16 +5,17 @@ import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
 import ingsoftware.zeroshop.enums.PaymentMethod;
 import ingsoftware.zeroshop.repository.org.OfficeRepository;
+import ingsoftware.zeroshop.service.transaction.MercadoPagoService;
 import ingsoftware.zeroshop.service.transaction.SaleOrderService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -22,10 +23,14 @@ public class CheckoutController {
 
     private final SaleOrderService saleOrderService;
     private final OfficeRepository officeRepository;
+    private final MercadoPagoService mercadoPagoService;
 
-    public CheckoutController(SaleOrderService saleOrderService, OfficeRepository officeRepository) {
+    public CheckoutController(SaleOrderService saleOrderService,
+                              OfficeRepository officeRepository,
+                              MercadoPagoService mercadoPagoService) {
         this.saleOrderService = saleOrderService;
         this.officeRepository = officeRepository;
+        this.mercadoPagoService = mercadoPagoService;
     }
 
     // GET /checkout: Muestra la página de finalización de compra con el carrito del cliente
@@ -149,20 +154,45 @@ public class CheckoutController {
 
     // GET /checkout/mp/success: Retorno exitoso de Mercado Pago
     @GetMapping("/checkout/mp/success")
-    public String mpSuccess(@RequestParam("orderId") UUID orderId,
+    public String mpSuccess(@RequestParam(value = "orderId", required = false) UUID orderId,
+                            @RequestParam(value = "external_reference", required = false) String externalReference,
+                            @RequestParam(value = "payment_id", required = false) String paymentId,
+                            @RequestParam(value = "collection_id", required = false) String collectionId,
+                            @RequestParam(value = "collection_status", required = false) String collectionStatus,
                             RedirectAttributes redirectAttributes) {
+        UUID targetOrderId = orderId;
+        if (targetOrderId == null && externalReference != null && !externalReference.isBlank()) {
+            try {
+                targetOrderId = UUID.fromString(externalReference.trim());
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (targetOrderId == null) {
+            String pId = (paymentId != null && !paymentId.isBlank()) ? paymentId : collectionId;
+            if (pId != null && !pId.isBlank()) {
+                targetOrderId = mercadoPagoService.verifyPaymentApproved(pId).orElse(null);
+            }
+        }
+
+        if (targetOrderId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "No se encontró el identificador del pedido.");
+            return "redirect:/orders";
+        }
+
         try {
-            saleOrderService.handleMercadoPagoSuccess(orderId);
+            saleOrderService.handleMercadoPagoSuccess(targetOrderId);
             redirectAttributes.addFlashAttribute("successMessage", "¡Pago acreditado por Mercado Pago con éxito!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al confirmar con Mercado Pago: " + e.getMessage());
         }
-        return "redirect:/checkout/success?orderId=" + orderId;
+        return "redirect:/checkout/success?orderId=" + targetOrderId;
     }
 
     // GET /checkout/mp/failure: Retorno de pago fallido desde Mercado Pago
     @GetMapping("/checkout/mp/failure")
-    public String mpFailure(@RequestParam("orderId") UUID orderId,
+    public String mpFailure(@RequestParam(value = "orderId", required = false) UUID orderId,
+                            @RequestParam(value = "external_reference", required = false) String externalReference,
                             RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("errorMessage", "El pago a través de Mercado Pago no fue completado.");
         return "redirect:/checkout";
@@ -170,10 +200,54 @@ public class CheckoutController {
 
     // GET /checkout/mp/pending: Retorno de pago pendiente desde Mercado Pago
     @GetMapping("/checkout/mp/pending")
-    public String mpPending(@RequestParam("orderId") UUID orderId,
+    public String mpPending(@RequestParam(value = "orderId", required = false) UUID orderId,
+                            @RequestParam(value = "external_reference", required = false) String externalReference,
                             RedirectAttributes redirectAttributes) {
+        UUID targetOrderId = orderId;
+        if (targetOrderId == null && externalReference != null && !externalReference.isBlank()) {
+            try {
+                targetOrderId = UUID.fromString(externalReference.trim());
+            } catch (Exception ignored) {
+            }
+        }
         redirectAttributes.addFlashAttribute("infoMessage", "El pago de Mercado Pago está pendiente de acreditación.");
-        return "redirect:/checkout/success?orderId=" + orderId;
+        return targetOrderId != null ? "redirect:/checkout/success?orderId=" + targetOrderId : "redirect:/orders";
+    }
+
+    // Webhook / IPN de Mercado Pago (recibe notificaciones POST/GET de Mercado Pago)
+    @RequestMapping(value = "/checkout/mp/webhook", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public ResponseEntity<String> mpWebhook(
+            @RequestParam(value = "topic", required = false) String topic,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "id", required = false) String id,
+            @RequestParam(value = "data.id", required = false) String dataId,
+            @RequestBody(required = false) Map<String, Object> body) {
+        try {
+            String paymentId = null;
+            if ("payment".equalsIgnoreCase(topic) || "payment".equalsIgnoreCase(type)) {
+                paymentId = id != null ? id : dataId;
+            }
+            if (paymentId == null && body != null) {
+                if (body.get("data") instanceof Map<?, ?> dataMap) {
+                    Object idObj = dataMap.get("id");
+                    if (idObj != null) {
+                        paymentId = idObj.toString();
+                    }
+                }
+                if (paymentId == null && body.get("id") != null) {
+                    paymentId = body.get("id").toString();
+                }
+            }
+
+            if (paymentId != null && !paymentId.isBlank()) {
+                mercadoPagoService.verifyPaymentApproved(paymentId)
+                        .ifPresent(saleOrderService::handleMercadoPagoSuccess);
+            }
+            return ResponseEntity.ok("OK");
+        } catch (Exception e) {
+            return ResponseEntity.ok("IGNORED");
+        }
     }
 
     // GET /checkout/success: Muestra la confirmación de la compra realizada con éxito

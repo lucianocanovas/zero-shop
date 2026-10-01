@@ -51,6 +51,7 @@
                             <th>Nº Pedido</th>
                             <th>Fecha</th>
                             <th>Sucursal</th>
+                            <th>Medio de Pago</th>
                             <th>Total</th>
                             <th>Estado Oficial</th>
                             <th class="text-end">Acciones</th>
@@ -61,6 +62,21 @@
                             <td class="fw-bold" th:text="'#' + ${#strings.substring(order.id.toString(), 0, 8)}">#ZR-1001</td>
                             <td class="text-muted small" th:text="${order.date != null ? #temporals.format(order.date, 'dd/MM/yyyy HH:mm') : '-'}">22/09/2026</td>
                             <td th:text="${order.office != null ? order.office.name : 'Casa Central Mendoza'}">Sucursal Mendoza</td>
+                            <td>
+                                <span th:if="${order.paymentMethod != null}"
+                                      class="badge fw-semibold"
+                                      th:classappend="${order.paymentMethod.name() == 'MERCADO_PAGO' ? 'text-white' : 
+                                                      (order.paymentMethod.name() == 'CASH' ? 'bg-success text-white' : 
+                                                      (order.paymentMethod.name() == 'CREDIT' ? 'bg-info text-dark' : 'bg-primary text-white'))}"
+                                      th:style="${order.paymentMethod.name() == 'MERCADO_PAGO' ? 'background-color: #009ee3 !important;' : ''}">
+                                    <i class="bi me-1" 
+                                       th:classappend="${order.paymentMethod.name() == 'MERCADO_PAGO' ? 'bi-credit-card-2-front-fill' : 
+                                                       (order.paymentMethod.name() == 'CASH' ? 'bi-cash-stack' : 
+                                                       (order.paymentMethod.name() == 'CREDIT' ? 'bi-credit-card' : 'bi-credit-card-2-front'))}"></i>
+                                    <span th:text="${order.paymentMethod.displayName}">Mercado Pago</span>
+                                </span>
+                                <span th:if="${order.paymentMethod == null}" class="badge bg-light text-muted border">-</span>
+                            </td>
                             <td class="fw-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$24.990,00</td>
                             <td>
                                 <span class="badge"
@@ -75,6 +91,12 @@
                             </td>
                             <td class="text-end">
                                 <div class="btn-group btn-group-sm">
+                                    <a th:if="${order.status.name() == 'PENDING_PAYMENT' and (order.paymentMethod == null or order.paymentMethod.name() == 'MERCADO_PAGO')}"
+                                       th:href="@{/checkout/mp/success(orderId=${order.id})}"
+                                       class="btn btn-outline-success"
+                                       title="Confirmar acreditación de pago">
+                                        <i class="bi bi-check2-circle me-1"></i>Acreditar
+                                    </a>
                                     <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-outline-primary">
                                         <i class="bi bi-eye me-1"></i>Seguimiento
                                     </a>
@@ -90,7 +112,7 @@
                         </tr>
 
                         <tr th:if="${orders == null or orders.empty}">
-                            <td colspan="6" class="text-center py-5 text-muted">
+                            <td colspan="7" class="text-center py-5 text-muted">
                                 <i class="bi bi-bag-x fs-1 d-block mb-2 text-secondary"></i>
                                 Todavía no has realizado ninguna compra.
                                 <div class="mt-3">

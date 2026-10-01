@@ -92,6 +92,18 @@ public class OrderController {
         return "redirect:/dashboard/sale-orders/" + id;
     }
 
+    // POST /dashboard/sale-orders/:id/accredit-mp: Registrar o confirmar pago de Mercado Pago manualmente
+    @PostMapping("/dashboard/sale-orders/{id}/accredit-mp")
+    public String accreditMercadoPago(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes) {
+        try {
+            saleOrderService.handleMercadoPagoSuccess(id);
+            redirectAttributes.addFlashAttribute("successMessage", "¡Pago de Mercado Pago acreditado exitosamente!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al acreditar pago de Mercado Pago: " + e.getMessage());
+        }
+        return "redirect:/dashboard/sale-orders/" + id;
+    }
+
     // PUT /dashboard/sale-orders/:id/status: Actualiza el estado de la orden
     @PutMapping("/dashboard/sale-orders/{id}/status")
     public String updateOrderStatus(@PathVariable("id") UUID id,

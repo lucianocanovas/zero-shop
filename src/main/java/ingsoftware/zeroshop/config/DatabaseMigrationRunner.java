@@ -29,6 +29,21 @@ public class DatabaseMigrationRunner implements ApplicationRunner {
         }
 
         try {
+            jdbcTemplate.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50)");
+            jdbcTemplate.execute(
+                    "UPDATE orders SET payment_method = (" +
+                    "  SELECT p.method FROM payments p WHERE p.order_id = orders.id ORDER BY p.date DESC LIMIT 1" +
+                    ") WHERE payment_method IS NULL AND EXISTS (SELECT 1 FROM payments p WHERE p.order_id = orders.id)"
+            );
+            jdbcTemplate.execute(
+                    "UPDATE orders SET payment_method = 'MERCADO_PAGO' WHERE payment_method IS NULL AND status = 'PENDING_PAYMENT'"
+            );
+            log.info("Columna orders.payment_method verificada y sincronizada.");
+        } catch (Exception e) {
+            log.warn("Aviso al verificar orders.payment_method: {}", e.getMessage());
+        }
+
+        try {
             jdbcTemplate.execute("ALTER TABLE sale_orders ALTER COLUMN office_id DROP NOT NULL");
             log.info("Columna sale_orders.office_id verificada para permitir null en estado ON_CART.");
         } catch (Exception e) {
@@ -103,6 +118,27 @@ public class DatabaseMigrationRunner implements ApplicationRunner {
             jdbcTemplate.execute("ALTER TABLE office_contacts ALTER COLUMN deleted SET DEFAULT false");
             log.info("Tabla office_contacts verificada para join table.");
         } catch (Exception ignored) {
+        }
+
+        try {
+            jdbcTemplate.execute(
+                "CREATE TABLE IF NOT EXISTS pending_registrations (" +
+                "  id UUID PRIMARY KEY DEFAULT gen_random_uuid(), " +
+                "  email VARCHAR(255) NOT NULL UNIQUE, " +
+                "  first_name VARCHAR(255) NOT NULL, " +
+                "  last_name VARCHAR(255) NOT NULL, " +
+                "  id_type VARCHAR(50) NOT NULL, " +
+                "  id_number VARCHAR(50) NOT NULL, " +
+                "  date_of_birth DATE NOT NULL, " +
+                "  password VARCHAR(255) NOT NULL, " +
+                "  verification_code VARCHAR(50) NOT NULL, " +
+                "  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL, " +
+                "  expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL" +
+                ")"
+            );
+            log.info("Tabla pending_registrations verificada o creada con éxito.");
+        } catch (Exception e) {
+            log.warn("Aviso al verificar pending_registrations: {}", e.getMessage());
         }
     }
 }

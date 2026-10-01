@@ -2,6 +2,7 @@ package ingsoftware.zeroshop.service.actor;
 
 import ingsoftware.zeroshop.entity.actor.Client;
 import ingsoftware.zeroshop.entity.actor.Employee;
+import ingsoftware.zeroshop.entity.actor.PendingRegistration;
 import ingsoftware.zeroshop.entity.actor.Person;
 import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.enums.EmployeeType;
@@ -9,6 +10,7 @@ import ingsoftware.zeroshop.enums.IDType;
 import ingsoftware.zeroshop.enums.Role;
 import ingsoftware.zeroshop.repository.actor.ClientRepository;
 import ingsoftware.zeroshop.repository.actor.EmployeeRepository;
+import ingsoftware.zeroshop.repository.actor.PendingRegistrationRepository;
 import ingsoftware.zeroshop.repository.actor.PersonRepository;
 import ingsoftware.zeroshop.repository.actor.UserRepository;
 import ingsoftware.zeroshop.service.notification.EmailService;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +36,7 @@ public class UserService {
     private final PersonRepository personRepository;
     private final ClientRepository clientRepository;
     private final EmployeeRepository employeeRepository;
+    private final PendingRegistrationRepository pendingRegistrationRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
@@ -40,12 +44,14 @@ public class UserService {
                        PersonRepository personRepository,
                        ClientRepository clientRepository,
                        EmployeeRepository employeeRepository,
+                       PendingRegistrationRepository pendingRegistrationRepository,
                        PasswordEncoder passwordEncoder,
                        @Autowired(required = false) EmailService emailService) {
         this.userRepository = userRepository;
         this.personRepository = personRepository;
         this.clientRepository = clientRepository;
         this.employeeRepository = employeeRepository;
+        this.pendingRegistrationRepository = pendingRegistrationRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
     }
@@ -64,17 +70,18 @@ public class UserService {
     }
 
     /**
-     * Registra un nuevo cliente desde el formulario público de registro con todos sus datos de persona.
-     * Si existía un usuario borrado lógicamente con el mismo correo, se reactiva con los nuevos datos.
+     * Inicia el registro de un nuevo cliente desde el formulario público de registro.
+     * Valida los datos y almacena una registración pendiente con su código de activación.
+     * NO crea el usuario ni la persona en la base de datos hasta que el código sea verificado.
      */
     @Transactional
-    public User registerClient(String firstName,
-                               String lastName,
-                               IDType idType,
-                               String idNumber,
-                               LocalDate dateOfBirth,
-                               String email,
-                               String password) {
+    public PendingRegistration registerClient(String firstName,
+                                             String lastName,
+                                             IDType idType,
+                                             String idNumber,
+                                             LocalDate dateOfBirth,
+                                             String email,
+                                             String password) {
         validatePersonNames(firstName, lastName);
         validateEmail(email);
         validatePassword(password);
@@ -103,14 +110,116 @@ public class UserService {
             throw new IllegalArgumentException("El correo electrónico ya se encuentra registrado.");
         }
 
-        // 2. Buscar si la persona ya existe en la BBDD (sea como Client o Employee) mediante su documento
+        // 2. Verificar si la persona ya existe en la BBDD y si ya superó el límite de usuarios
+        Optional<Person> existingPersonOpt = personRepository.findByIdNumber(cleanIdNumber);
+        if (existingPersonOpt.isPresent()) {
+            Person existingPerson = existingPersonOpt.get();
+            long activeUsersCount = userRepository.countByPersonIdAndDeletedFalse(existingPerson.getId());
+            boolean isSameUserReactivating = existingUserOpt.isPresent()
+                    && existingUserOpt.get().getPerson() != null
+                    && existingUserOpt.get().getPerson().getId().equals(existingPerson.getId());
+
+            if (activeUsersCount >= 2 && !isSameUserReactivating) {
+                throw new IllegalArgumentException("La persona con documento " + cleanIdNumber + " ya posee el límite máximo de 2 usuarios vinculados.");
+            }
+        }
+
+        // 3. Generar código de activación de 6 dígitos
+        String verificationCode = String.format("%06d", new java.util.Random().nextInt(999999));
+
+        // 4. Guardar o actualizar la solicitud de registro pendiente
+        PendingRegistration pending = pendingRegistrationRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseGet(PendingRegistration::new);
+        pending.setEmail(normalizedEmail);
+        pending.setFirstName(firstName.trim());
+        pending.setLastName(lastName.trim());
+        pending.setIdType(idType);
+        pending.setIdNumber(cleanIdNumber);
+        pending.setDateOfBirth(dateOfBirth);
+        pending.setPassword(passwordEncoder.encode(password));
+        pending.setVerificationCode(verificationCode);
+        pending.setCreatedAt(LocalDateTime.now());
+        pending.setExpiresAt(LocalDateTime.now().plusHours(24));
+
+        PendingRegistration savedPending = pendingRegistrationRepository.save(pending);
+
+        // 5. Enviar código de activación por correo electrónico
+        if (emailService != null) {
+            emailService.sendVerificationCodeEmail(normalizedEmail, verificationCode, "http://localhost:8080/verify?email=" + normalizedEmail);
+        }
+
+        return savedPending;
+    }
+
+    /**
+     * Sobrecarga de registro con datos de persona por defecto (compatibilidad).
+     */
+    @Transactional
+    public PendingRegistration registerClient(String firstName, String lastName, String email, String password) {
+        return registerClient(firstName, lastName, IDType.DNI, generateUniqueIdNumber(), LocalDate.of(2000, 1, 1), email, password);
+    }
+
+    /**
+     * Verifica la cuenta del cliente validando el código de 6 dígitos enviado por correo.
+     * Al validar correctamente el código, crea de forma efectiva la Persona/Cliente y el Usuario en la base de datos.
+     */
+    @Transactional
+    public boolean verifyAccount(String email, String code) {
+        if (email == null || code == null || code.isBlank()) {
+            return false;
+        }
+        String normalizedEmail = email.trim().toLowerCase();
+        String cleanCode = code.trim();
+
+        // 1. Buscar en registros pendientes
+        Optional<PendingRegistration> pendingOpt = pendingRegistrationRepository.findByEmailIgnoreCase(normalizedEmail);
+        if (pendingOpt.isPresent()) {
+            PendingRegistration pending = pendingOpt.get();
+
+            if (pending.getVerificationCode() != null && pending.getVerificationCode().equals(cleanCode)) {
+                if (pending.getExpiresAt() != null && pending.getExpiresAt().isBefore(LocalDateTime.now())) {
+                    throw new IllegalArgumentException("El código de activación ha expirado. Por favor solicita uno nuevo.");
+                }
+
+                // Crear y persistir el usuario y su persona asociada
+                completeRegistrationFromPending(pending);
+                pendingRegistrationRepository.delete(pending);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // 2. Fallback para cuentas legadas que pudieran tener el código pendiente directamente en User
+        Optional<User> userOpt = userRepository.findByUsernameIgnoreCase(normalizedEmail);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if (user.getVerificationCode() != null && user.getVerificationCode().trim().equals(cleanCode)) {
+                user.setVerified(true);
+                user.setVerificationCode(null);
+                userRepository.save(user);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Completa el registro creando la persona (Client) y el User en la base de datos tras verificar el código.
+     */
+    private User completeRegistrationFromPending(PendingRegistration pending) {
+        String cleanIdNumber = pending.getIdNumber();
+        String normalizedEmail = pending.getEmail();
+
         Optional<Person> existingPersonOpt = personRepository.findByIdNumber(cleanIdNumber);
         Person personToLink;
+
+        Optional<User> existingUserOpt = userRepository.findByUsernameIgnoreCase(normalizedEmail);
 
         if (existingPersonOpt.isPresent()) {
             Person existingPerson = existingPersonOpt.get();
 
-            // Regla: Máximo 2 usuarios distintos asociados a la misma persona física
             long activeUsersCount = userRepository.countByPersonIdAndDeletedFalse(existingPerson.getId());
             boolean isSameUserReactivating = existingUserOpt.isPresent()
                     && existingUserOpt.get().getPerson() != null
@@ -120,96 +229,59 @@ public class UserService {
                 throw new IllegalArgumentException("La persona con documento " + cleanIdNumber + " ya posee el límite máximo de 2 usuarios vinculados.");
             }
 
-            // No se crea un objeto nuevo en BBDD; se reutiliza la persona existente
             existingPerson.setDeleted(false);
             if (isSameUserReactivating) {
-                existingPerson.setFirstName(firstName.trim());
-                existingPerson.setLastName(lastName.trim());
-                existingPerson.setDateOfBirth(dateOfBirth);
-                existingPerson.setIdType(idType);
+                existingPerson.setFirstName(pending.getFirstName());
+                existingPerson.setLastName(pending.getLastName());
+                existingPerson.setDateOfBirth(pending.getDateOfBirth());
+                existingPerson.setIdType(pending.getIdType());
                 personToLink = personRepository.save(existingPerson);
             } else {
                 personToLink = existingPerson;
             }
         } else {
-            // Si la persona no existe, como Person es abstracta, instanciamos un nuevo Client
             Client newClient = new Client();
             newClient.setClientNumber("CLI-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-            newClient.setFirstName(firstName.trim());
-            newClient.setLastName(lastName.trim());
-            newClient.setDateOfBirth(dateOfBirth);
-            newClient.setIdType(idType);
+            newClient.setFirstName(pending.getFirstName());
+            newClient.setLastName(pending.getLastName());
+            newClient.setDateOfBirth(pending.getDateOfBirth());
+            newClient.setIdType(pending.getIdType());
             newClient.setIdNumber(cleanIdNumber);
             newClient.setDeleted(false);
             personToLink = clientRepository.save(newClient);
         }
 
-        String verificationCode = String.format("%06d", new java.util.Random().nextInt(999999));
-
+        User userToSave;
         if (existingUserOpt.isPresent()) {
-            // Reactivar usuario previamente eliminado
-            User existingUser = existingUserOpt.get();
-            existingUser.setPerson(personToLink);
-            existingUser.setPassword(passwordEncoder.encode(password));
-            existingUser.setRole(Role.CLIENT);
-            existingUser.setVerificationCode(verificationCode);
-            existingUser.setVerified(false);
-            existingUser.setDeleted(false);
-            User savedUser = userRepository.save(existingUser);
-
-            if (emailService != null) {
-                emailService.sendVerificationCodeEmail(normalizedEmail, verificationCode, "http://localhost:8080/verify?email=" + normalizedEmail);
-                emailService.sendWelcomeEmail(normalizedEmail, firstName.trim());
-            }
-
-            return savedUser;
+            userToSave = existingUserOpt.get();
+            userToSave.setPerson(personToLink);
+            userToSave.setPassword(pending.getPassword());
+            userToSave.setRole(Role.CLIENT);
+            userToSave.setVerificationCode(null);
+            userToSave.setVerified(true);
+            userToSave.setDeleted(false);
+        } else {
+            userToSave = new User();
+            userToSave.setUsername(normalizedEmail);
+            userToSave.setPassword(pending.getPassword());
+            userToSave.setRole(Role.CLIENT);
+            userToSave.setPerson(personToLink);
+            userToSave.setVerificationCode(null);
+            userToSave.setVerified(true);
+            userToSave.setDeleted(false);
         }
 
-        // Crear nuevo User y asociarlo a la persona
-        User user = new User();
-        user.setUsername(normalizedEmail);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRole(Role.CLIENT);
-        user.setPerson(personToLink);
-        user.setVerificationCode(verificationCode);
-        user.setVerified(false);
-        user.setDeleted(false);
-
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(userToSave);
 
         if (emailService != null) {
-            emailService.sendVerificationCodeEmail(normalizedEmail, verificationCode, "http://localhost:8080/verify?email=" + normalizedEmail);
-            emailService.sendWelcomeEmail(normalizedEmail, firstName.trim());
+            emailService.sendWelcomeEmail(normalizedEmail, pending.getFirstName());
         }
 
         return savedUser;
     }
 
     /**
-     * Verifica la cuenta del cliente validando el código de 6 dígitos enviado por correo.
-     */
-    @Transactional
-    public boolean verifyAccount(String email, String code) {
-        if (email == null || code == null) {
-            return false;
-        }
-        String normalizedEmail = email.trim().toLowerCase();
-        Optional<User> userOpt = userRepository.findByUsernameIgnoreCase(normalizedEmail);
-        if (userOpt.isEmpty()) {
-            return false;
-        }
-        User user = userOpt.get();
-        if (user.getVerificationCode() != null && user.getVerificationCode().trim().equals(code.trim())) {
-            user.setVerified(true);
-            user.setVerificationCode(null);
-            userRepository.save(user);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Reenvía un nuevo código de activación al correo del usuario.
+     * Reenvía un nuevo código de activación al correo del usuario para su solicitud pendiente.
      */
     @Transactional
     public String resendVerificationCode(String email) {
@@ -217,25 +289,39 @@ public class UserService {
             throw new IllegalArgumentException("El correo electrónico es requerido.");
         }
         String normalizedEmail = email.trim().toLowerCase();
-        User user = userRepository.findByUsernameIgnoreCase(normalizedEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con el correo: " + email));
 
-        String newCode = String.format("%06d", new java.util.Random().nextInt(999999));
-        user.setVerificationCode(newCode);
-        userRepository.save(user);
+        Optional<PendingRegistration> pendingOpt = pendingRegistrationRepository.findByEmailIgnoreCase(normalizedEmail);
+        if (pendingOpt.isPresent()) {
+            PendingRegistration pending = pendingOpt.get();
+            String newCode = String.format("%06d", new java.util.Random().nextInt(999999));
+            pending.setVerificationCode(newCode);
+            pending.setExpiresAt(LocalDateTime.now().plusHours(24));
+            pendingRegistrationRepository.save(pending);
 
-        if (emailService != null) {
-            emailService.sendVerificationCodeEmail(normalizedEmail, newCode, "http://localhost:8080/verify?email=" + normalizedEmail);
+            if (emailService != null) {
+                emailService.sendVerificationCodeEmail(normalizedEmail, newCode, "http://localhost:8080/verify?email=" + normalizedEmail);
+            }
+            return newCode;
         }
-        return newCode;
-    }
 
-    /**
-     * Sobrecarga de registro con datos de persona por defecto (compatibilidad).
-     */
-    @Transactional
-    public User registerClient(String firstName, String lastName, String email, String password) {
-        return registerClient(firstName, lastName, IDType.DNI, generateUniqueIdNumber(), LocalDate.of(2000, 1, 1), email, password);
+        // Fallback para usuarios ya existentes no verificados
+        Optional<User> userOpt = userRepository.findByUsernameIgnoreCase(normalizedEmail);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if (Boolean.TRUE.equals(user.getVerified())) {
+                throw new IllegalArgumentException("La cuenta ya se encuentra verificada. Puedes iniciar sesión.");
+            }
+            String newCode = String.format("%06d", new java.util.Random().nextInt(999999));
+            user.setVerificationCode(newCode);
+            userRepository.save(user);
+
+            if (emailService != null) {
+                emailService.sendVerificationCodeEmail(normalizedEmail, newCode, "http://localhost:8080/verify?email=" + normalizedEmail);
+            }
+            return newCode;
+        }
+
+        throw new IllegalArgumentException("No se encontró ninguna solicitud de registro pendiente para el correo: " + email);
     }
 
     /**

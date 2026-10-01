@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import ingsoftware.zeroshop.enums.OrderStatus;
+import ingsoftware.zeroshop.enums.PaymentMethod;
 
 @Entity
 @Table(name = "orders")
@@ -32,6 +33,10 @@ public abstract class Order {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private OrderStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method")
+    private PaymentMethod paymentMethod;
 
     @Builder.Default
     @Column(name = "deleted", nullable = false)

@@ -1,9 +1,11 @@
 package ingsoftware.zeroshop.service.transaction;
 
 import com.mercadopago.MercadoPagoConfig;
+import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.preference.*;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
 import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MercadoPagoService {
@@ -132,6 +136,7 @@ public class MercadoPagoService {
             if (baseUrl != null && baseUrl.startsWith("https://") && !baseUrl.contains("localhost")
                     && !baseUrl.contains("127.0.0.1")) {
                 requestBuilder.autoReturn("approved");
+                requestBuilder.notificationUrl(baseUrl + "/checkout/mp/webhook");
             }
 
             PreferenceRequest preferenceRequest = requestBuilder.build();
@@ -154,11 +159,38 @@ public class MercadoPagoService {
             throw new IllegalStateException("Error al generar pago en Mercado Pago: " + errorMsg);
         } catch (MPException e) {
             log.error("Error SDK Mercado Pago: {}", e.getMessage(), e);
-            throw new IllegalStateException("Error al conectar con Mercado Pago: " + e.getMessage());
+            throw new IllegalStateException("Error al conectar con Mercado Pago: " + errorMsg(e));
         } catch (Exception e) {
             log.error("Excepción inesperada en Mercado Pago: {}", e.getMessage(), e);
             return baseUrl + "/checkout/mp/success?orderId=" + saleOrder.getId()
                     + "&collection_status=approved&simulated=true";
         }
+    }
+
+    private String errorMsg(Exception e) {
+        return e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+    }
+
+    /**
+     * Consulta el estado de un pago en Mercado Pago mediante su ID.
+     * Retorna el externalReference (orderId) si el pago fue aprobado ('approved').
+     */
+    public Optional<UUID> verifyPaymentApproved(String paymentId) {
+        if (paymentId == null || paymentId.isBlank()) {
+            return Optional.empty();
+        }
+        try {
+            PaymentClient paymentClient = new PaymentClient();
+            Payment payment = paymentClient.get(Long.parseLong(paymentId.trim()));
+            if (payment != null && "approved".equalsIgnoreCase(payment.getStatus())) {
+                String externalRef = payment.getExternalReference();
+                if (externalRef != null && !externalRef.isBlank()) {
+                    return Optional.of(UUID.fromString(externalRef.trim()));
+                }
+            }
+        } catch (Exception e) {
+            log.warn("No se pudo verificar el pago {} en Mercado Pago: {}", paymentId, e.getMessage());
+        }
+        return Optional.empty();
     }
 }

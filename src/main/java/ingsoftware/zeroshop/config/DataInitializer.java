@@ -1329,6 +1329,7 @@ public class DataInitializer implements ApplicationRunner {
             .shippingAddress(juanAddr1)
             .date(LocalDateTime.now().minusDays(12))
             .status(OrderStatus.DELIVERED)
+            .paymentMethod(PaymentMethod.CREDIT)
             .totalAmount(new BigDecimal("137000.00"))
             .deleted(false)
             .build();
@@ -1395,6 +1396,7 @@ public class DataInitializer implements ApplicationRunner {
             .shippingAddress(juanAddr2)
             .date(LocalDateTime.now().minusDays(3))
             .status(OrderStatus.PENDING_SHIPPING)
+            .paymentMethod(PaymentMethod.MERCADO_PAGO)
             .totalAmount(new BigDecimal("68000.00"))
             .deleted(false)
             .build();
@@ -1443,6 +1445,7 @@ public class DataInitializer implements ApplicationRunner {
             .shippingAddress(mariaAddr1)
             .date(LocalDateTime.now().minusDays(6))
             .status(OrderStatus.DELIVERED)
+            .paymentMethod(PaymentMethod.DEBIT)
             .totalAmount(new BigDecimal("113000.00"))
             .deleted(false)
             .build();
@@ -1509,6 +1512,7 @@ public class DataInitializer implements ApplicationRunner {
             .shippingAddress(agustinAddr1)
             .date(LocalDateTime.now().minusDays(1))
             .status(OrderStatus.PENDING_PAYMENT)
+            .paymentMethod(PaymentMethod.MERCADO_PAGO)
             .totalAmount(new BigDecimal("96000.00"))
             .deleted(false)
             .build();

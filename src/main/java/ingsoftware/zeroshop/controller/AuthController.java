@@ -89,12 +89,18 @@ public class AuthController {
                          @RequestParam("code") String code,
                          Model model,
                          RedirectAttributes redirectAttributes) {
-        boolean verified = userService.verifyAccount(email, code);
-        if (verified) {
-            redirectAttributes.addFlashAttribute("success", "¡Cuenta activada con éxito! Ya puedes iniciar sesión con tus credenciales.");
-            return "redirect:/login?verified=true";
-        } else {
-            model.addAttribute("error", "Código de activación incorrecto o inexistente. Verifica e intenta nuevamente.");
+        try {
+            boolean verified = userService.verifyAccount(email, code);
+            if (verified) {
+                redirectAttributes.addFlashAttribute("success", "¡Cuenta activada con éxito! Ya puedes iniciar sesión con tus credenciales.");
+                return "redirect:/login?verified=true";
+            } else {
+                model.addAttribute("error", "Código de activación incorrecto o inexistente. Verifica e intenta nuevamente.");
+                model.addAttribute("email", email);
+                return "verify";
+            }
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("email", email);
             return "verify";
         }

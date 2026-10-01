@@ -2,9 +2,13 @@ package ingsoftware.zeroshop;
 
 import ingsoftware.zeroshop.entity.actor.Client;
 import ingsoftware.zeroshop.entity.actor.Employee;
+import ingsoftware.zeroshop.entity.actor.PendingRegistration;
 import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.enums.IDType;
 import ingsoftware.zeroshop.enums.Role;
+import ingsoftware.zeroshop.repository.actor.ClientRepository;
+import ingsoftware.zeroshop.repository.actor.PendingRegistrationRepository;
+import ingsoftware.zeroshop.repository.actor.PersonRepository;
 import ingsoftware.zeroshop.repository.actor.UserRepository;
 import ingsoftware.zeroshop.service.actor.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -34,25 +38,43 @@ public class UserServiceIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
-    private ingsoftware.zeroshop.repository.actor.PersonRepository personRepository;
+    private PersonRepository personRepository;
 
     @Autowired
-    private ingsoftware.zeroshop.repository.actor.ClientRepository clientRepository;
+    private ClientRepository clientRepository;
+
+    @Autowired
+    private PendingRegistrationRepository pendingRegistrationRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Test
-    @DisplayName("Registro de usuario: Crea automáticamente una Persona (Client) y el Usuario asociado")
-    public void testRegisterClientCreatesUserAndPerson() {
+    @DisplayName("Registro de usuario: No crea el usuario en BBDD hasta validar el código de verificación")
+    public void testRegisterClientDoesNotCreateUserUntilVerified() {
         String email = "nuevo.cliente." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
 
-        User createdUser = userService.registerClient("Carlos", "Gomez", email, "SecurePass123");
+        PendingRegistration pending = userService.registerClient("Carlos", "Gomez", email, "SecurePass123");
 
-        assertNotNull(createdUser, "El usuario creado no debe ser nulo");
+        assertNotNull(pending, "El registro pendiente no debe ser nulo");
+        assertEquals(email.toLowerCase(), pending.getEmail());
+        assertNotNull(pending.getVerificationCode(), "Debe existir un código de verificación");
+
+        // Validar que el usuario NO existe en la base de datos antes de verificar el código
+        assertTrue(userRepository.findByUsernameIgnoreCase(email).isEmpty(), "El usuario NO debe existir en la base de datos antes de verificar");
+
+        // Ahora validar el código
+        boolean verified = userService.verifyAccount(email, pending.getVerificationCode());
+        assertTrue(verified, "La verificación debe ser exitosa");
+
+        // Validar que AHORA SÍ el usuario fue creado en la base de datos
+        User createdUser = userRepository.findByUsernameIgnoreCase(email).orElse(null);
+        assertNotNull(createdUser, "El usuario debe existir tras la verificación");
         assertNotNull(createdUser.getId(), "El usuario debe tener un ID asignado");
         assertEquals(email.toLowerCase(), createdUser.getUsername());
         assertEquals(Role.CLIENT, createdUser.getRole(), "El rol por defecto de registro debe ser CLIENT");
+        assertTrue(createdUser.getVerified(), "El usuario debe quedar verificado");
+        assertNull(createdUser.getVerificationCode(), "El código debe removerse del usuario");
         assertTrue(passwordEncoder.matches("SecurePass123", createdUser.getPassword()), "La contraseña debe estar hasheada con BCrypt");
 
         // Validar que se creó la Persona y es de tipo Client
@@ -65,18 +87,29 @@ public class UserServiceIntegrationTest {
         assertTrue(createdUser.getPerson() instanceof Client, "La persona creada para un CLIENT debe ser instancia de Client");
         Client client = (Client) createdUser.getPerson();
         assertNotNull(client.getClientNumber(), "El cliente debe tener un número de cliente autogenerado");
+
+        // Validar que la solicitud pendiente se eliminó
+        assertTrue(pendingRegistrationRepository.findByEmailIgnoreCase(email).isEmpty(), "El registro pendiente debe haberse eliminado tras la verificación");
     }
 
     @Test
-    @DisplayName("Registro de cliente: Permite registrar con datos completos de persona (idType, idNumber, dateOfBirth)")
+    @DisplayName("Registro de cliente: Permite registrar y verificar con datos completos de persona (idType, idNumber, dateOfBirth)")
     public void testRegisterClientWithFullDetails() {
         String email = "cliente.completo." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
         String idNumber = String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits()) % 90000000L + 10000000L);
         LocalDate dob = LocalDate.of(1998, 7, 15);
 
-        User createdUser = userService.registerClient("Maria", "Rodriguez", IDType.PASAPORTE, idNumber, dob, email, "PasswordFull123");
+        PendingRegistration pending = userService.registerClient("Maria", "Rodriguez", IDType.PASAPORTE, idNumber, dob, email, "PasswordFull123");
+        assertNotNull(pending);
 
-        assertNotNull(createdUser);
+        // Antes del código no existe en UserRepository
+        assertTrue(userRepository.findByUsernameIgnoreCase(email).isEmpty());
+
+        // Verificar
+        boolean verified = userService.verifyAccount(email, pending.getVerificationCode());
+        assertTrue(verified);
+
+        User createdUser = userRepository.findByUsernameIgnoreCase(email).orElseThrow();
         assertEquals(email.toLowerCase(), createdUser.getUsername());
         assertEquals(Role.CLIENT, createdUser.getRole());
 
@@ -92,14 +125,16 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Borrado lógico: Reactiva una cuenta borrada si se vuelve a registrar con el mismo correo")
+    @DisplayName("Borrado lógico: Reactiva una cuenta borrada si se vuelve a registrar con el mismo correo y se verifica")
     public void testRegisterClientReactivatesDeletedAccountWithSameEmail() {
         String email = "reactivar.cliente." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
         String idNumber = String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits()) % 90000000L + 10000000L);
         LocalDate dob = LocalDate.of(1995, 5, 20);
 
-        // 1. Crear usuario original
-        User originalUser = userService.registerClient("Pedro", "Picapiedra", IDType.DNI, idNumber, dob, email, "ClaveVieja123");
+        // 1. Crear usuario original y verificarlo
+        PendingRegistration pending = userService.registerClient("Pedro", "Picapiedra", IDType.DNI, idNumber, dob, email, "ClaveVieja123");
+        userService.verifyAccount(email, pending.getVerificationCode());
+        User originalUser = userRepository.findByUsernameIgnoreCase(email).orElseThrow();
         assertNotNull(originalUser);
         assertFalse(originalUser.getDeleted());
 
@@ -110,10 +145,11 @@ public class UserServiceIntegrationTest {
         assertTrue(deletedUser.getPerson().getDeleted(), "La persona debe quedar marcada como borrada");
 
         // 3. Volver a registrar con el MISMO correo y DNI
-        User reactivatedUser = userService.registerClient("Pedro Renacido", "Picapiedra", IDType.DNI, idNumber, dob, email, "NuevaClave456");
+        PendingRegistration pending2 = userService.registerClient("Pedro Renacido", "Picapiedra", IDType.DNI, idNumber, dob, email, "NuevaClave456");
+        userService.verifyAccount(email, pending2.getVerificationCode());
 
         // 4. Validar que no arrojó error, reutilizó la fila y está reactivada
-        assertNotNull(reactivatedUser);
+        User reactivatedUser = userRepository.findByUsernameIgnoreCase(email).orElseThrow();
         assertEquals(originalUser.getId(), reactivatedUser.getId(), "Debe reutilizar el mismo registro de usuario");
         assertFalse(reactivatedUser.getDeleted(), "El usuario debe volver a estar activo");
         assertFalse(reactivatedUser.getPerson().getDeleted(), "La persona debe volver a estar activa");
@@ -204,7 +240,8 @@ public class UserServiceIntegrationTest {
     public void testDuplicateEmailThrowsException() {
         String email = "duplicado." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
 
-        userService.registerClient("Primero", "Perez", email, "Password123");
+        PendingRegistration pending = userService.registerClient("Primero", "Perez", email, "Password123");
+        userService.verifyAccount(email, pending.getVerificationCode());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             userService.registerClient("Segundo", "Lopez", email, "Password456");
@@ -217,7 +254,9 @@ public class UserServiceIntegrationTest {
     @DisplayName("Actualización: Se actualizan los datos del perfil y de la persona asociada")
     public void testUpdateProfileUpdatesUserAndPerson() {
         String email = "original." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
-        User user = userService.registerClient("NombreOriginal", "ApellidoOriginal", email, "Password123");
+        PendingRegistration pending = userService.registerClient("NombreOriginal", "ApellidoOriginal", email, "Password123");
+        userService.verifyAccount(email, pending.getVerificationCode());
+        User user = userRepository.findByUsernameIgnoreCase(email).orElseThrow();
 
         String newEmail = "modificado." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
         User updated = userService.updateProfile(user.getId(), "NombreNuevo", "ApellidoNuevo", newEmail, "NewPassword123");
@@ -237,9 +276,10 @@ public class UserServiceIntegrationTest {
         String email3 = "user3." + UUID.randomUUID().toString().substring(0, 6) + "@test.com";
         LocalDate dob = LocalDate.of(1995, 8, 15);
 
-        // 1. Primer registro para esta persona
-        User user1 = userService.registerClient("Luciano", "Perez", IDType.DNI, dni, dob, email1, "Clave12345");
-        assertNotNull(user1);
+        // 1. Primer registro y verificación para esta persona
+        PendingRegistration p1 = userService.registerClient("Luciano", "Perez", IDType.DNI, dni, dob, email1, "Clave12345");
+        userService.verifyAccount(email1, p1.getVerificationCode());
+        User user1 = userRepository.findByUsernameIgnoreCase(email1).orElseThrow();
         assertNotNull(user1.getPerson());
         UUID personId = user1.getPerson().getId();
 
@@ -247,8 +287,9 @@ public class UserServiceIntegrationTest {
         assertEquals(1, personRepository.findByIdNumber(dni).stream().count());
 
         // 2. Segundo registro con OTRO email pero el MISMO DNI
-        User user2 = userService.registerClient("Luciano", "Perez", IDType.DNI, dni, dob, email2, "Clave67890");
-        assertNotNull(user2);
+        PendingRegistration p2 = userService.registerClient("Luciano", "Perez", IDType.DNI, dni, dob, email2, "Clave67890");
+        userService.verifyAccount(email2, p2.getVerificationCode());
+        User user2 = userRepository.findByUsernameIgnoreCase(email2).orElseThrow();
         assertNotNull(user2.getPerson());
         assertEquals(personId, user2.getPerson().getId(), "El segundo usuario debe estar vinculado a la misma persona");
 
@@ -282,8 +323,10 @@ public class UserServiceIntegrationTest {
         assertTrue(empUser.getPerson() instanceof Employee, "La persona debe ser de tipo Employee");
         UUID employeePersonId = empUser.getPerson().getId();
 
-        // 2. Registrarse desde la web con ese mismo DNI
-        User clientUser = userService.registerClient("Marcos", "Empleado", IDType.DNI, dni, dob, clientEmail, "ClientPass123");
+        // 2. Registrarse desde la web con ese mismo DNI y verificar
+        PendingRegistration pClient = userService.registerClient("Marcos", "Empleado", IDType.DNI, dni, dob, clientEmail, "ClientPass123");
+        userService.verifyAccount(clientEmail, pClient.getVerificationCode());
+        User clientUser = userRepository.findByUsernameIgnoreCase(clientEmail).orElseThrow();
         assertNotNull(clientUser);
         assertEquals(employeePersonId, clientUser.getPerson().getId(), "El cliente debe reutilizar la misma Persona (Employee) ya existente");
         assertEquals(2, userRepository.countByPersonIdAndDeletedFalse(employeePersonId), "Debe haber 2 usuarios vinculados a este empleado");

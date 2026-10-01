@@ -94,7 +94,10 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
 
-            // 2. Configuración de Form Login (coincide con templates/login.html)
+            // 2. Desactivar CSRF para webhooks y callbacks de pasarelas de pago externas (Mercado Pago)
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/checkout/mp/**"))
+
+            // 3. Configuración de Form Login (coincide con templates/login.html)
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login") // Endpoint POST manejado por Spring Security
@@ -118,7 +121,7 @@ public class SecurityConfig {
                 .permitAll()
             )
 
-            // 3. Configuración de Cierre de Sesión (Logout)
+            // 4. Configuración de Cierre de Sesión (Logout)
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/?logout=true")
@@ -126,13 +129,6 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             );
-
-            // 4. Configuración de "Recordarme" (Remember-me) - Requiere un bean UserDetailsService activo
-            // .rememberMe(remember -> remember
-            //     .key("zeroShopRememberMeSecretKey")
-            //     .tokenValiditySeconds(7 * 24 * 60 * 60)
-            //     .rememberMeParameter("remember-me")
-            // );
 
         return http.build();
     }
@@ -155,4 +151,3 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
-

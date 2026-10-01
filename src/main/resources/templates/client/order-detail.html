@@ -48,8 +48,28 @@
             <i class="bi bi-x-octagon-fill me-2"></i>Esta compra ha sido <strong>ANULADA / CANCELADA</strong>.
         </div>
 
+        <!-- Alerta de acreditación si está en estado PENDIENTE DE PAGO -->
+        <div th:if="${order.status.name() == 'PENDING_PAYMENT'}" class="alert alert-warning d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4 shadow-sm">
+            <div>
+                <i class="bi bi-clock-history me-2 fs-5"></i>
+                <span th:if="${order.paymentMethod != null and order.paymentMethod.name() == 'MERCADO_PAGO'}">
+                    Este pedido se encuentra <strong>Pendiente de Pago por Mercado Pago</strong>. Si ya completaste la transacción en Mercado Pago, confirma aquí la acreditación:
+                </span>
+                <span th:if="${order.paymentMethod != null and order.paymentMethod.name() == 'CASH'}">
+                    Este pedido está reservado para <strong>Pago en Efectivo</strong> al retirar en la sucursal seleccionada o contra entrega.
+                </span>
+                <span th:if="${order.paymentMethod == null or (order.paymentMethod.name() != 'MERCADO_PAGO' and order.paymentMethod.name() != 'CASH')}">
+                    Este pedido se encuentra <strong>Pendiente de Pago</strong>. Si abonaste a través de Mercado Pago, confirma aquí la acreditación:
+                </span>
+            </div>
+            <a th:if="${order.paymentMethod == null or order.paymentMethod.name() == 'MERCADO_PAGO'}"
+               th:href="@{/checkout/mp/success(orderId=${order.id})}" class="btn btn-success btn-sm fw-semibold text-nowrap">
+                <i class="bi bi-check-circle-fill me-1"></i>Confirmar Acreditación
+            </a>
+        </div>
+
         <!-- 1. Línea de Tiempo Oficial del TP Integrador: 5 Estados -->
-        <div class="card border-0 shadow-sm p-4 mb-4" th:if="${order.status.name() != 'CANCELLED'}">
+        <div class="card border-0 shadow-sm p-4 mb-4" th:if="${order.status.name() != 'CANCELLED'}\">
             <h5 class="fw-bold mb-4">Estado del Seguimiento Oficial</h5>
             <div class="row g-2 text-center">
                 <!-- 1. PENDIENTE DE PAGO -->
@@ -172,6 +192,22 @@
                 <div class="card border-0 shadow-sm p-4">
                     <h6 class="fw-bold text-dark mb-3"><i class="bi bi-wallet2 me-2 text-info"></i>Información de Pago</h6>
                     <div class="small text-muted">
+                        <div class="mb-2">
+                            <strong class="text-dark">Medio de Pago:</strong> 
+                            <span th:if="${order.paymentMethod != null}"
+                                  class="badge fw-semibold"
+                                  th:classappend="${order.paymentMethod.name() == 'MERCADO_PAGO' ? 'text-white' : 
+                                                  (order.paymentMethod.name() == 'CASH' ? 'bg-success text-white' : 
+                                                  (order.paymentMethod.name() == 'CREDIT' ? 'bg-info text-dark' : 'bg-primary text-white'))}"
+                                  th:style="${order.paymentMethod.name() == 'MERCADO_PAGO' ? 'background-color: #009ee3 !important;' : ''}">
+                                <i class="bi me-1" 
+                                   th:classappend="${order.paymentMethod.name() == 'MERCADO_PAGO' ? 'bi-credit-card-2-front-fill' : 
+                                                   (order.paymentMethod.name() == 'CASH' ? 'bi-cash-stack' : 
+                                                   (order.paymentMethod.name() == 'CREDIT' ? 'bi-credit-card' : 'bi-credit-card-2-front'))}"></i>
+                                <span th:text="${order.paymentMethod.displayName}">Mercado Pago</span>
+                            </span>
+                            <span th:if="${order.paymentMethod == null}" class="badge bg-light text-muted border">No especificado</span>
+                        </div>
                         <div class="mb-2">
                             <strong class="text-dark">Estado Oficial:</strong> 
                             <span class="badge" th:classappend="${order.status.name() == 'PAID' ? 'bg-success' : 'bg-warning text-dark'}" th:text="${order.status.displayName}">PAGO REALIZADO</span>
