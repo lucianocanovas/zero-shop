@@ -113,8 +113,11 @@ public class CategoryController {
 
         try {
             catalogService.createCategoryOrSubCategory(name, description, parentId);
+            redirectAttributes.addFlashAttribute("success", "Categoría guardada exitosamente.");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "No se pudo guardar la categoría: " + e.getMessage());
         }
         return "redirect:/dashboard/categories";
     }
@@ -127,7 +130,7 @@ public class CategoryController {
                                      @RequestParam(value = "description", required = false) String description,
                                      RedirectAttributes redirectAttributes) {
         if ("DELETE".equalsIgnoreCase(method)) {
-            return deleteCategory(id);
+            return deleteCategory(id, redirectAttributes);
         }
         if (name != null) {
             return updateCategory(id, name, description, redirectAttributes);
@@ -137,8 +140,8 @@ public class CategoryController {
 
     // POST /dashboard/categories/{id}/delete: Eliminación directa mediante POST para evitar fallos de formularios HTML
     @PostMapping("/{id}/delete")
-    public String deleteCategoryPost(@PathVariable("id") UUID id) {
-        return deleteCategory(id);
+    public String deleteCategoryPost(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes) {
+        return deleteCategory(id, redirectAttributes);
     }
 
     // PUT /dashboard/categories/{id}: Actualiza una categoría existente
@@ -149,18 +152,25 @@ public class CategoryController {
                                  RedirectAttributes redirectAttributes) {
         try {
             categoryService.updateCategory(id, name, description);
+            redirectAttributes.addFlashAttribute("success", "Categoría actualizada exitosamente.");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "No se pudo actualizar la categoría: " + e.getMessage());
         }
         return "redirect:/dashboard/categories";
     }
 
     // DELETE /dashboard/categories/{id}: Elimina lógicamente una categoría
     @DeleteMapping("/{id}")
-    public String deleteCategory(@PathVariable("id") UUID id) {
+    public String deleteCategory(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes) {
         try {
             catalogService.deleteCategory(id);
-        } catch (IllegalArgumentException ignored) {
+            redirectAttributes.addFlashAttribute("success", "Categoría eliminada con éxito.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "No se pudo eliminar la categoría: " + e.getMessage());
         }
         return "redirect:/dashboard/categories";
     }

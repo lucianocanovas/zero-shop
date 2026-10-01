@@ -5,12 +5,14 @@ import ingsoftware.zeroshop.entity.catalog.SubCategory;
 import ingsoftware.zeroshop.repository.catalog.CategoryRepository;
 import ingsoftware.zeroshop.repository.catalog.SubCategoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class SubCategoryService {
 
     private final SubCategoryRepository subCategoryRepository;
@@ -30,6 +32,7 @@ public class SubCategoryService {
      * @param categoryId ID de la categoría padre.
      * @throws IllegalArgumentException si los datos son inválidos o ya existe la subcategoría en esa categoría.
      */
+    @Transactional(readOnly = true)
     public void validateSubCategory(String name, UUID categoryId) {
         if (categoryId == null) {
             throw new IllegalArgumentException("El ID de la categoría padre no puede ser nulo.");
@@ -63,6 +66,7 @@ public class SubCategoryService {
      * @param subCategory Entidad SubCategory a validar.
      * @throws IllegalArgumentException si la subcategoría es nula o inválida.
      */
+    @Transactional(readOnly = true)
     public void validateSubCategory(SubCategory subCategory) {
         if (subCategory == null) {
             throw new IllegalArgumentException("La subcategoría no puede ser nula.");
@@ -102,6 +106,7 @@ public class SubCategoryService {
      * @return La subcategoría encontrada si es válida y está activa.
      * @throws IllegalArgumentException si el ID es nulo o no se encuentra activa.
      */
+    @Transactional(readOnly = true)
     public SubCategory validateSubCategoryExists(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("El ID de la subcategoría no puede ser nulo.");
@@ -114,10 +119,25 @@ public class SubCategoryService {
     public void createSubCategory(String name, String description, UUID categoryId) {
         validateSubCategory(name, categoryId);
         Category category = categoryService.validateCategoryExists(categoryId);
+
+        String trimmedName = name.trim();
+        Optional<SubCategory> existingOpt = subCategoryRepository.findByNameIgnoreCaseAndCategoryId(trimmedName, categoryId);
+        if (existingOpt.isPresent()) {
+            SubCategory existing = existingOpt.get();
+            if (Boolean.TRUE.equals(existing.getDeleted())) {
+                existing.setDeleted(false);
+                existing.setDescription(description != null ? description.trim() : null);
+                existing.setCategory(category);
+                subCategoryRepository.save(existing);
+                return;
+            }
+        }
+
         SubCategory subCategory = new SubCategory();
-        subCategory.setName(name.trim());
+        subCategory.setName(trimmedName);
         subCategory.setDescription(description != null ? description.trim() : null);
         subCategory.setCategory(category);
+        subCategory.setDeleted(false);
         subCategoryRepository.save(subCategory);
     }
 
@@ -132,6 +152,7 @@ public class SubCategoryService {
         subCategoryRepository.save(subCategory);
     }
 
+    @Transactional(readOnly = true)
     public Optional<SubCategory> findActiveById(UUID id) {
         if (id == null) {
             return Optional.empty();
@@ -139,6 +160,7 @@ public class SubCategoryService {
         return subCategoryRepository.findByIdAndDeletedFalse(id);
     }
 
+    @Transactional(readOnly = true)
     public List<SubCategory> findByCategoryId(UUID categoryId) {
         if (categoryId == null) {
             return List.of();

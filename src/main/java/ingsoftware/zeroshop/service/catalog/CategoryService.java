@@ -3,10 +3,13 @@ package ingsoftware.zeroshop.service.catalog;
 import ingsoftware.zeroshop.entity.catalog.Category;
 import ingsoftware.zeroshop.repository.catalog.CategoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class CategoryService {
 
     // Lógica de negocio relacionada con categorías y subcategorías de productos
@@ -23,6 +26,7 @@ public class CategoryService {
      * @param name Nombre de la categoría.
      * @throws IllegalArgumentException si el nombre es nulo, vacío, fuera de los límites de longitud o ya existe.
      */
+    @Transactional(readOnly = true)
     public void validateCategory(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre de la categoría no puede estar vacío.");
@@ -47,6 +51,7 @@ public class CategoryService {
      * @param category Entidad Category a validar.
      * @throws IllegalArgumentException si la categoría es nula o sus datos no son válidos.
      */
+    @Transactional(readOnly = true)
     public void validateCategory(Category category) {
         if (category == null) {
             throw new IllegalArgumentException("La categoría no puede ser nula.");
@@ -76,6 +81,7 @@ public class CategoryService {
      * @return La categoría encontrada si es válida y está activa.
      * @throws IllegalArgumentException si el ID es nulo o no se encuentra activa.
      */
+    @Transactional(readOnly = true)
     public Category validateCategoryExists(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("El ID de la categoría no puede ser nulo.");
@@ -88,12 +94,22 @@ public class CategoryService {
     public void createCategory(String name, String description) {
         validateCategory(name);
 
-        Category category = new Category();
-        if (category.getId() == null) {
-            category.setId(UUID.randomUUID());
+        String trimmedName = name.trim();
+        Optional<Category> existingOpt = categoryRepository.findByNameIgnoreCase(trimmedName);
+        if (existingOpt.isPresent()) {
+            Category existing = existingOpt.get();
+            if (Boolean.TRUE.equals(existing.getDeleted())) {
+                existing.setDeleted(false);
+                existing.setDescription(description != null ? description.trim() : null);
+                categoryRepository.save(existing);
+                return;
+            }
         }
-        category.setName(name.trim());
+
+        Category category = new Category();
+        category.setName(trimmedName);
         category.setDescription(description != null ? description.trim() : null);
+        category.setDeleted(false);
         categoryRepository.save(category);
     }
 

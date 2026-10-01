@@ -43,6 +43,11 @@
                     <span th:text="${error}">Ha ocurrido un error.</span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${success}">Operación realizada con éxito.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
 
                 <!-- Barra de Búsqueda y Filtros -->
                 <div class="card border-0 shadow-sm p-3 mb-4">
