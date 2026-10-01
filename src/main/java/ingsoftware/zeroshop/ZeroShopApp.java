@@ -53,7 +53,6 @@ Que su memoria nos guíe y nos motive a seguir adelante con determinación y opt
 
 package ingsoftware.zeroshop;
 
-import ingsoftware.zeroshop.config.DotEnvInitializer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -74,9 +73,7 @@ public class ZeroShopApp {
 
     public static void main(String[] args) {
         loadDotEnv();
-        SpringApplication app = new SpringApplication(ZeroShopApp.class);
-        app.addInitializers(new DotEnvInitializer());
-        app.run(args);
+        SpringApplication.run(ZeroShopApp.class, args);
     }
 
     public static void loadDotEnv() {
