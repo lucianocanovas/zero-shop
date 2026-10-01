@@ -75,7 +75,7 @@
                             <button type="submit" class="btn btn-primary btn-sm flex-fill" title="Filtrar">
                                 <i class="bi bi-funnel me-1"></i>Filtrar
                             </button>
-                            <a th:href="@{/dashboard/categories}" class="btn btn-outline-secondary btn-sm" title="Limpiar">
+                            <a th:href="@{/dashboard/categories}" class="btn btn-icon btn-outline-secondary btn-sm" title="Limpiar">
                                 <i class="bi bi-x-lg"></i>
                             </a>
                         </div>
@@ -103,10 +103,10 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group btn-group-sm">
-                                            <a th:href="@{/dashboard/categories/{id}(id=${cat.id})}" class="btn btn-outline-secondary" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <a th:href="@{/dashboard/categories/{id}(id=${cat.id})}" class="btn btn-icon btn-outline-secondary" title="Editar"><i class="bi bi-pencil"></i></a>
                                             <form method="post" th:action="@{/dashboard/categories/{id}/delete(id=${cat.id})}" class="d-inline">
                                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                                <button type="submit" class="btn btn-outline-danger" title="Eliminar" onclick="return confirm('¿Eliminar esta categoría?')"><i class="bi bi-trash"></i></button>
+                                                <button type="submit" class="btn btn-icon btn-outline-danger" title="Eliminar" onclick="return confirm('¿Eliminar esta categoría?')"><i class="bi bi-trash"></i></button>
                                             </form>
                                         </div>
                                     </td>

@@ -104,7 +104,7 @@
                                     <td class="text-end">
                                         <div class="btn-group btn-group-sm">
                                             <a th:href="@{/dashboard/providers/{id}(id=${provider.id})}"
-                                                class="btn btn-outline-secondary" title="Editar"><i
+                                                class="btn btn-icon btn-outline-secondary" title="Editar"><i
                                                     class="bi bi-pencil"></i></a>
                                             <form method="post"
                                                 th:action="@{/dashboard/providers/{id}(id=${provider.id})}"
@@ -112,7 +112,7 @@
                                                 <input type="hidden" th:name="${_csrf.parameterName}"
                                                     th:value="${_csrf.token}">
                                                 <input type="hidden" name="_method" value="DELETE">
-                                                <button type="submit" class="btn btn-outline-danger" title="Eliminar"
+                                                <button type="submit" class="btn btn-icon btn-outline-danger" title="Eliminar"
                                                     onclick="return confirm('¿Eliminar este proveedor?')"><i
                                                         class="bi bi-trash"></i></button>
                                             </form>
