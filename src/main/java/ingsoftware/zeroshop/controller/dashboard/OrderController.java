@@ -19,22 +19,77 @@ public class OrderController {
 
     private final SaleOrderService saleOrderService;
     private final PaymentService paymentService;
+    private final ingsoftware.zeroshop.repository.org.OfficeRepository officeRepository;
 
-    public OrderController(SaleOrderService saleOrderService, PaymentService paymentService) {
+    public OrderController(SaleOrderService saleOrderService,
+                           PaymentService paymentService,
+                           ingsoftware.zeroshop.repository.org.OfficeRepository officeRepository) {
         this.saleOrderService = saleOrderService;
         this.paymentService = paymentService;
+        this.officeRepository = officeRepository;
     }
 
-    // GET /dashboard/sale-orders: Lista todas las órdenes de los clientes
+    // GET /dashboard/sale-orders: Lista todas las órdenes de los clientes con búsqueda, filtros y paginación
     @GetMapping("/dashboard/sale-orders")
-    public String listOrders(Model model) {
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public String listOrders(
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "status", required = false) OrderStatus status,
+            @RequestParam(name = "officeId", required = false) UUID officeId,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        int pageNum = (page != null && page > 0) ? page : 1;
         List<SaleOrder> orders = saleOrderService.getAllConfirmedOrders();
-        model.addAttribute("orders", orders);
+
+        if (search != null && !search.trim().isBlank()) {
+            String q = search.trim().toLowerCase();
+            orders = orders.stream()
+                    .filter(o -> (o.getId() != null && o.getId().toString().toLowerCase().contains(q))
+                            || (o.getClient() != null && (
+                                    (o.getClient().getFirstName() != null && o.getClient().getFirstName().toLowerCase().contains(q))
+                                    || (o.getClient().getLastName() != null && o.getClient().getLastName().toLowerCase().contains(q))
+                                    || (o.getClient().getIdNumber() != null && o.getClient().getIdNumber().toLowerCase().contains(q))
+                            )))
+                    .toList();
+        }
+
+        if (status != null) {
+            orders = orders.stream()
+                    .filter(o -> o.getStatus() == status)
+                    .toList();
+        }
+
+        if (officeId != null) {
+            orders = orders.stream()
+                    .filter(o -> o.getOffice() != null && officeId.equals(o.getOffice().getId()))
+                    .toList();
+        }
+
+        // Ordenar fecha descendente
+        orders = orders.stream()
+                .sorted((o1, o2) -> {
+                    if (o1.getDate() == null) return 1;
+                    if (o2.getDate() == null) return -1;
+                    return o2.getDate().compareTo(o1.getDate());
+                })
+                .toList();
+
+        ingsoftware.zeroshop.dto.PageResult<SaleOrder> pageResult = ingsoftware.zeroshop.dto.PageResult.of(orders, pageNum, 10);
+
+        model.addAttribute("orders", pageResult.getContent());
+        model.addAttribute("pageResult", pageResult);
+        model.addAttribute("statuses", OrderStatus.values());
+        model.addAttribute("offices", officeRepository.findAllByDeletedFalse());
+        model.addAttribute("search", search);
+        model.addAttribute("status", status);
+        model.addAttribute("officeId", officeId);
+
         return "dashboard/sale-orders";
     }
 
     // GET /dashboard/sale-orders/:id: Muestra el detalle de una orden de cliente
     @GetMapping("/dashboard/sale-orders/{id}")
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public String getOrderDetail(@PathVariable("id") UUID id, Model model) {
         SaleOrder order = saleOrderService.getOrderById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + id));

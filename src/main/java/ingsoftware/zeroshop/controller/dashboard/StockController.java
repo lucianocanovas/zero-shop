@@ -32,17 +32,55 @@ public class StockController {
         this.officeRepository = officeRepository;
     }
 
-    // GET /dashboard/stock: Muestra el listado de existencias de inventario
+    // GET /dashboard/stock: Muestra el listado de existencias de inventario con búsqueda, filtros y paginación
     @GetMapping("/dashboard/stock")
     @Transactional(readOnly = true)
-    public String listStock(Model model) {
+    public String listStock(
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "officeId", required = false) UUID officeId,
+            @RequestParam(name = "level", required = false) String level,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        int pageNum = (page != null && page > 0) ? page : 1;
         List<Stock> stocks = stockService.getAllActiveStock();
         List<Product> products = productRepository.findAllByDeletedFalse();
         List<Office> offices = officeRepository.findAllByDeletedFalse();
 
-        model.addAttribute("stocks", stocks);
+        if (search != null && !search.trim().isBlank()) {
+            String q = search.trim().toLowerCase();
+            stocks = stocks.stream()
+                    .filter(s -> s.getProduct() != null && (
+                            (s.getProduct().getName() != null && s.getProduct().getName().toLowerCase().contains(q))
+                            || (s.getProduct().getCode() != null && s.getProduct().getCode().toLowerCase().contains(q))
+                    ))
+                    .toList();
+        }
+
+        if (officeId != null) {
+            stocks = stocks.stream()
+                    .filter(s -> s.getOffice() != null && officeId.equals(s.getOffice().getId()))
+                    .toList();
+        }
+
+        if (level != null && !level.isBlank()) {
+            if ("out".equalsIgnoreCase(level)) {
+                stocks = stocks.stream().filter(s -> s.getQuantity() <= 0).toList();
+            } else if ("low".equalsIgnoreCase(level)) {
+                stocks = stocks.stream().filter(s -> s.getQuantity() > 0 && s.getQuantity() <= 5).toList();
+            } else if ("normal".equalsIgnoreCase(level)) {
+                stocks = stocks.stream().filter(s -> s.getQuantity() > 5).toList();
+            }
+        }
+
+        ingsoftware.zeroshop.dto.PageResult<Stock> pageResult = ingsoftware.zeroshop.dto.PageResult.of(stocks, pageNum, 10);
+
+        model.addAttribute("stocks", pageResult.getContent());
+        model.addAttribute("pageResult", pageResult);
         model.addAttribute("products", products);
         model.addAttribute("offices", offices);
+        model.addAttribute("search", search);
+        model.addAttribute("officeId", officeId);
+        model.addAttribute("level", level);
 
         return "dashboard/stock";
     }

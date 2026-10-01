@@ -47,7 +47,9 @@ public class SecurityConfig {
                     "/categories/**",
                     "/offers",
                     "/checkout/mp/**",
-                    "/checkout/success"
+                    "/checkout/success",
+                    "/api/locations/**",
+                    "/dashboard/locations/**"
                 ).permitAll()
 
                 // Rutas públicas de autenticación y registro

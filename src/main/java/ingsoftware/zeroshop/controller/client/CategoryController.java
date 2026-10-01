@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -40,7 +41,12 @@ public class CategoryController {
 
     // GET /categories: Muestra las categorías disponibles junto con sus subcategorías
     @GetMapping
-    public String getCategories(Model model) {
+    public String getCategories(
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "hasSubs", required = false) Boolean hasSubs,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        int pageNum = (page != null && page > 0) ? page : 1;
         List<Category> activeCategories = catalogService.getAllActiveCategories();
 
         List<CategoryViewDto> categoryViews = activeCategories.stream()
@@ -64,7 +70,29 @@ public class CategoryController {
                 })
                 .toList();
 
-        model.addAttribute("categories", categoryViews);
+        // Búsqueda
+        if (search != null && !search.trim().isBlank()) {
+            String q = search.trim().toLowerCase();
+            categoryViews = categoryViews.stream()
+                    .filter(c -> (c.name() != null && c.name().toLowerCase().contains(q))
+                            || (c.description() != null && c.description().toLowerCase().contains(q))
+                            || (c.subCategories() != null && c.subCategories().stream().anyMatch(s -> s.getName().toLowerCase().contains(q))))
+                    .toList();
+        }
+
+        // Filtro por subcategorías
+        if (hasSubs != null) {
+            categoryViews = categoryViews.stream()
+                    .filter(c -> hasSubs ? (c.subCategories() != null && !c.subCategories().isEmpty()) : (c.subCategories() == null || c.subCategories().isEmpty()))
+                    .toList();
+        }
+
+        ingsoftware.zeroshop.dto.PageResult<CategoryViewDto> pageResult = ingsoftware.zeroshop.dto.PageResult.of(categoryViews, pageNum, 4);
+
+        model.addAttribute("categories", pageResult.getContent());
+        model.addAttribute("pageResult", pageResult);
+        model.addAttribute("search", search);
+        model.addAttribute("hasSubs", hasSubs);
         return "client/categories";
     }
 

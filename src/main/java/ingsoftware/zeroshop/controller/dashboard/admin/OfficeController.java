@@ -35,10 +35,15 @@ public class OfficeController {
     @Autowired
     private OfficeService officeService;
 
-    // GET /dashboard/offices o /dashboard/admin/offices: Lista todas las sucursales
+    // GET /dashboard/offices o /dashboard/admin/offices: Lista todas las sucursales con búsqueda, filtro y paginación
     @GetMapping({"/dashboard/offices", "/dashboard/admin/offices"})
     @Transactional(readOnly = true)
-    public String listOffices(Model model) {
+    public String listOffices(
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "type", required = false) ingsoftware.zeroshop.enums.OfficeType type,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        int pageNum = (page != null && page > 0) ? page : 1;
         java.util.List<OfficeFormDTO> officeDTOs = new java.util.ArrayList<>();
         for (Office office : officeService.getAllOffices()) {
             OfficeFormDTO dto = new OfficeFormDTO();
@@ -64,7 +69,35 @@ public class OfficeController {
             
             officeDTOs.add(dto);
         }
-        model.addAttribute("offices", officeDTOs);
+
+        if (search != null && !search.trim().isBlank()) {
+            String q = search.trim().toLowerCase();
+            officeDTOs = officeDTOs.stream().filter(o -> {
+                boolean matchName = o.getName() != null && o.getName().toLowerCase().contains(q);
+                boolean matchCuit = o.getCuit() != null && o.getCuit().toLowerCase().contains(q);
+                boolean matchPhone = o.getPhone() != null && o.getPhone().toLowerCase().contains(q);
+                boolean matchAddress = false;
+                if (o.getAddress() != null) {
+                    String street = o.getAddress().getStreet() != null ? o.getAddress().getStreet().toLowerCase() : "";
+                    String num = o.getAddress().getNumber() != null ? o.getAddress().getNumber().toString() : "";
+                    matchAddress = street.contains(q) || num.contains(q);
+                }
+                return matchName || matchCuit || matchPhone || matchAddress;
+            }).toList();
+        }
+
+        if (type != null) {
+            officeDTOs = officeDTOs.stream().filter(o -> type.name().equalsIgnoreCase(o.getType())).toList();
+        }
+
+        ingsoftware.zeroshop.dto.PageResult<OfficeFormDTO> pageResult = ingsoftware.zeroshop.dto.PageResult.of(officeDTOs, pageNum, 10);
+
+        model.addAttribute("offices", pageResult.getContent());
+        model.addAttribute("pageResult", pageResult);
+        model.addAttribute("search", search);
+        model.addAttribute("selectedType", type);
+        model.addAttribute("officeTypes", ingsoftware.zeroshop.enums.OfficeType.values());
+
         return "dashboard/admin/offices";
     }
 

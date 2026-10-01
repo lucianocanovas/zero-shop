@@ -1,11 +1,19 @@
 package ingsoftware.zeroshop.service.org;
 
+import ingsoftware.zeroshop.entity.actor.ContactEmail;
+import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.org.Stock;
+import ingsoftware.zeroshop.enums.Role;
+import ingsoftware.zeroshop.repository.actor.UserRepository;
 import ingsoftware.zeroshop.repository.catalog.ProductRepository;
 import ingsoftware.zeroshop.repository.org.OfficeRepository;
 import ingsoftware.zeroshop.repository.org.StockRepository;
+import ingsoftware.zeroshop.service.notification.EmailService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,16 +24,32 @@ import java.util.UUID;
 @Service
 public class StockService {
 
+    private static final Logger log = LoggerFactory.getLogger(StockService.class);
+    public static final int CRITICAL_STOCK_THRESHOLD = 5;
+
     private final StockRepository stockRepository;
     private final ProductRepository productRepository;
     private final OfficeRepository officeRepository;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+
+    @Autowired
+    public StockService(StockRepository stockRepository,
+                        ProductRepository productRepository,
+                        OfficeRepository officeRepository,
+                        @Autowired(required = false) UserRepository userRepository,
+                        @Autowired(required = false) EmailService emailService) {
+        this.stockRepository = stockRepository;
+        this.productRepository = productRepository;
+        this.officeRepository = officeRepository;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+    }
 
     public StockService(StockRepository stockRepository,
                         ProductRepository productRepository,
                         OfficeRepository officeRepository) {
-        this.stockRepository = stockRepository;
-        this.productRepository = productRepository;
-        this.officeRepository = officeRepository;
+        this(stockRepository, productRepository, officeRepository, null, null);
     }
 
     public List<Stock> getAllActiveStock() {
@@ -75,7 +99,8 @@ public class StockService {
         }
 
         stock.setQuantity(stock.getQuantity() - quantity);
-        stockRepository.save(stock);
+        Stock saved = stockRepository.save(stock);
+        checkAndNotifyCriticalStock(saved);
     }
 
     @Transactional
@@ -108,7 +133,9 @@ public class StockService {
         }
         Stock stock = getStockById(stockId);
         stock.setQuantity(newQuantity);
-        return stockRepository.save(stock);
+        Stock saved = stockRepository.save(stock);
+        checkAndNotifyCriticalStock(saved);
+        return saved;
     }
 
     @Transactional
@@ -122,7 +149,9 @@ public class StockService {
             throw new IllegalStateException("El ajuste resultaría en un stock negativo (" + updated + ").");
         }
         stock.setQuantity(updated);
-        return stockRepository.save(stock);
+        Stock saved = stockRepository.save(stock);
+        checkAndNotifyCriticalStock(saved);
+        return saved;
     }
 
     @Transactional
@@ -145,6 +174,49 @@ public class StockService {
                 });
 
         stock.setQuantity(quantity);
-        return stockRepository.save(stock);
+        Stock saved = stockRepository.save(stock);
+        checkAndNotifyCriticalStock(saved);
+        return saved;
+    }
+
+    private void checkAndNotifyCriticalStock(Stock stock) {
+        if (stock == null || stock.getQuantity() == null || stock.getQuantity() > CRITICAL_STOCK_THRESHOLD) {
+            return;
+        }
+
+        if (emailService == null || userRepository == null) {
+            return;
+        }
+
+        try {
+            List<User> admins = userRepository.findByRoleAndDeletedFalse(Role.ADMIN);
+            if (admins == null || admins.isEmpty()) {
+                return;
+            }
+
+            String productName = stock.getProduct() != null ? stock.getProduct().getName() : "Producto";
+            String productCode = stock.getProduct() != null ? stock.getProduct().getCode() : "";
+            String officeName = stock.getOffice() != null ? stock.getOffice().getName() : "Depósito";
+            int currentStock = stock.getQuantity();
+
+            for (User admin : admins) {
+                String email = null;
+                if (admin.getUsername() != null && admin.getUsername().contains("@")) {
+                    email = admin.getUsername();
+                } else if (admin.getPerson() != null && admin.getPerson().getContact() != null) {
+                    email = admin.getPerson().getContact().stream()
+                            .filter(c -> c instanceof ContactEmail)
+                            .map(c -> ((ContactEmail) c).getEmail())
+                            .findFirst().orElse(null);
+                }
+
+                if (email != null && !email.isBlank()) {
+                    emailService.sendCriticalStockAlertEmail(email, productName, productCode, currentStock, officeName);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Error al enviar alerta de stock crítico para producto {}: {}",
+                    stock.getProduct() != null ? stock.getProduct().getId() : "desconocido", e.getMessage());
+        }
     }
 }

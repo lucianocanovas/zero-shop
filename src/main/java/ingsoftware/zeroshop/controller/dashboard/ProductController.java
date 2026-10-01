@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Controller("dashboardProductController")
@@ -32,10 +33,80 @@ public class ProductController {
         this.fileStorageService = fileStorageService;
     }
 
-    // GET /dashboard/products: Lista todos los productos en el dashboard (Admin y Employee)
+    // GET /dashboard/products: Lista todos los productos en el dashboard con filtros, búsqueda y paginación
     @GetMapping("/dashboard/products")
-    public String listProducts(Model model) {
-        model.addAttribute("products", productService.findAllActive());
+    public String listProducts(
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "categoryId", required = false) UUID categoryId,
+            @RequestParam(name = "subCategoryId", required = false) UUID subCategoryId,
+            @RequestParam(name = "size", required = false) Size size,
+            @RequestParam(name = "onSale", required = false) Boolean onSale,
+            @RequestParam(name = "stockStatus", required = false) String stockStatus,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        int pageNum = (page != null && page > 0) ? page : 1;
+
+        List<Product> products = productService.findAllActive();
+
+        if (search != null && !search.trim().isBlank()) {
+            String q = search.trim().toLowerCase();
+            products = products.stream()
+                    .filter(p -> (p.getName() != null && p.getName().toLowerCase().contains(q))
+                            || (p.getCode() != null && p.getCode().toLowerCase().contains(q))
+                            || (p.getDescription() != null && p.getDescription().toLowerCase().contains(q)))
+                    .toList();
+        }
+
+        if (categoryId != null) {
+            products = products.stream()
+                    .filter(p -> p.getCategory() != null && categoryId.equals(p.getCategory().getId()))
+                    .toList();
+        }
+
+        if (subCategoryId != null) {
+            products = products.stream()
+                    .filter(p -> p.getSubCategory() != null && subCategoryId.equals(p.getSubCategory().getId()))
+                    .toList();
+        }
+
+        if (size != null) {
+            products = products.stream()
+                    .filter(p -> p.getSize() == size)
+                    .toList();
+        }
+
+        if (onSale != null) {
+            products = products.stream()
+                    .filter(p -> Boolean.valueOf(onSale).equals(p.getOnSale()))
+                    .toList();
+        }
+
+        if (stockStatus != null && !stockStatus.isBlank()) {
+            if ("in_stock".equalsIgnoreCase(stockStatus)) {
+                products = products.stream()
+                        .filter(p -> p.getStock() != null && p.getStock() > 0)
+                        .toList();
+            } else if ("out_of_stock".equalsIgnoreCase(stockStatus)) {
+                products = products.stream()
+                        .filter(p -> p.getStock() == null || p.getStock() == 0)
+                        .toList();
+            }
+        }
+
+        ingsoftware.zeroshop.dto.PageResult<Product> pageResult = ingsoftware.zeroshop.dto.PageResult.of(products, pageNum, 10);
+
+        model.addAttribute("products", pageResult.getContent());
+        model.addAttribute("pageResult", pageResult);
+        model.addAttribute("categories", categoryRepository.findAllByDeletedFalse());
+        model.addAttribute("subCategories", subCategoryRepository.findAllWithCategoryByDeletedFalse());
+        model.addAttribute("sizes", Size.values());
+        model.addAttribute("search", search);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("subCategoryId", subCategoryId);
+        model.addAttribute("size", size);
+        model.addAttribute("onSale", onSale);
+        model.addAttribute("stockStatus", stockStatus);
+
         return "dashboard/products";
     }
 

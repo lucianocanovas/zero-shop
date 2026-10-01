@@ -52,6 +52,48 @@
                     </div>
                 </div>
 
+                <!-- Barra de Búsqueda y Filtros de Stock -->
+                <div class="card border-0 shadow-sm p-3 mb-4">
+                    <form id="filterForm" method="get" th:action="@{/dashboard/stock}" class="row g-2 align-items-end">
+                        <input type="hidden" name="page" id="pageInput" th:value="${pageResult != null ? pageResult.pageNumber : 1}">
+
+                        <div class="col-12 col-md-4">
+                            <label for="search" class="form-label small fw-semibold text-muted">Buscar producto o SKU</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search" th:value="${search}" placeholder="Nombre o SKU...">
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <label for="officeId" class="form-label small fw-semibold text-muted">Sucursal</label>
+                            <select id="officeId" name="officeId" class="form-select form-select-sm">
+                                <option value="">Todas las sucursales</option>
+                                <option th:each="o : ${offices}" th:value="${o.id}" th:text="${o.name}" th:selected="${officeId != null and officeId == o.id}">Sucursal</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <label for="level" class="form-label small fw-semibold text-muted">Nivel de Stock</label>
+                            <select id="level" name="level" class="form-select form-select-sm">
+                                <option value="">Todos los niveles</option>
+                                <option value="normal" th:selected="${level == 'normal'}">Normal (> 5)</option>
+                                <option value="low" th:selected="${level == 'low'}">Bajo / Crítico (1 - 5)</option>
+                                <option value="out" th:selected="${level == 'out'}">Agotado (0)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-2 d-flex gap-1">
+                            <button type="submit" class="btn btn-primary btn-sm flex-fill" title="Filtrar">
+                                <i class="bi bi-funnel me-1"></i>Filtrar
+                            </button>
+                            <a th:href="@{/dashboard/stock}" class="btn btn-outline-secondary btn-sm" title="Limpiar">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Tabla de Stock -->
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="table-responsive">
@@ -107,6 +149,9 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Paginación Reutilizable -->
+                <div th:replace="~{common/fragments/pagination :: paginationBar(${pageResult})}"></div>
 
                 <!-- Modal Asignar Stock Directo -->
                 <div class="modal fade" id="newStockModal" tabindex="-1" aria-labelledby="newStockModalLabel" aria-hidden="true">

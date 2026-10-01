@@ -10,7 +10,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import ingsoftware.zeroshop.dto.PageResult;
+import ingsoftware.zeroshop.entity.actor.User;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Controller("dashboardAdminUserController")
@@ -24,8 +29,52 @@ public class UserController {
 
     // GET /dashboard/users o /dashboard/admin/users: Lista todos los usuarios del sistema
     @GetMapping({"/dashboard/users", "/dashboard/admin/users"})
-    public String listUsers(Model model) {
-        model.addAttribute("users", userService.findAll());
+    @Transactional(readOnly = true)
+    public String listUsers(
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "role", required = false) Role role,
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        int pageNum = (page != null && page > 0) ? page : 1;
+        List<User> users = userService.findAll();
+
+        if (search != null && !search.trim().isBlank()) {
+            String q = search.trim().toLowerCase();
+            users = users.stream().filter(u -> {
+                boolean matchUsername = u.getUsername() != null && u.getUsername().toLowerCase().contains(q);
+                boolean matchPerson = false;
+                if (u.getPerson() != null) {
+                    String fullName = (u.getPerson().getFirstName() + " " + u.getPerson().getLastName()).toLowerCase();
+                    boolean matchName = fullName.contains(q);
+                    boolean matchDni = u.getPerson().getIdNumber() != null && u.getPerson().getIdNumber().toLowerCase().contains(q);
+                    matchPerson = matchName || matchDni;
+                }
+                return matchUsername || matchPerson;
+            }).toList();
+        }
+
+        if (role != null) {
+            users = users.stream().filter(u -> u.getRole() == role).toList();
+        }
+
+        if (status != null && !status.isBlank()) {
+            if ("active".equalsIgnoreCase(status)) {
+                users = users.stream().filter(u -> Boolean.FALSE.equals(u.getDeleted())).toList();
+            } else if ("inactive".equalsIgnoreCase(status)) {
+                users = users.stream().filter(u -> Boolean.TRUE.equals(u.getDeleted())).toList();
+            }
+        }
+
+        PageResult<User> pageResult = PageResult.of(users, pageNum, 10);
+
+        model.addAttribute("users", pageResult.getContent());
+        model.addAttribute("pageResult", pageResult);
+        model.addAttribute("search", search);
+        model.addAttribute("selectedRole", role);
+        model.addAttribute("roles", Role.values());
+        model.addAttribute("status", status);
+
         return "dashboard/admin/users";
     }
 

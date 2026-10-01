@@ -49,6 +49,47 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
 
+                <!-- Barra de Búsqueda y Filtros -->
+                <div class="card border-0 shadow-sm p-3 mb-4">
+                    <form id="filterForm" method="get" th:action="@{/dashboard/admin/users}" class="row g-2 align-items-end">
+                        <input type="hidden" name="page" id="pageInput" th:value="${pageResult != null ? pageResult.pageNumber : 1}">
+
+                        <div class="col-12 col-md-5">
+                            <label for="search" class="form-label small fw-semibold text-muted">Buscar usuario</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search" th:value="${search}" placeholder="Username, email, nombre o DNI...">
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <label for="role" class="form-label small fw-semibold text-muted">Rol</label>
+                            <select id="role" name="role" class="form-select form-select-sm">
+                                <option value="">Todos los roles</option>
+                                <option th:each="r : ${roles}" th:value="${r.name()}" th:text="${r.name()}" th:selected="${selectedRole != null and selectedRole.name() == r.name()}">ADMIN</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-2">
+                            <label for="status" class="form-label small fw-semibold text-muted">Estado</label>
+                            <select id="status" name="status" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option value="active" th:selected="${status == 'active'}">Activos</option>
+                                <option value="inactive" th:selected="${status == 'inactive'}">Inactivos</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-2 d-flex gap-1">
+                            <button type="submit" class="btn btn-primary btn-sm flex-fill" title="Filtrar">
+                                <i class="bi bi-funnel me-1"></i>Filtrar
+                            </button>
+                            <a th:href="@{/dashboard/admin/users}" class="btn btn-outline-secondary btn-sm" title="Limpiar">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Tabla de Usuarios -->
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="table-responsive">
@@ -100,6 +141,9 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Paginación Reutilizable -->
+                <div th:replace="~{common/fragments/pagination :: paginationBar(${pageResult})}"></div>
             </main>
         </div>
     </div>

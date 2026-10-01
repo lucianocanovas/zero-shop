@@ -27,10 +27,15 @@ public class ProviderController {
     @Autowired
     private CityRepository cityRepository;
 
-    // GET /dashboard/providers: Lista los proveedores registrados
+    // GET /dashboard/providers: Lista los proveedores registrados con búsqueda, filtros y paginación
     @GetMapping("/dashboard/providers")
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public String listProviders(Model model) {
+    public String listProviders(
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "hasContact", required = false) Boolean hasContact,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        int pageNum = (page != null && page > 0) ? page : 1;
         java.util.List<SupplierFormDTO> providerDTOs = new java.util.ArrayList<>();
         for (Supplier supplier : supplierService.getAllSuppliers()) {
             SupplierFormDTO dto = new SupplierFormDTO();
@@ -47,7 +52,32 @@ public class ProviderController {
             }
             providerDTOs.add(dto);
         }
-        model.addAttribute("providers", providerDTOs);
+
+        if (search != null && !search.trim().isBlank()) {
+            String q = search.trim().toLowerCase();
+            providerDTOs = providerDTOs.stream()
+                    .filter(p -> (p.getName() != null && p.getName().toLowerCase().contains(q))
+                            || (p.getCuit() != null && p.getCuit().toLowerCase().contains(q))
+                            || (p.getEmail() != null && p.getEmail().toLowerCase().contains(q))
+                            || (p.getPhone() != null && p.getPhone().toLowerCase().contains(q)))
+                    .toList();
+        }
+
+        if (hasContact != null) {
+            providerDTOs = providerDTOs.stream()
+                    .filter(p -> hasContact
+                            ? ((p.getEmail() != null && !p.getEmail().isBlank()) || (p.getPhone() != null && !p.getPhone().isBlank()))
+                            : ((p.getEmail() == null || p.getEmail().isBlank()) && (p.getPhone() == null || p.getPhone().isBlank())))
+                    .toList();
+        }
+
+        ingsoftware.zeroshop.dto.PageResult<SupplierFormDTO> pageResult = ingsoftware.zeroshop.dto.PageResult.of(providerDTOs, pageNum, 10);
+
+        model.addAttribute("providers", pageResult.getContent());
+        model.addAttribute("pageResult", pageResult);
+        model.addAttribute("search", search);
+        model.addAttribute("hasContact", hasContact);
+
         return "dashboard/providers";
     }
 

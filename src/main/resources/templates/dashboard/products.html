@@ -49,6 +49,64 @@
                     </div>
                 </div>
 
+                <!-- Barra de Búsqueda y Filtros -->
+                <div class="card border-0 shadow-sm p-3 mb-4">
+                    <form id="filterForm" method="get" th:action="@{/dashboard/products}" class="row g-2 align-items-end">
+                        <input type="hidden" name="page" id="pageInput" th:value="${pageResult != null ? pageResult.pageNumber : 1}">
+
+                        <div class="col-12 col-md-3">
+                            <label for="search" class="form-label small fw-semibold text-muted">Buscar artículo</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search" th:value="${search}" placeholder="Nombre o SKU...">
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-2">
+                            <label for="categoryId" class="form-label small fw-semibold text-muted">Categoría</label>
+                            <select id="categoryId" name="categoryId" class="form-select form-select-sm">
+                                <option value="">Todas</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${categoryId != null and categoryId == cat.id}">Categoría</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-2">
+                            <label for="size" class="form-label small fw-semibold text-muted">Talle</label>
+                            <select id="size" name="size" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option th:each="s : ${sizes}" th:value="${s}" th:text="${s}" th:selected="${size != null and size == s}">Talle</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-2">
+                            <label for="stockStatus" class="form-label small fw-semibold text-muted">Stock</label>
+                            <select id="stockStatus" name="stockStatus" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option value="in_stock" th:selected="${stockStatus == 'in_stock'}">Con Stock</option>
+                                <option value="out_of_stock" th:selected="${stockStatus == 'out_of_stock'}">Sin Stock (0)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-1">
+                            <label for="onSale" class="form-label small fw-semibold text-muted">Oferta</label>
+                            <select id="onSale" name="onSale" class="form-select form-select-sm">
+                                <option value="">Todas</option>
+                                <option value="true" th:selected="${onSale == true}">Sí</option>
+                                <option value="false" th:selected="${onSale == false}">No</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-2 d-flex gap-1">
+                            <button type="submit" class="btn btn-primary btn-sm flex-fill" title="Filtrar">
+                                <i class="bi bi-funnel me-1"></i>Filtrar
+                            </button>
+                            <a th:href="@{/dashboard/products}" class="btn btn-outline-secondary btn-sm" title="Limpiar">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Tabla de Productos -->
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="table-responsive">
@@ -126,6 +184,9 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Paginación Reutilizable -->
+                <div th:replace="~{common/fragments/pagination :: paginationBar(${pageResult})}"></div>
             </main>
         </div>
     </div>

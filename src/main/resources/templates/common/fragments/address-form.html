@@ -105,7 +105,10 @@
                 }
 
                 fetch('/api/locations/states?countryId=' + countryId)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) throw new Error('HTTP ' + response.status);
+                        return response.json();
+                    })
                     .then(data => {
                         stateSelect.innerHTML = '<option value="">Seleccione una provincia...</option>';
                         data.forEach(state => {
@@ -116,6 +119,11 @@
                         });
                         stateSelect.disabled = false;
                         if (callback) callback();
+                    })
+                    .catch(err => {
+                        console.error('Error cargando provincias:', err);
+                        stateSelect.innerHTML = '<option value="">Error al cargar provincias</option>';
+                        stateSelect.disabled = false;
                     });
             }
 
@@ -129,7 +137,10 @@
                 }
 
                 fetch('/api/locations/cities?stateId=' + stateId)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) throw new Error('HTTP ' + response.status);
+                        return response.json();
+                    })
                     .then(data => {
                         citySelect.innerHTML = '<option value="">Seleccione una localidad...</option>';
                         data.forEach(city => {
@@ -141,6 +152,11 @@
                         });
                         citySelect.disabled = false;
                         if (callback) callback();
+                    })
+                    .catch(err => {
+                        console.error('Error cargando localidades:', err);
+                        citySelect.innerHTML = '<option value="">Error al cargar localidades</option>';
+                        citySelect.disabled = false;
                     });
             }
 

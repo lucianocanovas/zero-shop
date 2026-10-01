@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +33,12 @@ public class StockServiceUnitTest {
 
     @Mock
     private OfficeRepository officeRepository;
+
+    @Mock
+    private ingsoftware.zeroshop.repository.actor.UserRepository userRepository;
+
+    @Mock
+    private ingsoftware.zeroshop.service.notification.EmailService emailService;
 
     @InjectMocks
     private StockService stockService;
@@ -143,5 +150,76 @@ public class StockServiceUnitTest {
         assertFalse(stockService.hasAvailableStock(productId, officeId, 11));
         assertFalse(stockService.hasAvailableStock(productId, officeId, 0));
         assertFalse(stockService.hasAvailableStock(productId, officeId, -1));
+    }
+
+    @Test
+    @DisplayName("Unit: Notificación por email al administrador cuando el stock cae a nivel crítico (<= 5)")
+    public void testCriticalStockAlertEmailSentWhenStockReachesThreshold() {
+        UUID productId = UUID.randomUUID();
+        UUID officeId = UUID.randomUUID();
+
+        Product product = Product.builder().id(productId).name("Campera Zero").code("CMP-01").build();
+        Office office = new Office();
+        office.setId(officeId);
+        office.setName("Sucursal Mendoza");
+
+        Stock stock = Stock.builder()
+                .id(UUID.randomUUID())
+                .product(product)
+                .office(office)
+                .quantity(7)
+                .build();
+
+        ingsoftware.zeroshop.entity.actor.User adminUser = new ingsoftware.zeroshop.entity.actor.User();
+        adminUser.setUsername("admin@zeroshop.com");
+        adminUser.setRole(ingsoftware.zeroshop.enums.Role.ADMIN);
+
+        when(stockRepository.findByProductIdAndOfficeIdAndDeletedFalse(productId, officeId))
+                .thenReturn(Optional.of(stock));
+        when(stockRepository.save(any(Stock.class))).thenAnswer(i -> i.getArgument(0));
+        when(userRepository.findByRoleAndDeletedFalse(ingsoftware.zeroshop.enums.Role.ADMIN))
+                .thenReturn(List.of(adminUser));
+
+        // Descontamos 3 unidades: 7 - 3 = 4 (crítico <= 5)
+        stockService.decrementStock(productId, officeId, 3);
+
+        assertEquals(4, stock.getQuantity());
+        verify(emailService, times(1)).sendCriticalStockAlertEmail(
+                eq("admin@zeroshop.com"),
+                eq("Campera Zero"),
+                eq("CMP-01"),
+                eq(4),
+                eq("Sucursal Mendoza")
+        );
+    }
+
+    @Test
+    @DisplayName("Unit: No se envía email si el stock se mantiene por encima del umbral crítico (> 5)")
+    public void testNoEmailWhenStockRemainsAboveThreshold() {
+        UUID productId = UUID.randomUUID();
+        UUID officeId = UUID.randomUUID();
+
+        Product product = Product.builder().id(productId).name("Remera Sport").code("REM-02").build();
+        Office office = new Office();
+        office.setId(officeId);
+        office.setName("Sucursal Centro");
+
+        Stock stock = Stock.builder()
+                .id(UUID.randomUUID())
+                .product(product)
+                .office(office)
+                .quantity(20)
+                .build();
+
+        when(stockRepository.findByProductIdAndOfficeIdAndDeletedFalse(productId, officeId))
+                .thenReturn(Optional.of(stock));
+        when(stockRepository.save(any(Stock.class))).thenAnswer(i -> i.getArgument(0));
+
+        // Descontamos 5 unidades: 20 - 5 = 15 (> 5)
+        stockService.decrementStock(productId, officeId, 5);
+
+        assertEquals(15, stock.getQuantity());
+        verifyNoInteractions(emailService);
+        verifyNoInteractions(userRepository);
     }
 }

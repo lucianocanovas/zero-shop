@@ -47,10 +47,12 @@ public class CheckoutController {
         return "client/checkout";
     }
 
-    // POST /checkout/add: Agrega un producto al carrito
+    // POST /checkout/add: Agrega un producto al carrito manteniéndose en la misma página
     @PostMapping("/checkout/add")
     public String addToCart(@RequestParam("productId") UUID productId,
                             @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
+                            @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
+                            jakarta.servlet.http.HttpServletRequest request,
                             Principal principal,
                             RedirectAttributes redirectAttributes) {
         if (principal == null) {
@@ -64,7 +66,16 @@ public class CheckoutController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
-        return "redirect:/checkout";
+        if (redirectUrl != null && !redirectUrl.isBlank()) {
+            return "redirect:" + redirectUrl;
+        }
+
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.isBlank()) {
+            return "redirect:" + referer;
+        }
+
+        return "redirect:/products/" + productId;
     }
 
     // POST /checkout/update: Actualiza la cantidad de un ítem en el carrito

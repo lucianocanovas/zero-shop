@@ -29,18 +29,21 @@ public class EmployeeController {
     private final StockRepository stockRepository;
     private final SaleOrderService saleOrderService;
     private final SaleOrderRepository saleOrderRepository;
+    private final ingsoftware.zeroshop.repository.actor.ClientRepository clientRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public EmployeeController(OfficeRepository officeRepository,
                               ProductService productService,
                               StockRepository stockRepository,
                               SaleOrderService saleOrderService,
-                              SaleOrderRepository saleOrderRepository) {
+                              SaleOrderRepository saleOrderRepository,
+                              ingsoftware.zeroshop.repository.actor.ClientRepository clientRepository) {
         this.officeRepository = officeRepository;
         this.productService = productService;
         this.stockRepository = stockRepository;
         this.saleOrderService = saleOrderService;
         this.saleOrderRepository = saleOrderRepository;
+        this.clientRepository = clientRepository;
     }
 
     // GET /dashboard/employee: Panel principal o escritorio del empleado
@@ -133,6 +136,11 @@ public class EmployeeController {
                                    @RequestParam(value = "amountReceived", required = false) BigDecimal amountReceived,
                                    Authentication authentication,
                                    RedirectAttributes redirectAttributes) {
+        if (clientDni == null || clientDni.trim().isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "El DNI del cliente es obligatorio para registrar la venta en mostrador.");
+            return "redirect:/dashboard/employee/desk?officeId=" + officeId;
+        }
+
         try {
             String employeeUser = authentication != null ? authentication.getName() : null;
             SaleOrder order = saleOrderService.createDeskSale(
@@ -201,5 +209,27 @@ public class EmployeeController {
             }
         }
         return result;
+    }
+
+    // GET /dashboard/employee/desk/client-lookup: Autocompletado de cliente por DNI
+    @GetMapping("/dashboard/employee/desk/client-lookup")
+    @ResponseBody
+    public Map<String, Object> lookupClientByDni(@RequestParam("dni") String dni) {
+        if (dni == null || dni.trim().isBlank()) {
+            return Map.of("found", false);
+        }
+        String cleanDni = dni.trim();
+        return clientRepository.findAllByDeletedFalse().stream()
+                .filter(c -> cleanDni.equalsIgnoreCase(c.getIdNumber()))
+                .findFirst()
+                .map(c -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("found", true);
+                    map.put("firstName", c.getFirstName() != null ? c.getFirstName() : "");
+                    map.put("lastName", c.getLastName() != null ? c.getLastName() : "");
+                    map.put("clientNumber", c.getClientNumber() != null ? c.getClientNumber() : "");
+                    return map;
+                })
+                .orElse(Map.of("found", false));
     }
 }

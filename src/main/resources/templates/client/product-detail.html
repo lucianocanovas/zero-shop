@@ -24,6 +24,21 @@
             </ol>
         </nav>
 
+        <!-- Alertas de Éxito o Error -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4 shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+            <span th:text="${successMessage}">Producto agregado al carrito con éxito.</span>
+            <a th:href="@{/checkout}" class="btn btn-sm btn-outline-success ms-auto me-3 fw-semibold">
+                <i class="bi bi-cart3 me-1"></i>Ver Carrito
+            </a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+            <span th:text="${errorMessage}">Ocurrió un error al agregar el producto.</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <!-- Contenedor Principal del Producto -->
         <div class="card border-0 shadow-sm p-4 mb-5">
             <div class="row g-4 align-items-center">
@@ -63,6 +78,7 @@
                     <form method="post" th:action="@{/checkout/add}" class="mb-4">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <input type="hidden" name="productId" th:value="${product?.id}">
+                        <input type="hidden" name="redirectUrl" th:value="@{/products/{id}(id=${product?.id})}">
 
                         <!-- Selector de Talle (Requisito del integrador: XS, S, M, L, XL, XXL) -->
                         <div class="mb-3">

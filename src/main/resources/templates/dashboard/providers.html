@@ -41,6 +41,39 @@
                     </a>
                 </div>
 
+                <!-- Barra de Búsqueda y Filtros -->
+                <div class="card border-0 shadow-sm p-3 mb-4">
+                    <form id="filterForm" method="get" th:action="@{/dashboard/providers}" class="row g-2 align-items-end">
+                        <input type="hidden" name="page" id="pageInput" th:value="${pageResult != null ? pageResult.pageNumber : 1}">
+
+                        <div class="col-12 col-md-7">
+                            <label for="search" class="form-label small fw-semibold text-muted">Buscar proveedor</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search" th:value="${search}" placeholder="Razón social, CUIT, email, teléfono...">
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <label for="hasContact" class="form-label small fw-semibold text-muted">Datos de contacto</label>
+                            <select id="hasContact" name="hasContact" class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option value="true" th:selected="${hasContact == true}">Con contacto (email/teléfono)</option>
+                                <option value="false" th:selected="${hasContact == false}">Sin contacto</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-2 d-flex gap-1">
+                            <button type="submit" class="btn btn-primary btn-sm flex-fill" title="Filtrar">
+                                <i class="bi bi-funnel me-1"></i>Filtrar
+                            </button>
+                            <a th:href="@{/dashboard/providers}" class="btn btn-outline-secondary btn-sm" title="Limpiar">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Tabla de Proveedores -->
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="table-responsive">
@@ -98,6 +131,9 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Paginación Reutilizable -->
+                <div th:replace="~{common/fragments/pagination :: paginationBar(${pageResult})}"></div>
             </main>
         </div>
     </div>

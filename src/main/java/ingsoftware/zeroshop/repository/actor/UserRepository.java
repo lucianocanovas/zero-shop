@@ -29,5 +29,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByUsernameIgnoreCase(String username);
     boolean existsByUsernameIgnoreCaseAndDeletedFalse(String username);
     boolean existsByUsernameIgnoreCaseAndIdNot(String username, UUID id);
+    List<User> findByRoleAndDeletedFalse(ingsoftware.zeroshop.enums.Role role);
 
 }
