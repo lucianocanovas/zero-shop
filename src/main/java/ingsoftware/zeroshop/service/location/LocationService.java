@@ -74,4 +74,27 @@ public class LocationService {
     public Address saveAddress(Address address) {
         return addressRepository.save(address);
     }
+
+    @Transactional(readOnly = true)
+    public List<Country> findAllCountries() {
+        return countryRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<City> getAllCities() {
+        return cityRepository.findAllByDeletedFalse();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<City> findFirstCity() {
+        return cityRepository.findAllByDeletedFalse().stream().findFirst();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<City> findCityByName(String name) {
+        if (name == null || name.isBlank()) {
+            return Optional.empty();
+        }
+        return cityRepository.findByNameIgnoreCaseAndDeletedFalse(name.trim());
+    }
 }

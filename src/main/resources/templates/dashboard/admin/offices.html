@@ -37,6 +37,42 @@
                     </a>
                 </div>
 
+                <!-- Barra de Búsqueda y Filtros -->
+                <div class="card border-0 shadow-sm p-3 mb-4">
+                    <form id="filterForm" method="get" th:action="@{/dashboard/admin/offices}" class="row g-2 align-items-end">
+                        <input type="hidden" name="page" id="pageInput" th:value="${pageResult != null ? pageResult.pageNumber : 1}">
+
+                        <div class="col-12 col-md-6">
+                            <label for="search" class="form-label small fw-semibold text-muted">Buscar sucursal</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search" th:value="${search}" placeholder="Nombre, CUIT, teléfono, dirección...">
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-4">
+                            <label for="type" class="form-label small fw-semibold text-muted">Tipo de Sucursal</label>
+                            <select id="type" name="type" class="form-select form-select-sm">
+                                <option value="">Todos los tipos</option>
+                                <option value="HEADQUARTERS" th:selected="${selectedType != null and selectedType.name() == 'HEADQUARTERS'}">Sede Central</option>
+                                <option value="BRANCH" th:selected="${selectedType != null and selectedType.name() == 'BRANCH'}">Sucursal (Punto de Venta)</option>
+                                <option value="WAREHOUSE" th:selected="${selectedType != null and selectedType.name() == 'WAREHOUSE'}">Depósito</option>
+                                <option value="DISTRIBUTION_CENTER" th:selected="${selectedType != null and selectedType.name() == 'DISTRIBUTION_CENTER'}">Centro de Distribución</option>
+                                <option value="OTHER" th:selected="${selectedType != null and selectedType.name() == 'OTHER'}">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-2 d-flex gap-1">
+                            <button type="submit" class="btn btn-primary btn-sm flex-fill" title="Filtrar">
+                                <i class="bi bi-funnel me-1"></i>Filtrar
+                            </button>
+                            <a th:href="@{/dashboard/admin/offices}" class="btn btn-outline-secondary btn-sm" title="Limpiar">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Tabla de Sucursales -->
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="table-responsive">
@@ -91,6 +127,9 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Paginación Reutilizable -->
+                <div th:replace="~{common/fragments/pagination :: paginationBar(${pageResult})}"></div>
             </main>
         </div>
     </div>

@@ -317,6 +317,66 @@ public class EmailService {
         sendHtmlEmail(to, subject, html);
     }
 
+    /**
+     * Envía una notificación por correo electrónico al administrador informando sobre stock crítico (<= 5 unidades).
+     */
+    @Async
+    public void sendCriticalStockAlertEmail(String to, String productName, String productCode, int currentStock, String officeName) {
+        String subject = "Alerta: Stock Crítico - " + (productName != null ? productName : "Producto") + (productCode != null && !productCode.isBlank() ? " (" + productCode + ")" : "");
+        String html = """
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; color: #212529; }
+                        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+                        .header { background-color: #dc3545; color: #ffffff; padding: 25px; text-align: center; }
+                        .content { padding: 30px; line-height: 1.6; }
+                        .alert-box { background: #fff5f5; border: 1px solid #f5c2c7; border-left: 4px solid #dc3545; border-radius: 6px; padding: 15px; margin: 20px 0; }
+                        .badge { display: inline-block; padding: 4px 8px; font-weight: bold; border-radius: 4px; background-color: #dc3545; color: #ffffff; }
+                        .btn { display: inline-block; background-color: #0d6efd; color: #ffffff !important; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 15px; }
+                        .footer { background-color: #f1f3f5; padding: 20px; text-align: center; font-size: 12px; color: #6c757d; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1 style="margin:0; font-size: 22px;">⚠️ Alerta de Stock Crítico</h1>
+                        </div>
+                        <div class="content">
+                            <p>Estimado Administrador,</p>
+                            <p>El sistema ha detectado que el siguiente producto ha alcanzado un nivel de stock crítico (menor o igual a 5 unidades):</p>
+                            
+                            <div class="alert-box">
+                                <p style="margin:0 0 8px;"><strong>Producto:</strong> %s</p>
+                                <p style="margin:0 0 8px;"><strong>Código:</strong> %s</p>
+                                <p style="margin:0 0 8px;"><strong>Sucursal / Depósito:</strong> %s</p>
+                                <p style="margin:0;"><strong>Stock Actual:</strong> <span class="badge">%d unidades</span></p>
+                            </div>
+
+                            <p>Se recomienda emitir una nueva orden de compra o realizar una reposición a la brevedad para evitar quiebres de inventario.</p>
+
+                            <div style="text-align: center; margin-top: 25px;">
+                                <a href="http://localhost:8080/dashboard/stock" class="btn">Gestionar Inventario en Dashboard</a>
+                            </div>
+                        </div>
+                        <div class="footer">
+                            <p>&copy; 2026 Zero Shop Mendoza. Sistema de Notificaciones de Inventario.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """.formatted(
+                productName != null ? productName : "Sin nombre",
+                productCode != null && !productCode.isBlank() ? productCode : "N/A",
+                officeName != null ? officeName : "Depósito General",
+                currentStock
+        );
+
+        sendHtmlEmail(to, subject, html);
+    }
+
     public boolean isMailSenderAvailable() {
         return mailSender != null
                 && mailUsername != null && !mailUsername.isBlank()

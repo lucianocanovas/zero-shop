@@ -182,7 +182,7 @@
                                 </div>
 
                                 <!-- Menú flotante de resultados en vivo -->
-                                <div id="suggestionsBox" class="list-group position-absolute shadow-lg w-100 start-0 border-0 rounded-3 mt-1 d-none" style="top: 100%; z-index: 1050; max-height: 320px; overflow-y: auto;">
+                                <div id="suggestionsBox" class="list-group position-absolute shadow-lg w-100 start-0 border-0 rounded-3 mt-1 d-none" style="top: 100%; z-index: 1025; max-height: 320px; overflow-y: auto;">
                                 </div>
                             </div>
 
@@ -218,39 +218,40 @@
                                 </div>
                             </div>
 
-                            <!-- Datos del Cliente (Opcional) -->
+                            <!-- Datos del Cliente (Obligatorio) -->
                             <div class="card border-0 shadow-sm p-4 mt-4">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-bold mb-0 text-dark">
-                                        <i class="bi bi-person-badge text-primary me-1"></i>Datos del Cliente
+                                        <i class="bi bi-person-badge text-primary me-1"></i>Datos del Cliente <span class="badge bg-danger ms-1">Obligatorio</span>
                                     </h6>
-                                    <div class="form-check form-switch mb-0">
-                                        <input class="form-check-input" type="checkbox" id="identifyClientSwitch" onchange="toggleClientInputs(this.checked)">
-                                        <label class="form-check-label small" for="identifyClientSwitch">Identificar Cliente</label>
-                                    </div>
+                                    <span id="clientStatusBadge" class="badge bg-light text-muted border">
+                                        Ingrese DNI para buscar o registrar
+                                    </span>
                                 </div>
 
-                                <div id="clientInputsContainer" class="row g-3 d-none">
+                                <div class="row g-3">
                                     <div class="col-sm-6">
-                                        <label for="clientDni" class="form-label small text-muted">DNI o Documento</label>
-                                        <input type="text" id="clientDni" name="clientDni" class="form-control form-control-sm" placeholder="Ej: 38123456">
+                                        <label for="clientDni" class="form-label small fw-semibold text-dark">DNI o Documento <span class="text-danger">*</span></label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bi bi-card-heading"></i></span>
+                                            <input type="text" id="clientDni" name="clientDni" class="form-control" placeholder="Ej: 38123456" required oninput="handleDniInput(this.value)">
+                                        </div>
+                                        <div class="form-text small text-muted" style="font-size: 11px;">Presione Tab o ingrese 7-8 dígitos para buscar.</div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="clientName" class="form-label small text-muted">Nombre y Apellido</label>
-                                        <input type="text" id="clientName" name="clientName" class="form-control form-control-sm" placeholder="Ej: María Gomez">
+                                        <label for="clientName" class="form-label small fw-semibold text-dark">Nombre y Apellido <span class="text-danger">*</span></label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                            <input type="text" id="clientName" name="clientName" class="form-control" placeholder="Ej: María Gomez" required>
+                                        </div>
                                     </div>
-                                </div>
-                                <div id="defaultClientBadge">
-                                    <span class="badge bg-light text-dark border p-2">
-                                        <i class="bi bi-person-check me-1 text-success"></i>Consumidor Final (Venta mostrador estándar)
-                                    </span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Columna Derecha: Cobro y Facturación -->
                         <div class="col-12 col-lg-4">
-                            <div class="card border-0 shadow-sm p-4 sticky-top" style="top: 80px;">
+                            <div class="card border-0 shadow-sm p-4 sticky-top pos-checkout-sidebar" style="top: 75px; z-index: 10; max-height: calc(100vh - 90px); overflow-y: auto;">
                                 <h5 class="fw-bold mb-3">Total a Cobrar</h5>
 
                                 <!-- Display de Monto Final -->
@@ -646,20 +647,61 @@
             calculateChange();
         }
 
-        function toggleClientInputs(show) {
-            const container = document.getElementById('clientInputsContainer');
-            const badge = document.getElementById('defaultClientBadge');
-            if (show) {
-                container.classList.remove('d-none');
-                badge.classList.add('d-none');
-                document.getElementById('clientDni').focus();
-            } else {
-                container.classList.add('d-none');
-                badge.classList.remove('d-none');
-                document.getElementById('clientDni').value = '';
-                document.getElementById('clientName').value = '';
+        let dniDebounceTimer = null;
+        function handleDniInput(dni) {
+            clearTimeout(dniDebounceTimer);
+            const clean = dni ? dni.trim() : '';
+            const statusBadge = document.getElementById('clientStatusBadge');
+            const nameInput = document.getElementById('clientName');
+
+            if (!clean || clean.length < 6) {
+                statusBadge.className = 'badge bg-light text-muted border';
+                statusBadge.innerText = 'Ingrese DNI para buscar o registrar';
+                return;
             }
+
+            dniDebounceTimer = setTimeout(() => {
+                fetch('/dashboard/employee/desk/client-lookup?dni=' + encodeURIComponent(clean))
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.found) {
+                            statusBadge.className = 'badge bg-success-subtle text-success border border-success-subtle';
+                            statusBadge.innerHTML = '<i class="bi bi-check-circle me-1"></i>Cliente Registrado (' + (data.clientNumber || 'Habitual') + ')';
+                            const fullName = (data.firstName + ' ' + (data.lastName || '')).trim();
+                            if (fullName) {
+                                nameInput.value = fullName;
+                            }
+                        } else {
+                            statusBadge.className = 'badge bg-primary-subtle text-primary border border-primary-subtle';
+                            statusBadge.innerHTML = '<i class="bi bi-person-plus me-1"></i>Nuevo Cliente (se registrará)';
+                        }
+                    })
+                    .catch(() => {});
+            }, 300);
         }
+
+        // Validación estricta antes de registrar venta
+        document.getElementById('deskSaleForm').addEventListener('submit', function(e) {
+            if (cart.length === 0) {
+                e.preventDefault();
+                alert('Debe agregar al menos un producto a la venta.');
+                return false;
+            }
+            const dniVal = document.getElementById('clientDni').value.trim();
+            const nameVal = document.getElementById('clientName').value.trim();
+            if (!dniVal) {
+                e.preventDefault();
+                alert('El DNI del cliente es obligatorio para registrar la venta en mostrador.');
+                document.getElementById('clientDni').focus();
+                return false;
+            }
+            if (!nameVal) {
+                e.preventDefault();
+                alert('El Nombre y Apellido del cliente son obligatorios para registrar la venta.');
+                document.getElementById('clientName').focus();
+                return false;
+            }
+        });
 
         function escapeHtml(text) {
             if (!text) return '';

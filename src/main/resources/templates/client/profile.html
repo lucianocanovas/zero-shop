@@ -121,6 +121,59 @@
                     </form>
                 </div>
 
+                <!-- SECCIÓN: PROMOCIONES POR EMAIL -->
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <div class="d-flex align-items-center gap-2 mb-3 border-bottom pb-2">
+                        <i class="bi bi-envelope-heart-fill fs-4 text-primary"></i>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Promociones por Email</h5>
+                            <p class="text-muted small mb-0">Gestiona la recepción de ofertas especiales y novedades en tu casilla de correo</p>
+                        </div>
+                    </div>
+
+                    <!-- Alert dinámico para feedback AJAX -->
+                    <div id="promotionsAlert" class="alert d-none alert-dismissible fade show mb-3" role="alert">
+                        <i id="promotionsAlertIcon" class="bi me-2"></i>
+                        <span id="promotionsAlertMsg"></span>
+                        <button type="button" class="btn-close" onclick="document.getElementById('promotionsAlert').classList.add('d-none')"></button>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 border d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                        <!-- Slider para activar o desactivar promociones -->
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="form-check form-switch m-0 fs-4">
+                                <input class="form-check-input" type="checkbox" role="switch" id="promotionsSlider"
+                                       th:checked="${profile?.emailPromotionsEnabled}" style="cursor: pointer;">
+                            </div>
+                            <div>
+                                <label for="promotionsSlider" class="fw-bold text-dark mb-0 d-block" style="cursor: pointer;">
+                                    Promociones por email
+                                </label>
+                                <small id="promotionsStatusBadge">
+                                    <span th:if="${profile?.emailPromotionsEnabled}" class="text-success fw-semibold">
+                                        <i class="bi bi-bell-fill me-1"></i>Activadas
+                                    </span>
+                                    <span th:unless="${profile?.emailPromotionsEnabled}" class="text-secondary fw-semibold">
+                                        <i class="bi bi-bell-slash me-1"></i>Desactivadas
+                                    </span>
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Botón Enviar email de prueba al lado -->
+                        <div>
+                            <form id="testEmailForm" th:action="@{/profile/promotions/test-email}" method="post" class="m-0">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="button" id="btnSendTestEmail" class="btn btn-outline-primary px-3 py-2 d-flex align-items-center gap-2">
+                                    <i class="bi bi-send-fill" id="btnSendIcon"></i>
+                                    <span id="btnSendSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                    <span id="btnSendText">Enviar email de prueba</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- SECCIÓN 2: DIRECCIONES DE ENTREGA -->
                 <div class="card border-0 shadow-sm p-4 mb-4">
                     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3 border-bottom pb-2">
@@ -433,7 +486,10 @@
                     }
 
                     fetch('/api/locations/states?countryId=' + countryId)
-                        .then(r => r.json())
+                        .then(r => {
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                            return r.json();
+                        })
                         .then(states => {
                             stateSel.innerHTML = '<option value="">Seleccione provincia...</option>';
                             states.forEach(s => {
@@ -442,6 +498,11 @@
                                 opt.textContent = s.name;
                                 stateSel.appendChild(opt);
                             });
+                            stateSel.disabled = false;
+                        })
+                        .catch(e => {
+                            console.error("Error al cargar provincias:", e);
+                            stateSel.innerHTML = '<option value="">Error al cargar provincias</option>';
                             stateSel.disabled = false;
                         });
                 });
@@ -457,7 +518,10 @@
                     }
 
                     fetch('/api/locations/cities?stateId=' + stateId)
-                        .then(r => r.json())
+                        .then(r => {
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                            return r.json();
+                        })
                         .then(cities => {
                             citySel.innerHTML = '<option value="">Seleccione localidad...</option>';
                             cities.forEach(c => {
@@ -467,7 +531,127 @@
                                 citySel.appendChild(opt);
                             });
                             citySel.disabled = false;
+                        })
+                        .catch(e => {
+                            console.error("Error al cargar localidades:", e);
+                            citySel.innerHTML = '<option value="">Error al cargar localidades</option>';
+                            citySel.disabled = false;
                         });
+                });
+            }
+
+            // --- GESTIÓN DE PROMOCIONES POR EMAIL ---
+            const promotionsSlider = document.getElementById('promotionsSlider');
+            const promotionsStatusBadge = document.getElementById('promotionsStatusBadge');
+            const promotionsAlert = document.getElementById('promotionsAlert');
+            const promotionsAlertMsg = document.getElementById('promotionsAlertMsg');
+            const promotionsAlertIcon = document.getElementById('promotionsAlertIcon');
+
+            function showPromotionsAlert(message, isSuccess) {
+                if (!promotionsAlert) return;
+                promotionsAlert.className = 'alert alert-dismissible fade show mb-3 ' + (isSuccess ? 'alert-success' : 'alert-danger');
+                if (promotionsAlertIcon) {
+                    promotionsAlertIcon.className = 'bi me-2 ' + (isSuccess ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill');
+                }
+                if (promotionsAlertMsg) {
+                    promotionsAlertMsg.textContent = message;
+                }
+                promotionsAlert.classList.remove('d-none');
+            }
+
+            if (promotionsSlider) {
+                promotionsSlider.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    const csrfInput = document.querySelector('input[name="_csrf"]');
+                    const csrfToken = csrfInput ? csrfInput.value : '';
+
+                    const params = new URLSearchParams();
+                    params.append('enabled', isChecked);
+                    if (csrfInput) params.append(csrfInput.name, csrfToken);
+
+                    fetch('/profile/promotions/toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: params.toString()
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (promotionsStatusBadge) {
+                                promotionsStatusBadge.innerHTML = data.enabled
+                                    ? '<span class="text-success fw-semibold"><i class="bi bi-bell-fill me-1"></i>Activadas</span>'
+                                    : '<span class="text-secondary fw-semibold"><i class="bi bi-bell-slash me-1"></i>Desactivadas</span>';
+                            }
+                            showPromotionsAlert(data.message, true);
+                        } else {
+                            throw new Error(data.message || 'Error al actualizar preferencias');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error toggling promotions:', err);
+                        promotionsSlider.checked = !isChecked;
+                        showPromotionsAlert('No se pudo actualizar la preferencia: ' + err.message, false);
+                    });
+                });
+            }
+
+            // Botón Enviar email de prueba
+            const btnSendTestEmail = document.getElementById('btnSendTestEmail');
+            const testEmailForm = document.getElementById('testEmailForm');
+            const btnSendIcon = document.getElementById('btnSendIcon');
+            const btnSendSpinner = document.getElementById('btnSendSpinner');
+            const btnSendText = document.getElementById('btnSendText');
+
+            if (btnSendTestEmail && testEmailForm) {
+                btnSendTestEmail.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const csrfInput = testEmailForm.querySelector('input[name="_csrf"]');
+                    const csrfToken = csrfInput ? csrfInput.value : '';
+
+                    btnSendTestEmail.disabled = true;
+                    if (btnSendIcon) btnSendIcon.classList.add('d-none');
+                    if (btnSendSpinner) btnSendSpinner.classList.remove('d-none');
+                    if (btnSendText) btnSendText.textContent = 'Enviando...';
+
+                    const formData = new FormData(testEmailForm);
+
+                    fetch('/profile/promotions/test-email', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    })
+                    .then(r => {
+                        if (!r.ok) {
+                            return r.json().then(j => { throw new Error(j.message || 'HTTP ' + r.status); });
+                        }
+                        return r.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            showPromotionsAlert(data.message, true);
+                        } else {
+                            showPromotionsAlert(data.message || 'Error al enviar email de prueba', false);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error sending test email:', err);
+                        // Fallback a envío normal de formulario si falla la conexión
+                        showPromotionsAlert('Error al enviar email: ' + err.message, false);
+                    })
+                    .finally(() => {
+                        btnSendTestEmail.disabled = false;
+                        if (btnSendIcon) btnSendIcon.classList.remove('d-none');
+                        if (btnSendSpinner) btnSendSpinner.classList.add('d-none');
+                        if (btnSendText) btnSendText.textContent = 'Enviar email de prueba';
+                    });
                 });
             }
         });

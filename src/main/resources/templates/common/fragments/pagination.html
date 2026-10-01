@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Fragmento Reutilizable de Paginación -->
+<div th:fragment="paginationBar(pageResult)" th:if="${pageResult != null}" class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-4 pt-3 border-top">
+    <div class="small text-muted">
+        <span th:if="${pageResult.totalElements > 0}">
+            Mostrando <span class="fw-semibold text-dark" th:text="${pageResult.fromIndex}">1</span>
+            a <span class="fw-semibold text-dark" th:text="${pageResult.toIndex}">10</span>
+            de <span class="fw-semibold text-dark" th:text="${pageResult.totalElements}">50</span> resultados
+        </span>
+        <span th:if="${pageResult.totalElements == 0}">
+            Sin resultados que mostrar
+        </span>
+    </div>
+
+    <nav th:if="${pageResult.totalPages > 1}" aria-label="Navegación de páginas">
+        <ul class="pagination pagination-sm mb-0">
+            <!-- Botón Anterior -->
+            <li class="page-item" th:classappend="${pageResult.first} ? 'disabled'">
+                <button type="button" class="page-link"
+                        th:onclick="'navigatePage(' + ${pageResult.pageNumber - 1} + ')'"
+                        aria-label="Página anterior"
+                        th:disabled="${pageResult.first}">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+            </li>
+
+            <!-- Números de Página -->
+            <li class="page-item"
+                th:each="p : ${#numbers.sequence(1, pageResult.totalPages)}"
+                th:classappend="${p == pageResult.pageNumber} ? 'active'">
+                <button type="button" class="page-link"
+                        th:onclick="'navigatePage(' + ${p} + ')'"
+                        th:text="${p}">1</button>
+            </li>
+
+            <!-- Botón Siguiente -->
+            <li class="page-item" th:classappend="${pageResult.last} ? 'disabled'">
+                <button type="button" class="page-link"
+                        th:onclick="'navigatePage(' + ${pageResult.pageNumber + 1} + ')'"
+                        aria-label="Página siguiente"
+                        th:disabled="${pageResult.last}">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        if (typeof navigatePage !== 'function') {
+            function navigatePage(pageNum) {
+                const filterForm = document.getElementById('filterForm');
+                if (filterForm) {
+                    let pageInput = document.getElementById('pageInput');
+                    if (!pageInput) {
+                        pageInput = document.createElement('input');
+                        pageInput.type = 'hidden';
+                        pageInput.name = 'page';
+                        pageInput.id = 'pageInput';
+                        filterForm.appendChild(pageInput);
+                    }
+                    pageInput.value = pageNum;
+                    filterForm.submit();
+                } else {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('page', pageNum);
+                    window.location.href = url.toString();
+                }
+            }
+        }
+    </script>
+</div>
+
+</body>
+</html>

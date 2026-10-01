@@ -52,6 +52,56 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
 
+                <!-- Barra de Búsqueda y Filtros de Órdenes de Compra -->
+                <div class="card border-0 shadow-sm p-3 mb-4">
+                    <form id="filterForm" method="get" th:action="@{/dashboard/purchase-orders}" class="row g-2 align-items-end">
+                        <input type="hidden" name="page" id="pageInput" th:value="${pageResult != null ? pageResult.pageNumber : 1}">
+
+                        <div class="col-12 col-md-3">
+                            <label for="search" class="form-label small fw-semibold text-muted">Buscar por ID o Proveedor</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search" name="search" th:value="${search}" placeholder="Nº o Proveedor...">
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <label for="supplierId" class="form-label small fw-semibold text-muted">Proveedor</label>
+                            <select id="supplierId" name="supplierId" class="form-select form-select-sm">
+                                <option value="">Todos los proveedores</option>
+                                <option th:each="s : ${suppliers}" th:value="${s.id}" th:text="${s.name}" th:selected="${supplierId != null and supplierId == s.id}">Proveedor</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-2">
+                            <label for="officeId" class="form-label small fw-semibold text-muted">Sucursal</label>
+                            <select id="officeId" name="officeId" class="form-select form-select-sm">
+                                <option value="">Todas las sucursales</option>
+                                <option th:each="o : ${offices}" th:value="${o.id}" th:text="${o.name}" th:selected="${officeId != null and officeId == o.id}">Sucursal</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6 col-md-2">
+                            <label for="status" class="form-label small fw-semibold text-muted">Estado</label>
+                            <select id="status" name="status" class="form-select form-select-sm">
+                                <option value="">Todos los estados</option>
+                                <option value="ISSUED" th:selected="${status == 'ISSUED'}">Emitida</option>
+                                <option value="RECEIVED" th:selected="${status == 'RECEIVED'}">Recibida</option>
+                                <option value="CANCELLED" th:selected="${status == 'CANCELLED'}">Cancelada</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-2 d-flex gap-1">
+                            <button type="submit" class="btn btn-primary btn-sm flex-fill" title="Filtrar">
+                                <i class="bi bi-funnel me-1"></i>Filtrar
+                            </button>
+                            <a th:href="@{/dashboard/purchase-orders}" class="btn btn-outline-secondary btn-sm" title="Limpiar">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Tabla de Órdenes de Compra -->
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="table-responsive">
@@ -115,6 +165,9 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Paginación Reutilizable -->
+                <div th:replace="~{common/fragments/pagination :: paginationBar(${pageResult})}"></div>
             </main>
         </div>
     </div>

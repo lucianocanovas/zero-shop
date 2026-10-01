@@ -1,7 +1,7 @@
 package ingsoftware.zeroshop.controller.client;
 
 import ingsoftware.zeroshop.entity.catalog.SubCategory;
-import ingsoftware.zeroshop.repository.catalog.SubCategoryRepository;
+import ingsoftware.zeroshop.service.catalog.SubCategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +17,10 @@ import java.util.UUID;
 @RequestMapping("/subcategories")
 public class SubCategoryController {
 
-    private final SubCategoryRepository subCategoryRepository;
+    private final SubCategoryService subCategoryService;
 
-    public SubCategoryController(SubCategoryRepository subCategoryRepository) {
-        this.subCategoryRepository = subCategoryRepository;
+    public SubCategoryController(SubCategoryService subCategoryService) {
+        this.subCategoryService = subCategoryService;
     }
 
     public record SubCategoryDto(
@@ -42,7 +42,7 @@ public class SubCategoryController {
     // GET /subcategories/{id}: Redirige a los productos de esa subcategoría
     @GetMapping("/{id}")
     public String getSubCategoryProducts(@PathVariable("id") UUID id) {
-        Optional<SubCategory> subCategory = subCategoryRepository.findByIdAndDeletedFalse(id);
+        Optional<SubCategory> subCategory = subCategoryService.findActiveById(id);
         if (subCategory.isPresent()) {
             return "redirect:/products?subCategoryId=" + id;
         }
@@ -53,7 +53,7 @@ public class SubCategoryController {
     @GetMapping(value = "/by-category/{categoryId}", produces = "application/json")
     @ResponseBody
     public List<SubCategoryDto> getSubCategoriesByCategoryId(@PathVariable("categoryId") UUID categoryId) {
-        return subCategoryRepository.findByCategoryIdAndDeletedFalse(categoryId).stream()
+        return subCategoryService.findByCategoryId(categoryId).stream()
                 .map(sub -> new SubCategoryDto(
                         sub.getId(),
                         sub.getName(),

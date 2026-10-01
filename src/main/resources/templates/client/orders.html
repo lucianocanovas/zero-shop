@@ -43,6 +43,38 @@
             </a>
         </div>
 
+        <!-- Barra de Búsqueda y Filtros de Pedidos -->
+        <div class="card border-0 shadow-sm p-3 mb-4">
+            <form id="filterForm" method="get" th:action="@{/orders}" class="row g-2 align-items-end">
+                <input type="hidden" name="page" id="pageInput" th:value="${pageResult != null ? pageResult.pageNumber : 1}">
+
+                <div class="col-12 col-md-6">
+                    <label for="search" class="form-label small fw-semibold text-muted">Buscar por ID de Pedido</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="search" name="search" th:value="${search}" placeholder="Ej: 3caf9ca6...">
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4">
+                    <label for="status" class="form-label small fw-semibold text-muted">Estado del Pedido</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="">Todos los estados</option>
+                        <option th:each="st : ${statuses}" th:value="${st}" th:text="${st.displayName}" th:selected="${status != null and status == st}">Estado</option>
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-2 d-flex gap-1">
+                    <button type="submit" class="btn btn-primary flex-fill" title="Filtrar">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                    <a th:href="@{/orders}" class="btn btn-outline-secondary" title="Limpiar">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
         <div class="card border-0 shadow-sm overflow-hidden">
             <div class="table-responsive">
                 <table class="table table-custom align-middle mb-0">
@@ -59,7 +91,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="order : ${orders}" th:if="${orders != null and !orders.empty}">
-                            <td class="fw-bold" th:text="'#' + ${#strings.substring(order.id.toString(), 0, 8)}">#ZR-1001</td>
+                            <td class="fw-bold" th:text="${order.id != null ? '#' + #strings.substring(order.id.toString(), 0, 8) : '-'}">#ZR-1001</td>
                             <td class="text-muted small" th:text="${order.date != null ? #temporals.format(order.date, 'dd/MM/yyyy HH:mm') : '-'}">22/09/2026</td>
                             <td th:text="${order.office != null ? order.office.name : 'Casa Central Mendoza'}">Sucursal Mendoza</td>
                             <td>
@@ -77,9 +109,10 @@
                                 </span>
                                 <span th:if="${order.paymentMethod == null}" class="badge bg-light text-muted border">-</span>
                             </td>
-                            <td class="fw-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount, 1, 2)}">$24.990,00</td>
+                            <td class="fw-bold text-primary" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : 0, 1, 2)}">$24.990,00</td>
                             <td>
                                 <span class="badge"
+                                      th:if="${order.status != null}"
                                       th:classappend="${order.status.name() == 'PENDING_PAYMENT' ? 'bg-warning text-dark' : 
                                                       (order.status.name() == 'PAID' ? 'bg-success' : 
                                                       (order.status.name() == 'PENDING_SHIPPING' ? 'bg-primary' : 
@@ -88,6 +121,7 @@
                                       th:text="${order.status.displayName}">
                                     PAGO REALIZADO
                                 </span>
+                                <span class="badge bg-secondary text-white" th:if="${order.status == null}">En Proceso</span>
                             </td>
                             <td class="text-end">
                                 <div class="btn-group btn-group-sm">
@@ -124,6 +158,9 @@
                 </table>
             </div>
         </div>
+
+        <!-- Paginación Reutilizable -->
+        <div th:replace="~{common/fragments/pagination :: paginationBar(${pageResult})}"></div>
     </main>
 
     <!-- Footer Reutilizable -->

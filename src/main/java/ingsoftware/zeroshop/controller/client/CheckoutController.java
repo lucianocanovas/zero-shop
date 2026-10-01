@@ -4,7 +4,7 @@ import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
 import ingsoftware.zeroshop.enums.PaymentMethod;
-import ingsoftware.zeroshop.repository.org.OfficeRepository;
+import ingsoftware.zeroshop.service.org.OfficeService;
 import ingsoftware.zeroshop.service.transaction.MercadoPagoService;
 import ingsoftware.zeroshop.service.transaction.SaleOrderService;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +22,14 @@ import java.util.UUID;
 public class CheckoutController {
 
     private final SaleOrderService saleOrderService;
-    private final OfficeRepository officeRepository;
+    private final OfficeService officeService;
     private final MercadoPagoService mercadoPagoService;
 
     public CheckoutController(SaleOrderService saleOrderService,
-                              OfficeRepository officeRepository,
+                              OfficeService officeService,
                               MercadoPagoService mercadoPagoService) {
         this.saleOrderService = saleOrderService;
-        this.officeRepository = officeRepository;
+        this.officeService = officeService;
         this.mercadoPagoService = mercadoPagoService;
     }
 
@@ -42,7 +42,7 @@ public class CheckoutController {
 
         SaleOrder cart = saleOrderService.getOrCreateCart(principal.getName());
         List<OrderDetail> cartItems = saleOrderService.getOrderDetails(cart.getId());
-        List<Office> offices = officeRepository.findAllByDeletedFalse();
+        List<Office> offices = officeService.getAllOffices();
 
         model.addAttribute("cart", cart);
         model.addAttribute("cartItems", cartItems);
@@ -52,10 +52,12 @@ public class CheckoutController {
         return "client/checkout";
     }
 
-    // POST /checkout/add: Agrega un producto al carrito
+    // POST /checkout/add: Agrega un producto al carrito manteniéndose en la misma página
     @PostMapping("/checkout/add")
     public String addToCart(@RequestParam("productId") UUID productId,
                             @RequestParam(value = "quantity", defaultValue = "1") Integer quantity,
+                            @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
+                            jakarta.servlet.http.HttpServletRequest request,
                             Principal principal,
                             RedirectAttributes redirectAttributes) {
         if (principal == null) {
@@ -69,7 +71,16 @@ public class CheckoutController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
-        return "redirect:/checkout";
+        if (redirectUrl != null && !redirectUrl.isBlank()) {
+            return "redirect:" + redirectUrl;
+        }
+
+        String referer = request.getHeader("Referer");
+        if (referer != null && !referer.isBlank()) {
+            return "redirect:" + referer;
+        }
+
+        return "redirect:/products/" + productId;
     }
 
     // POST /checkout/update: Actualiza la cantidad de un ítem en el carrito
@@ -210,6 +221,7 @@ public class CheckoutController {
             } catch (Exception ignored) {
             }
         }
+
         redirectAttributes.addFlashAttribute("infoMessage", "El pago de Mercado Pago está pendiente de acreditación.");
         return targetOrderId != null ? "redirect:/checkout/success?orderId=" + targetOrderId : "redirect:/orders";
     }

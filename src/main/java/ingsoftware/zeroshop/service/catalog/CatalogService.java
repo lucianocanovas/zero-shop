@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -103,5 +104,22 @@ public class CatalogService {
      */
     public List<SubCategory> getAllActiveSubCategories() {
         return subCategoryRepository.findAllByDeletedFalse();
+    }
+
+    /**
+     * Obtiene todas las subcategorías activas con su categoría cargada.
+     */
+    public List<SubCategory> getAllActiveSubCategoriesWithCategory() {
+        return subCategoryRepository.findAllWithCategoryByDeletedFalse();
+    }
+
+    /**
+     * Busca una subcategoría activa por su ID.
+     */
+    public Optional<SubCategory> findActiveSubCategoryById(UUID id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return subCategoryRepository.findByIdAndDeletedFalse(id);
     }
 }

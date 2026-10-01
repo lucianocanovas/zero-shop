@@ -245,3 +245,42 @@ body {
     border-radius: var(--zero-radius-lg);
     overflow: hidden;
 }
+
+/* ==========================================================================
+   Dashboard Topbar & POS Sticky Sidebar Styles (Z-Index & Overflow)
+   ========================================================================== */
+.dashboard-topbar-header {
+    z-index: 1030 !important;
+}
+
+.pos-checkout-sidebar {
+    z-index: 10 !important;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+}
+
+.pos-checkout-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.pos-checkout-sidebar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   Home Store Feature / Benefit Icons (Perfect Circle Aspect Ratio 1:1)
+   ========================================================================== */
+.feature-icon-circle {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    min-height: 58px;
+    border-radius: 50% !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+}
+

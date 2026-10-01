@@ -1,12 +1,20 @@
 package ingsoftware.zeroshop.service.actor;
 
+import ingsoftware.zeroshop.dto.ClientProfileDTO;
 import ingsoftware.zeroshop.entity.actor.Client;
+import ingsoftware.zeroshop.entity.actor.Contact;
+import ingsoftware.zeroshop.entity.actor.ContactEmail;
+import ingsoftware.zeroshop.entity.actor.ContactPhone;
 import ingsoftware.zeroshop.entity.actor.Employee;
 import ingsoftware.zeroshop.entity.actor.PendingRegistration;
 import ingsoftware.zeroshop.entity.actor.Person;
 import ingsoftware.zeroshop.entity.actor.User;
+import ingsoftware.zeroshop.entity.location.Address;
+import ingsoftware.zeroshop.entity.location.City;
+import ingsoftware.zeroshop.enums.ContactType;
 import ingsoftware.zeroshop.enums.EmployeeType;
 import ingsoftware.zeroshop.enums.IDType;
+import ingsoftware.zeroshop.enums.PhoneType;
 import ingsoftware.zeroshop.enums.Role;
 import ingsoftware.zeroshop.repository.actor.ClientRepository;
 import ingsoftware.zeroshop.repository.actor.EmployeeRepository;
@@ -25,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -852,5 +861,225 @@ public class UserService {
             candidate = String.valueOf(num);
         } while (personRepository.existsByIdNumber(candidate));
         return candidate;
+    }
+
+    public List<Client> getAllActiveClients() {
+        return clientRepository.findAllByDeletedFalse();
+    }
+
+    public Optional<Client> findClientByDni(String dni) {
+        if (dni == null || dni.isBlank()) {
+            return Optional.empty();
+        }
+        String cleanDni = dni.trim();
+        return clientRepository.findAllByDeletedFalse().stream()
+                .filter(c -> cleanDni.equalsIgnoreCase(c.getIdNumber()))
+                .findFirst();
+    }
+
+    @Transactional
+    public Person getOrCreatePerson(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no puede ser nulo.");
+        }
+        Person person = user.getPerson();
+        if (person == null) {
+            String firstName = user.getUsername() != null ? user.getUsername().split("@")[0] : "Usuario";
+            if (user.getRole() == Role.CLIENT) {
+                Client client = new Client();
+                client.setFirstName(firstName);
+                client.setLastName("");
+                client.setGender(null);
+                client.setDateOfBirth(LocalDate.of(2000, 1, 1));
+                client.setIdType(IDType.DNI);
+                client.setIdNumber(String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits()) % 90000000L + 10000000L));
+                client.setClientNumber("CLI-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+                client.setDeleted(false);
+                client.setAddress(new ArrayList<>());
+                client.setContact(new ArrayList<>());
+                person = clientRepository.save(client);
+            } else {
+                Employee employee = new Employee();
+                employee.setFirstName(firstName);
+                employee.setLastName("");
+                employee.setGender(null);
+                employee.setDateOfBirth(LocalDate.of(2000, 1, 1));
+                employee.setIdType(IDType.DNI);
+                employee.setIdNumber(String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits()) % 90000000L + 10000000L));
+                employee.setDeleted(false);
+                employee.setAddress(new ArrayList<>());
+                employee.setContact(new ArrayList<>());
+                person = employeeRepository.save(employee);
+            }
+            user.setPerson(person);
+            userRepository.save(user);
+        }
+        if (person.getAddress() == null) {
+            person.setAddress(new ArrayList<>());
+        }
+        if (person.getContact() == null) {
+            person.setContact(new ArrayList<>());
+        }
+        return person;
+    }
+
+    @Transactional
+    public User updateUserProfile(String currentUsername, ClientProfileDTO form) {
+        User user = getByEmail(currentUsername);
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+
+        if (form.getFirstName() == null || form.getFirstName().trim().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio.");
+        }
+        if (form.getLastName() == null || form.getLastName().trim().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio.");
+        }
+        if (form.getEmail() == null || form.getEmail().trim().isBlank()) {
+            throw new IllegalArgumentException("El correo electrónico es obligatorio.");
+        }
+
+        String newEmail = form.getEmail().trim().toLowerCase();
+        if (!newEmail.equals(user.getUsername().toLowerCase())) {
+            Optional<User> other = userRepository.findByUsernameIgnoreCase(newEmail);
+            if (other.isPresent() && !other.get().getId().equals(user.getId())
+                    && (other.get().getDeleted() == null || !other.get().getDeleted())) {
+                throw new IllegalArgumentException("El correo electrónico ya está registrado por otro usuario.");
+            }
+            user.setUsername(newEmail);
+        }
+
+        if (form.getPassword() != null && !form.getPassword().isBlank()) {
+            if (form.getPassword().trim().length() < 6) {
+                throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres.");
+            }
+            user.setPassword(passwordEncoder.encode(form.getPassword().trim()));
+        }
+
+        Person person = getOrCreatePerson(user);
+        person.setFirstName(form.getFirstName().trim());
+        person.setLastName(form.getLastName().trim());
+        person.setGender(form.getGender());
+        if (form.getDateOfBirth() != null) {
+            person.setDateOfBirth(form.getDateOfBirth());
+        }
+
+        if (form.getEmailPromotionsEnabled() != null) {
+            user.setEmailPromotionsEnabled(form.getEmailPromotionsEnabled());
+        }
+
+        personRepository.save(person);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public boolean toggleEmailPromotions(String username, Boolean enabled) {
+        User user = getByEmail(username);
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+        boolean newStatus = (enabled != null) ? enabled : !(user.getEmailPromotionsEnabled() == null || user.getEmailPromotionsEnabled());
+        user.setEmailPromotionsEnabled(newStatus);
+        userRepository.save(user);
+        return newStatus;
+    }
+
+    @Transactional
+    public void addAddressToUserProfile(String username, String street, String number, String floor,
+                                       String apartment, String zipCode, String observations,
+                                       City city) {
+        User user = getByEmail(username);
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+        if (street == null || street.trim().isBlank()) throw new IllegalArgumentException("La calle es obligatoria.");
+        if (number == null || number.trim().isBlank()) throw new IllegalArgumentException("El número es obligatorio.");
+
+        Person person = getOrCreatePerson(user);
+
+        Address address = Address.builder()
+                .street(street.trim())
+                .number(number.trim())
+                .floor(floor != null && !floor.trim().isBlank() ? floor.trim() : null)
+                .apartment(apartment != null && !apartment.trim().isBlank() ? apartment.trim() : null)
+                .zipCode(zipCode != null && !zipCode.trim().isBlank() ? zipCode.trim() : "5500")
+                .observations(observations != null && !observations.trim().isBlank() ? observations.trim() : null)
+                .city(city)
+                .deleted(false)
+                .build();
+
+        person.getAddress().add(address);
+        personRepository.save(person);
+    }
+
+    @Transactional
+    public void deleteAddressFromUserProfile(String username, UUID addressId) {
+        User user = getByEmail(username);
+        if (user == null || user.getPerson() == null) return;
+        Person person = user.getPerson();
+        if (person.getAddress() != null) {
+            for (Address a : person.getAddress()) {
+                if (a.getId() != null && a.getId().equals(addressId)) {
+                    a.setDeleted(true);
+                    break;
+                }
+            }
+            personRepository.save(person);
+        }
+    }
+
+    @Transactional
+    public void addContactToUserProfile(String username, String contactCategory, String phoneNumber,
+                                       PhoneType phoneType, String email,
+                                       ContactType contactType, String observation) {
+        User user = getByEmail(username);
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no encontrado.");
+        }
+        Person person = getOrCreatePerson(user);
+        ContactType cType = contactType != null ? contactType : ContactType.PERSONAL;
+        String obs = (observation != null && !observation.trim().isBlank()) ? observation.trim() : null;
+
+        if ("EMAIL".equalsIgnoreCase(contactCategory)) {
+            if (email == null || email.trim().isBlank()) {
+                throw new IllegalArgumentException("El correo electrónico de contacto es obligatorio.");
+            }
+            ContactEmail ce = new ContactEmail();
+            ce.setEmail(email.trim());
+            ce.setContactType(cType);
+            ce.setObservation(obs != null ? obs : "Email de contacto");
+            ce.setDeleted(false);
+            person.getContact().add(ce);
+        } else {
+            if (phoneNumber == null || phoneNumber.trim().isBlank()) {
+                throw new IllegalArgumentException("El número de teléfono es obligatorio.");
+            }
+            ContactPhone cp = new ContactPhone();
+            cp.setPhoneNumber(phoneNumber.trim());
+            cp.setPhoneType(phoneType != null ? phoneType : PhoneType.MOBILE);
+            cp.setContactType(cType);
+            cp.setObservation(obs != null ? obs : "Teléfono de contacto");
+            cp.setDeleted(false);
+            person.getContact().add(cp);
+        }
+
+        personRepository.save(person);
+    }
+
+    @Transactional
+    public void deleteContactFromUserProfile(String username, UUID contactId) {
+        User user = getByEmail(username);
+        if (user == null || user.getPerson() == null) return;
+        Person person = user.getPerson();
+        if (person.getContact() != null) {
+            for (Contact c : person.getContact()) {
+                if (c.getId() != null && c.getId().equals(contactId)) {
+                    c.setDeleted(true);
+                    break;
+                }
+            }
+            personRepository.save(person);
+        }
     }
 }

@@ -121,4 +121,3 @@ El directorio `docs/` contiene la documentación exhaustiva del sistema:
 - **[docs/ENTITIES.md](docs/ENTITIES.md):** Modelo de datos relacional y entidades del dominio.
 - **[docs/VIEWS.md](docs/VIEWS.md):** Mapa de navegación y plantillas de presentación Thymeleaf.
 - **[docs/LOAD_TESTING.md](docs/LOAD_TESTING.md):** Metodología de pruebas de estrés y plan de Apache JMeter (`docs/zeroshop_load_test.jmx`).
-

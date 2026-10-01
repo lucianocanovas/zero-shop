@@ -404,7 +404,10 @@
                     }
 
                     fetch('/api/locations/states?countryId=' + countryId)
-                        .then(r => r.json())
+                        .then(r => {
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                            return r.json();
+                        })
                         .then(states => {
                             stateSel.innerHTML = '<option value="">Seleccione provincia...</option>';
                             states.forEach(s => {
@@ -413,6 +416,11 @@
                                 opt.textContent = s.name;
                                 stateSel.appendChild(opt);
                             });
+                            stateSel.disabled = false;
+                        })
+                        .catch(e => {
+                            console.error("Error al cargar provincias:", e);
+                            stateSel.innerHTML = '<option value="">Error al cargar provincias</option>';
                             stateSel.disabled = false;
                         });
                 });
@@ -428,7 +436,10 @@
                     }
 
                     fetch('/api/locations/cities?stateId=' + stateId)
-                        .then(r => r.json())
+                        .then(r => {
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                            return r.json();
+                        })
                         .then(cities => {
                             citySel.innerHTML = '<option value="">Seleccione localidad...</option>';
                             cities.forEach(c => {
@@ -437,6 +448,11 @@
                                 opt.textContent = c.name;
                                 citySel.appendChild(opt);
                             });
+                            citySel.disabled = false;
+                        })
+                        .catch(e => {
+                            console.error("Error al cargar localidades:", e);
+                            citySel.innerHTML = '<option value="">Error al cargar localidades</option>';
                             citySel.disabled = false;
                         });
                 });

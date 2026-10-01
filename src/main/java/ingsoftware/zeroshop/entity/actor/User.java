@@ -37,6 +37,9 @@ public class User {
     @Column(name = "verified")
     private Boolean verified = true;
 
+    @Column(name = "email_promotions_enabled")
+    private Boolean emailPromotionsEnabled = true;
+
     @Column (name = "deleted", nullable = false)
     private Boolean deleted = false;
 }

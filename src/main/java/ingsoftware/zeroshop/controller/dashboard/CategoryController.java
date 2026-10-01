@@ -31,9 +31,14 @@ public class CategoryController {
             List<SubCategory> subCategories
     ) {}
 
-    // GET /dashboard/categories: Lista únicamente las categorías activas en el dashboard
+    // GET /dashboard/categories: Lista únicamente las categorías activas en el dashboard con filtros y paginación
     @GetMapping
-    public String listCategories(Model model) {
+    public String listCategories(
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "hasSubs", required = false) Boolean hasSubs,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            Model model) {
+        int pageNum = (page != null && page > 0) ? page : 1;
         List<Category> categories = catalogService.getAllActiveCategories();
         List<CategoryDashboardDto> categoryDtos = categories.stream()
                 .map(cat -> new CategoryDashboardDto(
@@ -44,7 +49,27 @@ public class CategoryController {
                 ))
                 .toList();
 
-        model.addAttribute("categories", categoryDtos);
+        if (search != null && !search.trim().isBlank()) {
+            String q = search.trim().toLowerCase();
+            categoryDtos = categoryDtos.stream()
+                    .filter(c -> (c.name() != null && c.name().toLowerCase().contains(q))
+                            || (c.description() != null && c.description().toLowerCase().contains(q))
+                            || (c.subCategories() != null && c.subCategories().stream().anyMatch(s -> s.getName().toLowerCase().contains(q))))
+                    .toList();
+        }
+
+        if (hasSubs != null) {
+            categoryDtos = categoryDtos.stream()
+                    .filter(c -> hasSubs ? (c.subCategories() != null && !c.subCategories().isEmpty()) : (c.subCategories() == null || c.subCategories().isEmpty()))
+                    .toList();
+        }
+
+        ingsoftware.zeroshop.dto.PageResult<CategoryDashboardDto> pageResult = ingsoftware.zeroshop.dto.PageResult.of(categoryDtos, pageNum, 10);
+
+        model.addAttribute("categories", pageResult.getContent());
+        model.addAttribute("pageResult", pageResult);
+        model.addAttribute("search", search);
+        model.addAttribute("hasSubs", hasSubs);
         return "dashboard/categories";
     }
 

@@ -43,7 +43,47 @@
             </div>
         </div>
 
-        <h3 class="fw-bold mb-4">Promociones Destacadas</h3>
+        <!-- Barra de Filtros de Ofertas -->
+        <div class="card border-0 shadow-sm p-3 mb-4">
+            <form id="filterForm" method="get" th:action="@{/offers}" class="row g-2 align-items-end">
+                <input type="hidden" name="page" id="pageInput" th:value="${pageResult != null ? pageResult.pageNumber : 1}">
+
+                <div class="col-12 col-md-5">
+                    <label for="search" class="form-label small fw-semibold text-muted">Buscar oferta</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="search" name="search" th:value="${search}" placeholder="Nombre o SKU...">
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label for="categoryId" class="form-label small fw-semibold text-muted">Categoría</label>
+                    <select id="categoryId" name="categoryId" class="form-select">
+                        <option value="">Todas</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${categoryId != null and (categoryId == cat.id.toString() or categoryId == cat.name.toLowerCase())}">Categoría</option>
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-2">
+                    <label for="maxPrice" class="form-label small fw-semibold text-muted">Precio Máx ($)</label>
+                    <input type="number" class="form-control" id="maxPrice" name="maxPrice" th:value="${maxPrice}" placeholder="Ej: 40000" step="500">
+                </div>
+
+                <div class="col-12 col-md-2 d-flex gap-1">
+                    <button type="submit" class="btn btn-danger flex-fill" title="Aplicar Filtros">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                    <a th:href="@{/offers}" class="btn btn-outline-secondary" title="Limpiar Filtros">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0">Promociones Destacadas</h3>
+            <span class="small text-muted" th:if="${pageResult != null}" th:text="${pageResult.totalElements} + ' productos en promoción'"></span>
+        </div>
 
         <!-- Grilla de Ofertas -->
         <div class="row g-4">
@@ -107,8 +147,10 @@
                         </a>
                     </div>
                 </div>
-            </div>
         </div>
+
+        <!-- Paginación Reutilizable -->
+        <div th:replace="~{common/fragments/pagination :: paginationBar(${pageResult})}"></div>
     </main>
 
     <!-- Footer Reutilizable -->

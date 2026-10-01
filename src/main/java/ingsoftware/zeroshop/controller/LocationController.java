@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/dashboard/locations")
+@RequestMapping({"/api/locations", "/dashboard/locations"})
 public class LocationController {
 
     private final LocationService locationService;
@@ -21,14 +21,20 @@ public class LocationController {
     }
 
     @GetMapping("/states")
-    public List<LocationDTO> getStates(@RequestParam("countryId") UUID countryId) {
+    public List<LocationDTO> getStates(@RequestParam(value = "countryId", required = false) UUID countryId) {
+        if (countryId == null) {
+            return List.of();
+        }
         return locationService.getStatesByCountryId(countryId).stream()
                 .map(state -> new LocationDTO(state.getId(), state.getName(), state.getCode()))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/cities")
-    public List<LocationDTO> getCities(@RequestParam("stateId") UUID stateId) {
+    public List<LocationDTO> getCities(@RequestParam(value = "stateId", required = false) UUID stateId) {
+        if (stateId == null) {
+            return List.of();
+        }
         return locationService.getCitiesByStateId(stateId).stream()
                 .map(city -> new LocationDTO(city.getId(), city.getName(), city.getCode()))
                 .collect(Collectors.toList());

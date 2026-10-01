@@ -562,45 +562,35 @@ public class SaleOrderService {
             }
         }
 
-        // 3. Resolver cliente (Consumidor Final o por DNI)
-        Client client = null;
-        if (clientDni != null && !clientDni.trim().isBlank()) {
-            String cleanDni = clientDni.trim();
-            client = clientRepository.findAllByDeletedFalse().stream()
-                    .filter(c -> cleanDni.equalsIgnoreCase(c.getIdNumber()))
-                    .findFirst()
-                    .orElse(null);
-            if (client == null) {
-                // Crear cliente con ese DNI y nombre
-                String fName = (clientName != null && !clientName.trim().isBlank()) ? clientName.trim() : "Cliente";
-                client = new Client();
-                client.setFirstName(fName);
-                client.setLastName("Mostrador");
-                client.setIdType(IDType.DNI);
-                client.setIdNumber(cleanDni);
-                client.setDateOfBirth(LocalDate.of(2000, 1, 1));
-                client.setClientNumber("CLI-" + cleanDni);
-                client.setDeleted(false);
-                client = clientRepository.save(client);
-            }
+        // 3. Resolver cliente (OBLIGATORIO: Se deben registrar los datos del cliente para vender)
+        if (clientDni == null || clientDni.trim().isBlank()) {
+            throw new IllegalArgumentException("Es obligatorio registrar los datos del cliente (DNI) para poder realizar una venta.");
         }
 
+        String cleanDni = clientDni.trim();
+        Client client = clientRepository.findAllByDeletedFalse().stream()
+                .filter(c -> cleanDni.equalsIgnoreCase(c.getIdNumber()))
+                .findFirst()
+                .orElse(null);
+
         if (client == null) {
-            // Consumidor Final predeterminado
-            client = clientRepository.findAllByDeletedFalse().stream()
-                    .filter(c -> "00000000".equals(c.getIdNumber()) || "Consumidor".equalsIgnoreCase(c.getFirstName()))
-                    .findFirst()
-                    .orElseGet(() -> {
-                        Client c = new Client();
-                        c.setFirstName("Consumidor");
-                        c.setLastName("Final");
-                        c.setIdType(IDType.DNI);
-                        c.setIdNumber("00000000");
-                        c.setDateOfBirth(LocalDate.of(2000, 1, 1));
-                        c.setClientNumber("CLI-CONSUMIDOR-FINAL");
-                        c.setDeleted(false);
-                        return clientRepository.save(c);
-                    });
+            if (clientName == null || clientName.trim().isBlank()) {
+                throw new IllegalArgumentException("Es obligatorio ingresar el nombre del cliente para registrarlo en el sistema.");
+            }
+            String trimmedName = clientName.trim();
+            String[] parts = trimmedName.split("\\s+", 2);
+            String fName = parts[0];
+            String lName = parts.length > 1 ? parts[1] : "Mostrador";
+
+            client = new Client();
+            client.setFirstName(fName);
+            client.setLastName(lName);
+            client.setIdType(IDType.DNI);
+            client.setIdNumber(cleanDni);
+            client.setDateOfBirth(LocalDate.of(2000, 1, 1));
+            client.setClientNumber("CLI-" + cleanDni);
+            client.setDeleted(false);
+            client = clientRepository.save(client);
         }
 
         // 4. Verificar stock y calcular total
@@ -670,5 +660,12 @@ public class SaleOrderService {
         paymentService.createInvoiceForOrder(savedOrder);
 
         return savedOrder;
+    }
+
+    public List<SaleOrder> getOrdersByOffice(UUID officeId) {
+        if (officeId == null) {
+            return List.of();
+        }
+        return saleOrderRepository.findByOfficeIdAndDeletedFalse(officeId);
     }
 }

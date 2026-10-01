@@ -98,4 +98,50 @@ public class NewsletterServiceUnitTest {
         verify(emailService, times(1)).sendHtmlEmail(eq("cliente1@gmail.com"), anyString(), anyString());
         verify(emailService, times(1)).sendHtmlEmail(eq("cliente2@gmail.com"), anyString(), anyString());
     }
+
+    @Test
+    @DisplayName("Unit: sendPromotionalNewsletter no envía correo a clientes con promociones desactivadas")
+    public void testSendNewsletterExcludesDisabledClients() {
+        Product p = Product.builder()
+                .name("Zapatillas Zero Air")
+                .currentPrice(new BigDecimal("35000.00"))
+                .onSale(true)
+                .build();
+
+        User clientActive = new User();
+        clientActive.setUsername("activo@gmail.com");
+        clientActive.setRole(Role.CLIENT);
+        clientActive.setEmailPromotionsEnabled(true);
+
+        User clientOptOut = new User();
+        clientOptOut.setUsername("desactivado@gmail.com");
+        clientOptOut.setRole(Role.CLIENT);
+        clientOptOut.setEmailPromotionsEnabled(false);
+
+        when(productRepository.findByOnSaleTrueAndDeletedFalse()).thenReturn(List.of(p));
+        when(userRepository.findAllByDeletedFalse()).thenReturn(List.of(clientActive, clientOptOut));
+
+        int sent = newsletterService.sendPromotionalNewsletter();
+
+        assertEquals(1, sent);
+        verify(emailService, times(1)).sendHtmlEmail(eq("activo@gmail.com"), anyString(), anyString());
+        verify(emailService, never()).sendHtmlEmail(eq("desactivado@gmail.com"), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("Unit: sendTestPromotionalEmail envía correo al destinatario especificado")
+    public void testSendTestPromotionalEmailSuccess() {
+        Product p = Product.builder()
+                .name("Campera Deportiva Zero")
+                .currentPrice(new BigDecimal("45000.00"))
+                .onSale(false)
+                .build();
+
+        when(productRepository.findByOnSaleTrueAndDeletedFalse()).thenReturn(List.of());
+        when(productRepository.findAllByDeletedFalse()).thenReturn(List.of(p));
+
+        newsletterService.sendTestPromotionalEmail("destinatario@test.com");
+
+        verify(emailService, times(1)).sendHtmlEmail(eq("destinatario@test.com"), anyString(), anyString());
+    }
 }
