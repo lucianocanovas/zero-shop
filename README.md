@@ -120,4 +120,5 @@ El directorio `docs/` contiene la documentación exhaustiva del sistema:
 - **[docs/REPOSITORY.md](docs/REPOSITORY.md):** Catálogo de repositorios Spring Data JPA y métodos de consulta.
 - **[docs/ENTITIES.md](docs/ENTITIES.md):** Modelo de datos relacional y entidades del dominio.
 - **[docs/VIEWS.md](docs/VIEWS.md):** Mapa de navegación y plantillas de presentación Thymeleaf.
+- **[docs/VIEWS.md](docs/DTO.md):** Detalle de los DTO utilizados para la transferencia de datos.
 - **[docs/LOAD_TESTING.md](docs/LOAD_TESTING.md):** Metodología de pruebas de estrés y plan de Apache JMeter (`docs/zeroshop_load_test.jmx`).
