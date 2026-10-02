@@ -47,6 +47,7 @@
 ---
 
 ## 3. Vistas Comunes del Dashboard (`/templates/dashboard`)
+
 *Vistas compartidas para personal administrativo (`ADMIN`) y empleados (`EMPLOYEE`).*
 
 - **Inicio del Dashboard:** `/dashboard` (`templates/dashboard/index.html`)
@@ -76,6 +77,7 @@
 ---
 
 ## 4. Vistas Exclusivas de Administración (`/templates/dashboard/admin`)
+
 *Acceso exclusivo para rol `ADMIN`.*
 
 - **Panel de Administración General:** `/dashboard/admin` (`templates/dashboard/admin/index.html`)
@@ -95,6 +97,7 @@
 ---
 
 ## 5. Vistas Exclusivas de Empleados (`/templates/dashboard/employee`)
+
 *Acceso exclusivo para rol `EMPLOYEE`.*
 
 - **Escritorio Operativo del Empleado:** `/dashboard/employee/desk` (`templates/dashboard/employee/desk.html`)
