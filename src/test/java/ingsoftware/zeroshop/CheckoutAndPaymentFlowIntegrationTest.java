@@ -1,7 +1,10 @@
 package ingsoftware.zeroshop;
 
 import ingsoftware.zeroshop.entity.catalog.Product;
+import ingsoftware.zeroshop.entity.location.Address;
 import ingsoftware.zeroshop.entity.org.Office;
+import ingsoftware.zeroshop.entity.transaction.Invoice;
+import ingsoftware.zeroshop.entity.transaction.InvoiceDetail;
 import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.Payment;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
@@ -307,5 +310,105 @@ public class CheckoutAndPaymentFlowIntegrationTest {
         // El cliente debe ver la orden en su lista de compras confirmadas
         List<SaleOrder> clientOrders = saleOrderService.getClientOrders(clientUsername);
         assertTrue(clientOrders.stream().anyMatch(o -> o.getId().equals(paidOrder.getId())));
+    }
+
+    @Test
+    @DisplayName("Checkout: El usuario puede asociar una nueva dirección y luego elegirla entre sus direcciones cargadas")
+    public void testCheckoutWithSavedAddressAndAssociation() {
+        // 1. Agregar producto al carrito
+        saleOrderService.addProductToCart(clientUsername, product1.getId(), 1);
+
+        // 2. Primer checkout: asociar nueva dirección con saveNewAddress = true
+        String redirectUrl1 = saleOrderService.processCheckout(
+                clientUsername,
+                null,
+                true,
+                office.getId(),
+                "Calle Las Heras",
+                "750",
+                "1",
+                "A",
+                "5500",
+                "Mendoza",
+                "+54 9 261 111-2233",
+                PaymentMethod.CASH
+        );
+        assertNotNull(redirectUrl1);
+
+        // 3. Verificar que la dirección quedó asociada a la libreta del usuario
+        List<Address> userAddresses = saleOrderService.getUserAddresses(clientUsername);
+        assertFalse(userAddresses.isEmpty(), "El usuario debe tener al menos una dirección asociada");
+        Address savedAddr = userAddresses.stream()
+                .filter(a -> "Calle Las Heras".equals(a.getStreet()))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(savedAddr, "La dirección 'Calle Las Heras' debe existir en las direcciones del usuario");
+        assertEquals("750", savedAddr.getNumber());
+
+        // 4. Segundo checkout: el usuario elige su dirección ya cargada pasando su addressId
+        saleOrderService.addProductToCart(clientUsername, product2.getId(), 1);
+        String redirectUrl2 = saleOrderService.processCheckout(
+                clientUsername,
+                savedAddr.getId(),
+                false,
+                office.getId(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                PaymentMethod.CASH
+        );
+        assertNotNull(redirectUrl2);
+
+        // 5. Verificar que la orden utilizó la dirección seleccionada
+        List<SaleOrder> orders = saleOrderService.getClientOrders(clientUsername);
+        assertFalse(orders.isEmpty());
+        SaleOrder latestOrder = orders.get(0);
+        assertNotNull(latestOrder.getShippingAddress(), "La orden debe tener asignada la dirección de envío");
+        assertEquals(savedAddr.getId(), latestOrder.getShippingAddress().getId(), "La orden debe usar la dirección cargada elegida");
+    }
+
+    @Test
+    @DisplayName("Factura de Compra del Cliente: Emisión automática y consulta para el cliente")
+    public void testClientInvoiceCreationAndRetrieval() {
+        // 1. Cliente agrega producto al carrito y realiza compra con tarjeta de crédito
+        saleOrderService.addProductToCart(clientUsername, product1.getId(), 2);
+        String redirectUrl = saleOrderService.processCheckout(
+                clientUsername,
+                office.getId(),
+                "San Martín",
+                "1250",
+                null,
+                null,
+                "5500",
+                "Mendoza Capital",
+                "+54 9 261 420-9900",
+                PaymentMethod.CREDIT
+        );
+        assertNotNull(redirectUrl);
+
+        List<SaleOrder> orders = saleOrderService.getClientOrders(clientUsername);
+        assertFalse(orders.isEmpty());
+        SaleOrder order = orders.get(0);
+        assertEquals(OrderStatus.PAID, order.getStatus());
+
+        // 2. Comprobar que la factura se generó para la compra y está disponible
+        Invoice invoice = paymentService.getInvoiceByOrderId(order.getId())
+                .orElseGet(() -> paymentService.createInvoiceForOrder(order));
+
+        assertNotNull(invoice, "La orden abonada debe poseer una factura emitida");
+        assertNotNull(invoice.getNumber(), "La factura debe poseer un número oficial");
+        assertTrue(invoice.getNumber().startsWith("FC-"), "El número de factura debe seguir el formato oficial");
+        assertEquals(order.getTotalAmount(), invoice.getTotalAmount(), "El total de la factura debe coincidir con el total de la compra");
+
+        // 3. Comprobar los ítems facturados
+        List<InvoiceDetail> invoiceDetails = paymentService.getInvoiceDetails(invoice.getId());
+        assertFalse(invoiceDetails.isEmpty(), "La factura debe incluir el detalle de los productos facturados");
+        assertEquals(1, invoiceDetails.size());
+        assertEquals(2, invoiceDetails.get(0).getQuantity());
+        assertEquals(product1.getId(), invoiceDetails.get(0).getProduct().getId());
     }
 }

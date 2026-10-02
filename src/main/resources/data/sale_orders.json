@@ -1,0 +1,173 @@
+[
+  {
+    "clientUsername": "client@gmail.com",
+    "employeeUsername": "employee@gmail.com",
+    "officeName": "Casa Central Mendoza (Av. San Martín)",
+    "shippingAddressStreet": "Av. Emilio Civit",
+    "daysAgo": 12,
+    "status": "DELIVERED",
+    "paymentMethod": "CREDIT",
+    "totalAmount": 137000.00,
+    "details": [
+      {
+        "productCode": "RUN-NIKE-01",
+        "quantity": 1,
+        "unitPrice": 115000.00,
+        "total": 115000.00
+      },
+      {
+        "productCode": "CAP-STREET-10",
+        "quantity": 1,
+        "unitPrice": 22000.00,
+        "total": 22000.00
+      }
+    ],
+    "payment": {
+      "amount": 137000.00,
+      "daysAgo": 12,
+      "method": "CREDIT"
+    },
+    "invoice": {
+      "number": "FC-0001-00000001",
+      "daysAgo": 12,
+      "totalAmount": 137000.00,
+      "status": "PAID",
+      "details": [
+        {
+          "productCode": "RUN-NIKE-01",
+          "quantity": 1,
+          "unitPrice": 115000.00,
+          "total": 115000.00
+        },
+        {
+          "productCode": "CAP-STREET-10",
+          "quantity": 1,
+          "unitPrice": 22000.00,
+          "total": 22000.00
+        }
+      ]
+    }
+  },
+  {
+    "clientUsername": "client@gmail.com",
+    "employeeUsername": "lucia.cajera@zeroshop.com",
+    "officeName": "Sucursal Shopping Palmares (Godoy Cruz)",
+    "shippingAddressStreet": "Calle Colón",
+    "daysAgo": 3,
+    "status": "PENDING_SHIPPING",
+    "paymentMethod": "MERCADO_PAGO",
+    "totalAmount": 68000.00,
+    "details": [
+      {
+        "productCode": "HOOD-FLEECE-04",
+        "quantity": 1,
+        "unitPrice": 68000.00,
+        "total": 68000.00
+      }
+    ],
+    "payment": {
+      "amount": 68000.00,
+      "daysAgo": 3,
+      "method": "MERCADO_PAGO"
+    },
+    "invoice": {
+      "number": "FC-0001-00000002",
+      "daysAgo": 3,
+      "totalAmount": 68000.00,
+      "status": "PAID",
+      "details": [
+        {
+          "productCode": "HOOD-FLEECE-04",
+          "quantity": 1,
+          "unitPrice": 68000.00,
+          "total": 68000.00
+        }
+      ]
+    }
+  },
+  {
+    "clientUsername": "maria.gonzalez@gmail.com",
+    "employeeUsername": "employee@gmail.com",
+    "officeName": "Casa Central Mendoza (Av. San Martín)",
+    "shippingAddressStreet": "Calle Sarmiento",
+    "daysAgo": 6,
+    "status": "DELIVERED",
+    "paymentMethod": "DEBIT",
+    "totalAmount": 113000.00,
+    "details": [
+      {
+        "productCode": "MOC-URB-09",
+        "quantity": 1,
+        "unitPrice": 49000.00,
+        "total": 49000.00
+      },
+      {
+        "productCode": "TSH-OVER-05",
+        "quantity": 2,
+        "unitPrice": 32000.00,
+        "total": 64000.00
+      }
+    ],
+    "payment": {
+      "amount": 113000.00,
+      "daysAgo": 6,
+      "method": "DEBIT"
+    },
+    "invoice": {
+      "number": "FC-0001-00000003",
+      "daysAgo": 6,
+      "totalAmount": 113000.00,
+      "status": "PAID",
+      "details": [
+        {
+          "productCode": "MOC-URB-09",
+          "quantity": 1,
+          "unitPrice": 49000.00,
+          "total": 49000.00
+        },
+        {
+          "productCode": "TSH-OVER-05",
+          "quantity": 2,
+          "unitPrice": 32000.00,
+          "total": 64000.00
+        }
+      ]
+    }
+  },
+  {
+    "clientUsername": "agustin.rodriguez@gmail.com",
+    "employeeUsername": null,
+    "officeName": "Sucursal Mendoza Plaza Shopping (Guaymallén)",
+    "shippingAddressStreet": "Calle Espejo",
+    "daysAgo": 1,
+    "status": "PENDING_PAYMENT",
+    "paymentMethod": "MERCADO_PAGO",
+    "totalAmount": 96000.00,
+    "details": [
+      {
+        "productCode": "DEN-TRUCK-06",
+        "quantity": 1,
+        "unitPrice": 96000.00,
+        "total": 96000.00
+      }
+    ]
+  },
+  {
+    "clientUsername": "client@gmail.com",
+    "employeeUsername": null,
+    "officeName": null,
+    "shippingAddressStreet": null,
+    "daysAgo": 0,
+    "status": "ON_CART",
+    "paymentMethod": null,
+    "totalAmount": 54000.00,
+    "details": [
+      {
+        "productCode": "JOG-CARGO-07",
+        "quantity": 1,
+        "unitPrice": 54000.00,
+        "total": 54000.00
+      }
+    ]
+  }
+]

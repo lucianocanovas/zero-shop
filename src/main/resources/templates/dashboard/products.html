@@ -114,8 +114,8 @@
                             <thead>
                                 <tr>
                                     <th>Código</th>
-                                    <th>Nombre del Producto</th>
-                                    <th>Categoría / Subcategoría</th>
+                                    <th class="cell-wrap">Nombre del Producto</th>
+                                    <th class="min-w-md">Categoría / Subcategoría</th>
                                     <th>Talle</th>
                                     <th>Oferta</th>
                                     <th>Precio</th>
@@ -127,8 +127,8 @@
                                 <!-- Iteración dinámica si existen productos -->
                                 <tr th:each="product : ${products}" th:if="${products != null and !products.empty}">
                                     <td class="fw-semibold text-muted" th:text="${product.code}">ZR-1001</td>
-                                    <td class="fw-bold text-dark" th:text="${product.name}">Producto</td>
-                                    <td>
+                                    <td class="fw-bold text-dark cell-wrap" th:text="${product.name}">Producto</td>
+                                    <td class="min-w-md">
                                         <span th:text="${product.category != null ? product.category.name : 'General'}">Categoría</span>
                                         <small class="text-muted" th:if="${product.subCategory != null}" th:text="' / ' + ${product.subCategory.name}"></small>
                                     </td>

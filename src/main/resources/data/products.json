@@ -1,0 +1,230 @@
+[
+  {
+    "code": "RUN-NIKE-01",
+    "name": "Zapatillas Running Nike Air Zoom Pegasus",
+    "description": "Calzado running de alto rendimiento con amortiguación React y cápsula Zoom Air para máxima respuesta.",
+    "size": "M",
+    "imageUrl": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80",
+    "category": "Hombres",
+    "subcategory": "Calzado",
+    "onSale": true,
+    "regularPrice": 145000.00,
+    "salePrice": 115000.00,
+    "supplierName": "Calzados y Deportes del Plata S.R.L.",
+    "costPrice": 62000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 45,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 25,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 18
+    }
+  },
+  {
+    "code": "ADI-FORUM-02",
+    "name": "Zapatillas Adidas Superstar Streetwear",
+    "description": "Diseño clásico de las 3 tiras con puntera de caucho en relieve y cuero prémium para el streetstyle urbano.",
+    "size": "M",
+    "imageUrl": "https://images.unsplash.com/photo-1593287073863-c992914cb3e3?w=800&q=80",
+    "category": "Unisex",
+    "subcategory": "Calzado",
+    "onSale": false,
+    "regularPrice": 129000.00,
+    "salePrice": null,
+    "supplierName": "Calzados y Deportes del Plata S.R.L.",
+    "costPrice": 70000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 35,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 20,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 15
+    }
+  },
+  {
+    "code": "PUM-CAR-03",
+    "name": "Zapatillas Urbanas Puma Smash V2 Leather",
+    "description": "Zapatillas urbanas de corte bajo en cuero sintético suave con franja clásica Puma y suela de caucho durable.",
+    "size": "S",
+    "imageUrl": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&q=80",
+    "category": "Mujeres",
+    "subcategory": "Calzado",
+    "onSale": false,
+    "regularPrice": 98000.00,
+    "salePrice": null,
+    "supplierName": "Calzados y Deportes del Plata S.R.L.",
+    "costPrice": 52000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 40,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 22,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 12
+    }
+  },
+  {
+    "code": "HOOD-FLEECE-04",
+    "name": "Buzo Hoodie Canguro Fleece Premium",
+    "description": "Buzo con capucha confeccionado en algodón frisado con bolsillo frontal tipo canguro, cordones de ajuste y rib elastizado.",
+    "size": "L",
+    "imageUrl": "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=800&q=80",
+    "category": "Hombres",
+    "subcategory": "Indumentaria",
+    "onSale": true,
+    "regularPrice": 85000.00,
+    "salePrice": 68000.00,
+    "supplierName": "Distribuidora Textil Cuyana S.A.",
+    "costPrice": 34000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 50,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 30,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 20
+    }
+  },
+  {
+    "code": "TSH-OVER-05",
+    "name": "Remera Oversize Algodón 24/1 White",
+    "description": "Corte moderno cuadrado oversize, tejido suave en jersey de algodón peinado 100% de máxima durabilidad.",
+    "size": "M",
+    "imageUrl": "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&q=80",
+    "category": "Unisex",
+    "subcategory": "Indumentaria",
+    "onSale": false,
+    "regularPrice": 32000.00,
+    "salePrice": null,
+    "supplierName": "Distribuidora Textil Cuyana S.A.",
+    "costPrice": 16000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 60,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 35,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 25
+    }
+  },
+  {
+    "code": "DEN-TRUCK-06",
+    "name": "Campera Denim Trucker Vintage Unisex",
+    "description": "Campera de jean rígido lavado con cuello en contraste, botones metálicos envejecidos y bolsillos frontales con solapa.",
+    "size": "L",
+    "imageUrl": "https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=800&q=80",
+    "category": "Unisex",
+    "subcategory": "Indumentaria",
+    "onSale": true,
+    "regularPrice": 120000.00,
+    "salePrice": 96000.00,
+    "supplierName": "Distribuidora Textil Cuyana S.A.",
+    "costPrice": 48000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 25,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 15,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 8
+    }
+  },
+  {
+    "code": "JOG-CARGO-07",
+    "name": "Pantalón Jogger Cargo Slim Fit",
+    "description": "Jogger elastizado con múltiples bolsillos funcionales en muslos y botamangas con puño elástico reforzado.",
+    "size": "M",
+    "imageUrl": "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&q=80",
+    "category": "Hombres",
+    "subcategory": "Indumentaria",
+    "onSale": false,
+    "regularPrice": 54000.00,
+    "salePrice": null,
+    "supplierName": "Distribuidora Textil Cuyana S.A.",
+    "costPrice": 27000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 35,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 20,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 15
+    }
+  },
+  {
+    "code": "CREW-BEIGE-08",
+    "name": "Buzo Crewneck Beige Minimalist",
+    "description": "Cuello redondo clásico en algodón perchado, color neutro beige versátil de tacto ultra suave.",
+    "size": "S",
+    "imageUrl": "https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800&q=80",
+    "category": "Mujeres",
+    "subcategory": "Indumentaria",
+    "onSale": false,
+    "regularPrice": 59000.00,
+    "salePrice": null,
+    "supplierName": "Distribuidora Textil Cuyana S.A.",
+    "costPrice": 30000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 30,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 18,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 10
+    }
+  },
+  {
+    "code": "MOC-URB-09",
+    "name": "Mochila Urbana Porta Laptop Antirrobo 20L",
+    "description": "Compartimento acolchado para notebook de hasta 15.6'', cierre trasero oculto y tela cordura impermeable.",
+    "size": "M",
+    "imageUrl": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",
+    "category": "Unisex",
+    "subcategory": "Accesorios",
+    "onSale": true,
+    "regularPrice": 65000.00,
+    "salePrice": 49000.00,
+    "supplierName": "Accesorios Urbanos y Moda S.A.",
+    "costPrice": 24000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 40,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 25,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 14
+    }
+  },
+  {
+    "code": "CAP-STREET-10",
+    "name": "Gorra Trucker Streetwear Bordada Curve",
+    "description": "Gorra con frente estructurado de gabardina, malla trasera respirable y broche regulable snapback.",
+    "size": "M",
+    "imageUrl": "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&q=80",
+    "category": "Unisex",
+    "subcategory": "Accesorios",
+    "onSale": false,
+    "regularPrice": 22000.00,
+    "salePrice": null,
+    "supplierName": "Accesorios Urbanos y Moda S.A.",
+    "costPrice": 9500.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 50,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 30,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 20
+    }
+  },
+  {
+    "code": "BAG-SPORT-11",
+    "name": "Bolso Deportivo Gym & Travel Impermeable",
+    "description": "Bolso espacioso estilo duffle con asas de mano reforzadas y correa desmontable, ideal para entrenamiento y viajes.",
+    "size": "L",
+    "imageUrl": "https://images.unsplash.com/photo-1448582649076-3981753123b5?w=800&q=80",
+    "category": "Unisex",
+    "subcategory": "Accesorios",
+    "onSale": false,
+    "regularPrice": 42000.00,
+    "salePrice": null,
+    "supplierName": "Accesorios Urbanos y Moda S.A.",
+    "costPrice": 21000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 20,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 12,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 4
+    }
+  },
+  {
+    "code": "KID-SNEAK-12",
+    "name": "Zapatillas Deportivas Niños Court Retro",
+    "description": "Calzado deportivo infantil de alto impacto con diseño urbano retro, amortiguación Air y suela de goma antideslizante.",
+    "size": "S",
+    "imageUrl": "https://images.unsplash.com/photo-1605523741177-cd660595c2cf?w=800&q=80",
+    "category": "Niños",
+    "subcategory": "Calzado",
+    "onSale": false,
+    "regularPrice": 48000.00,
+    "salePrice": null,
+    "supplierName": "Calzados y Deportes del Plata S.R.L.",
+    "costPrice": 24000.00,
+    "stocks": {
+      "Casa Central Mendoza (Av. San Martín)": 25,
+      "Sucursal Shopping Palmares (Godoy Cruz)": 15,
+      "Sucursal Mendoza Plaza Shopping (Guaymallén)": 8
+    }
+  }
+]

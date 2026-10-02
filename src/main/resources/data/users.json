@@ -1,0 +1,322 @@
+[
+  {
+    "username": "admin@gmail.com",
+    "password": "admin123",
+    "role": "ADMIN",
+    "person": {
+      "type": "EMPLOYEE",
+      "firstName": "Martín",
+      "lastName": "Administrador",
+      "idType": "DNI",
+      "idNumber": "28123456",
+      "gender": "MALE",
+      "dateOfBirth": "1982-04-10",
+      "employeeType": "MANAGER",
+      "hireDate": "2020-01-15",
+      "officeNames": ["Casa Central Mendoza (Av. San Martín)"],
+      "addresses": [
+        {
+          "street": "Av. Emilio Civit",
+          "number": "150",
+          "floor": "4",
+          "apartment": "A",
+          "zipCode": "5500",
+          "observations": "Domicilio particular administración",
+          "cityName": "Mendoza"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "PHONE",
+          "phoneNumber": "+54 261 400-0001",
+          "phoneType": "LANDLINE",
+          "contactType": "WORK",
+          "observation": "Línea corporativa"
+        },
+        {
+          "type": "EMAIL",
+          "email": "admin@zeroshop.com",
+          "contactType": "WORK",
+          "observation": "Email de gestión gerencial"
+        }
+      ]
+    }
+  },
+  {
+    "username": "employee@gmail.com",
+    "password": "employee123",
+    "role": "EMPLOYEE",
+    "person": {
+      "type": "EMPLOYEE",
+      "firstName": "Carlos",
+      "lastName": "Gómez",
+      "idType": "DNI",
+      "idNumber": "32456789",
+      "gender": "MALE",
+      "dateOfBirth": "1990-03-15",
+      "employeeType": "VENDOR",
+      "hireDate": "2021-06-01",
+      "officeNames": ["Casa Central Mendoza (Av. San Martín)"],
+      "addresses": [
+        {
+          "street": "Calle Las Heras",
+          "number": "340",
+          "floor": "PB",
+          "apartment": "A",
+          "zipCode": "5500",
+          "observations": "Cerca de plaza Independencia",
+          "cityName": "Mendoza"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "PHONE",
+          "phoneNumber": "+54 261 411-2233",
+          "phoneType": "MOBILE",
+          "contactType": "PERSONAL",
+          "observation": "Celular personal"
+        },
+        {
+          "type": "EMAIL",
+          "email": "carlos.gomez@zeroshop.com",
+          "contactType": "WORK",
+          "observation": "Correo corporativo ventas"
+        }
+      ]
+    }
+  },
+  {
+    "username": "lucia.cajera@zeroshop.com",
+    "password": "employee123",
+    "role": "EMPLOYEE",
+    "person": {
+      "type": "EMPLOYEE",
+      "firstName": "Lucía",
+      "lastName": "Fernández",
+      "idType": "DNI",
+      "idNumber": "35123987",
+      "gender": "FEMALE",
+      "dateOfBirth": "1994-08-22",
+      "employeeType": "CASHIER",
+      "hireDate": "2022-03-15",
+      "officeNames": ["Sucursal Shopping Palmares (Godoy Cruz)"],
+      "addresses": [
+        {
+          "street": "Av. San Martín Sur",
+          "number": "2550",
+          "floor": "2",
+          "apartment": "4B",
+          "zipCode": "5501",
+          "observations": "Frente a ciclovía",
+          "cityName": "Godoy Cruz"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "PHONE",
+          "phoneNumber": "+54 261 455-6677",
+          "phoneType": "MOBILE",
+          "contactType": "PERSONAL",
+          "observation": "Celular personal de contacto"
+        },
+        {
+          "type": "EMAIL",
+          "email": "lucia.fernandez@zeroshop.com",
+          "contactType": "WORK",
+          "observation": "Email laboral Palmares"
+        }
+      ]
+    }
+  },
+  {
+    "username": "marcos.deposito@zeroshop.com",
+    "password": "employee123",
+    "role": "EMPLOYEE",
+    "person": {
+      "type": "EMPLOYEE",
+      "firstName": "Marcos",
+      "lastName": "Sosa",
+      "idType": "DNI",
+      "idNumber": "29876543",
+      "gender": "MALE",
+      "dateOfBirth": "1988-11-05",
+      "employeeType": "STOCKER",
+      "hireDate": "2021-09-10",
+      "officeNames": ["Sucursal Mendoza Plaza Shopping (Guaymallén)"],
+      "addresses": [
+        {
+          "street": "Calle Belgrano",
+          "number": "820",
+          "floor": "PB",
+          "apartment": null,
+          "zipCode": "5519",
+          "observations": "Casa con rejas blancas",
+          "cityName": "Guaymallén"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "PHONE",
+          "phoneNumber": "+54 261 488-9900",
+          "phoneType": "MOBILE",
+          "contactType": "PERSONAL",
+          "observation": "Celular guardia de stock"
+        },
+        {
+          "type": "EMAIL",
+          "email": "marcos.sosa@zeroshop.com",
+          "contactType": "WORK",
+          "observation": "Logística y recepción"
+        }
+      ]
+    }
+  },
+  {
+    "username": "client@gmail.com",
+    "password": "client123",
+    "role": "CLIENT",
+    "person": {
+      "type": "CLIENT",
+      "clientNumber": "CLI-0001",
+      "firstName": "Juan",
+      "lastName": "Pérez",
+      "idType": "DNI",
+      "idNumber": "40123456",
+      "gender": "MALE",
+      "dateOfBirth": "1995-05-20",
+      "addresses": [
+        {
+          "street": "Av. Emilio Civit",
+          "number": "450",
+          "floor": "PB",
+          "apartment": null,
+          "zipCode": "5500",
+          "observations": "Casa particular frente al parque con timbre negro",
+          "cityName": "Mendoza"
+        },
+        {
+          "street": "Calle Colón",
+          "number": "120",
+          "floor": "3",
+          "apartment": "B",
+          "zipCode": "5500",
+          "observations": "Oficina laboral (recibir de 9:00 a 18:00 hs)",
+          "cityName": "Mendoza"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "PHONE",
+          "phoneNumber": "+54 9 261 511-2233",
+          "phoneType": "MOBILE",
+          "contactType": "PERSONAL",
+          "observation": "Celular personal con WhatsApp"
+        },
+        {
+          "type": "PHONE",
+          "phoneNumber": "+54 261 425-9988",
+          "phoneType": "LANDLINE",
+          "contactType": "PERSONAL",
+          "observation": "Teléfono fijo del hogar"
+        },
+        {
+          "type": "EMAIL",
+          "email": "juan.perez@gmail.com",
+          "contactType": "PERSONAL",
+          "observation": "Email de compras y notificaciones"
+        }
+      ]
+    }
+  },
+  {
+    "username": "maria.gonzalez@gmail.com",
+    "password": "client123",
+    "role": "CLIENT",
+    "person": {
+      "type": "CLIENT",
+      "clientNumber": "CLI-0002",
+      "firstName": "María",
+      "lastName": "González",
+      "idType": "DNI",
+      "idNumber": "38999888",
+      "gender": "FEMALE",
+      "dateOfBirth": "1993-10-12",
+      "addresses": [
+        {
+          "street": "Calle Sarmiento",
+          "number": "780",
+          "floor": "PB",
+          "apartment": null,
+          "zipCode": "5519",
+          "observations": "Portón corredizo negro, dejar paquete con encargado",
+          "cityName": "Guaymallén"
+        },
+        {
+          "street": "Av. Champagnat",
+          "number": "1500",
+          "floor": "Mza C",
+          "apartment": "Casa 12",
+          "zipCode": "5500",
+          "observations": "Barrio Dalvian - Ingreso por guardia",
+          "cityName": "Mendoza"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "PHONE",
+          "phoneNumber": "+54 9 261 633-4455",
+          "phoneType": "MOBILE",
+          "contactType": "PERSONAL",
+          "observation": "Celular con WhatsApp"
+        },
+        {
+          "type": "EMAIL",
+          "email": "maria.gonzalez@gmail.com",
+          "contactType": "PERSONAL",
+          "observation": "Email particular"
+        }
+      ]
+    }
+  },
+  {
+    "username": "agustin.rodriguez@gmail.com",
+    "password": "client123",
+    "role": "CLIENT",
+    "person": {
+      "type": "CLIENT",
+      "clientNumber": "CLI-0003",
+      "firstName": "Agustín",
+      "lastName": "Rodríguez",
+      "idType": "DNI",
+      "idNumber": "42111222",
+      "gender": "MALE",
+      "dateOfBirth": "1998-02-18",
+      "addresses": [
+        {
+          "street": "Calle Espejo",
+          "number": "330",
+          "floor": "1",
+          "apartment": "2",
+          "zipCode": "5500",
+          "observations": "Edificio centro, tocar timbre 1B",
+          "cityName": "Mendoza"
+        }
+      ],
+      "contacts": [
+        {
+          "type": "PHONE",
+          "phoneNumber": "+54 9 261 744-8899",
+          "phoneType": "MOBILE",
+          "contactType": "PERSONAL",
+          "observation": "Celular personal"
+        },
+        {
+          "type": "EMAIL",
+          "email": "agustin.rodriguez@gmail.com",
+          "contactType": "PERSONAL",
+          "observation": "Email de contacto"
+        }
+      ]
+    }
+  }
+]

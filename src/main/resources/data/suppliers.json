@@ -1,0 +1,101 @@
+[
+  {
+    "name": "Distribuidora Textil Cuyana S.A.",
+    "cuit": "30-70891234-5",
+    "addresses": [
+      {
+        "street": "Parque Industrial Las Heras",
+        "number": "Calle 4 Galpón B",
+        "floor": null,
+        "apartment": null,
+        "zipCode": "5539",
+        "observations": "Planta de confección y despacho mayorista",
+        "cityName": "Mendoza"
+      },
+      {
+        "street": "Av. Mitre",
+        "number": "540",
+        "floor": "2",
+        "apartment": "Of. 201",
+        "zipCode": "5500",
+        "observations": "Oficina administrativa y pagos",
+        "cityName": "Mendoza"
+      }
+    ],
+    "contacts": [
+      {
+        "type": "PHONE",
+        "phoneNumber": "+54 261 498-1122",
+        "phoneType": "LANDLINE",
+        "contactType": "WORK",
+        "observation": "Ventas mayoristas indumentaria"
+      },
+      {
+        "type": "EMAIL",
+        "email": "ventas@textilcuyana.com",
+        "contactType": "BUSINESS",
+        "observation": "Recepción de órdenes de compra"
+      }
+    ]
+  },
+  {
+    "name": "Calzados y Deportes del Plata S.R.L.",
+    "cuit": "30-65432198-1",
+    "addresses": [
+      {
+        "street": "Av. del Libertador",
+        "number": "4800",
+        "floor": "6",
+        "apartment": "A",
+        "zipCode": "1426",
+        "observations": "Showroom y centro de distribución de calzado deportivo",
+        "cityName": "La Plata"
+      }
+    ],
+    "contacts": [
+      {
+        "type": "PHONE",
+        "phoneNumber": "+54 11 4780-5500",
+        "phoneType": "LANDLINE",
+        "contactType": "WORK",
+        "observation": "Mesa corporativa de atención"
+      },
+      {
+        "type": "EMAIL",
+        "email": "pedidos@calzadosdelplata.com.ar",
+        "contactType": "BUSINESS",
+        "observation": "Ventas calzado y accesorios deportivos"
+      }
+    ]
+  },
+  {
+    "name": "Accesorios Urbanos y Moda S.A.",
+    "cuit": "30-71829304-3",
+    "addresses": [
+      {
+        "street": "Calle Defensa",
+        "number": "1020",
+        "floor": "PB",
+        "apartment": null,
+        "zipCode": "1065",
+        "observations": "Depósito y taller central San Telmo",
+        "cityName": "La Plata"
+      }
+    ],
+    "contacts": [
+      {
+        "type": "PHONE",
+        "phoneNumber": "+54 11 4361-9090",
+        "phoneType": "LANDLINE",
+        "contactType": "WORK",
+        "observation": "Línea corporativa"
+      },
+      {
+        "type": "EMAIL",
+        "email": "info@accesoriosurbanos.com.ar",
+        "contactType": "BUSINESS",
+        "observation": "Catálogos y presupuestos"
+      }
+    ]
+  }
+]

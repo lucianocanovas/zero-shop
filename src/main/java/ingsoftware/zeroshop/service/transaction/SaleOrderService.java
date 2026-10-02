@@ -8,6 +8,7 @@ import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.entity.catalog.PriceHistory;
 import ingsoftware.zeroshop.entity.catalog.Product;
 import ingsoftware.zeroshop.entity.location.Address;
+import ingsoftware.zeroshop.entity.location.City;
 import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
@@ -15,10 +16,12 @@ import ingsoftware.zeroshop.enums.IDType;
 import ingsoftware.zeroshop.enums.OrderStatus;
 import ingsoftware.zeroshop.enums.PaymentMethod;
 import ingsoftware.zeroshop.repository.actor.ClientRepository;
+import ingsoftware.zeroshop.repository.actor.PersonRepository;
 import ingsoftware.zeroshop.repository.actor.UserRepository;
 import ingsoftware.zeroshop.repository.catalog.PriceHistoryRepository;
 import ingsoftware.zeroshop.repository.catalog.ProductRepository;
 import ingsoftware.zeroshop.repository.location.AddressRepository;
+import ingsoftware.zeroshop.repository.location.CityRepository;
 import ingsoftware.zeroshop.repository.org.OfficeRepository;
 import ingsoftware.zeroshop.repository.transaction.OrderDetailRepository;
 import ingsoftware.zeroshop.repository.transaction.SaleOrderRepository;
@@ -33,6 +36,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,9 +50,11 @@ public class SaleOrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final ProductRepository productRepository;
     private final ClientRepository clientRepository;
+    private final PersonRepository personRepository;
     private final UserRepository userRepository;
     private final OfficeRepository officeRepository;
     private final AddressRepository addressRepository;
+    private final CityRepository cityRepository;
     private final PriceHistoryRepository priceHistoryRepository;
     private final PaymentService paymentService;
     private final StockService stockService;
@@ -60,9 +66,11 @@ public class SaleOrderService {
                             ProductRepository productRepository,
                             PriceHistoryRepository priceHistoryRepository,
                             ClientRepository clientRepository,
+                            PersonRepository personRepository,
                             UserRepository userRepository,
                             OfficeRepository officeRepository,
                             AddressRepository addressRepository,
+                            CityRepository cityRepository,
                             PaymentService paymentService,
                             StockService stockService,
                             MercadoPagoService mercadoPagoService,
@@ -72,9 +80,11 @@ public class SaleOrderService {
         this.productRepository = productRepository;
         this.priceHistoryRepository = priceHistoryRepository;
         this.clientRepository = clientRepository;
+        this.personRepository = personRepository;
         this.userRepository = userRepository;
         this.officeRepository = officeRepository;
         this.addressRepository = addressRepository;
+        this.cityRepository = cityRepository;
         this.paymentService = paymentService;
         this.stockService = stockService;
         this.mercadoPagoService = mercadoPagoService;
@@ -232,10 +242,30 @@ public class SaleOrderService {
     }
 
     /**
-     * Procesa la confirmación de compra y prepara el pago según el método seleccionado.
+     * Obtiene las direcciones activas del cliente asociado al usuario.
+     */
+    @Transactional(readOnly = true)
+    public List<Address> getUserAddresses(String username) {
+        if (username == null || username.isBlank()) {
+            return Collections.emptyList();
+        }
+        User user = userRepository.findByUsernameIgnoreCaseAndDeletedFalse(username).orElse(null);
+        if (user == null || user.getPerson() == null || user.getPerson().getAddress() == null) {
+            return Collections.emptyList();
+        }
+        return user.getPerson().getAddress().stream()
+                .filter(a -> a.getDeleted() == null || !a.getDeleted())
+                .toList();
+    }
+
+    /**
+     * Procesa la confirmación de compra y prepara el pago según el método seleccionado,
+     * permitiendo elegir una dirección existente o asociar una nueva al cliente.
      */
     @Transactional
     public String processCheckout(String username,
+                                  UUID addressId,
+                                  boolean saveNewAddress,
                                   UUID officeId,
                                   String street,
                                   String number,
@@ -267,17 +297,41 @@ public class SaleOrderService {
         order.setOffice(office);
 
         // Dirección de entrega
-        Address shippingAddress = Address.builder()
-                .street(street != null && !street.isBlank() ? street : "Dirección Cliente")
-                .number(number != null && !number.isBlank() ? number : "S/N")
-                .floor(floor)
-                .apartment(apartment)
-                .zipCode(zipCode != null && !zipCode.isBlank() ? zipCode : "5500")
-                .observations(phone != null ? "Tel: " + phone : null)
-                .deleted(false)
-                .build();
-        Address savedAddress = addressRepository.save(shippingAddress);
-        order.setShippingAddress(savedAddress);
+        Address shippingAddress = null;
+        if (addressId != null) {
+            shippingAddress = addressRepository.findActive(addressId).orElse(null);
+        }
+
+        if (shippingAddress == null) {
+            City cityEntity = null;
+            if (city != null && !city.isBlank()) {
+                cityEntity = cityRepository.findByNameIgnoreCaseAndDeletedFalse(city.trim()).orElse(null);
+            }
+
+            Address newAddress = Address.builder()
+                    .street(street != null && !street.isBlank() ? street.trim() : "Dirección Cliente")
+                    .number(number != null && !number.isBlank() ? number.trim() : "S/N")
+                    .floor(floor != null && !floor.isBlank() ? floor.trim() : null)
+                    .apartment(apartment != null && !apartment.isBlank() ? apartment.trim() : null)
+                    .zipCode(zipCode != null && !zipCode.isBlank() ? zipCode.trim() : "5500")
+                    .observations(phone != null && !phone.isBlank() ? "Tel: " + phone.trim() : null)
+                    .city(cityEntity)
+                    .deleted(false)
+                    .build();
+            shippingAddress = addressRepository.save(newAddress);
+
+            // Asociar la nueva dirección al cliente si saveNewAddress es true
+            if (saveNewAddress && order.getClient() != null) {
+                Person person = order.getClient();
+                if (person.getAddress() == null) {
+                    person.setAddress(new ArrayList<>());
+                }
+                person.getAddress().add(shippingAddress);
+                personRepository.save(person);
+            }
+        }
+
+        order.setShippingAddress(shippingAddress);
         order.setDate(LocalDateTime.now());
         order.setPaymentMethod(paymentMethod);
 
@@ -309,6 +363,23 @@ public class SaleOrderService {
     }
 
     /**
+     * Sobrecarga de compatibilidad para processCheckout sin addressId previo.
+     */
+    @Transactional
+    public String processCheckout(String username,
+                                  UUID officeId,
+                                  String street,
+                                  String number,
+                                  String floor,
+                                  String apartment,
+                                  String zipCode,
+                                  String city,
+                                  String phone,
+                                  PaymentMethod paymentMethod) {
+        return processCheckout(username, null, false, officeId, street, number, floor, apartment, zipCode, city, phone, paymentMethod);
+    }
+
+    /**
      * Callback exitoso desde Mercado Pago.
      */
     @Transactional
@@ -333,7 +404,7 @@ public class SaleOrderService {
             if (order.getClient() != null) {
                 recipientEmail = userRepository.findAllByDeletedFalse().stream()
                         .filter(u -> u.getPerson() != null && u.getPerson().getId().equals(order.getClient().getId()))
-                        .map(User::getUsername)
+                        .map(u -> u.getUsername())
                         .findFirst()
                         .orElse(null);
 
@@ -382,7 +453,7 @@ public class SaleOrderService {
         if (order.getClient() != null) {
             recipientEmail = userRepository.findAllByDeletedFalse().stream()
                     .filter(u -> u.getPerson() != null && u.getPerson().getId().equals(order.getClient().getId()))
-                    .map(User::getUsername)
+                    .map(u -> u.getUsername())
                     .findFirst()
                     .orElse(null);
 

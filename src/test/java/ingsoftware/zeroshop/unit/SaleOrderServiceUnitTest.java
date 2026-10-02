@@ -8,10 +8,12 @@ import ingsoftware.zeroshop.entity.transaction.SaleOrder;
 import ingsoftware.zeroshop.enums.OrderStatus;
 import ingsoftware.zeroshop.enums.PaymentMethod;
 import ingsoftware.zeroshop.repository.actor.ClientRepository;
+import ingsoftware.zeroshop.repository.actor.PersonRepository;
 import ingsoftware.zeroshop.repository.actor.UserRepository;
 import ingsoftware.zeroshop.repository.catalog.PriceHistoryRepository;
 import ingsoftware.zeroshop.repository.catalog.ProductRepository;
 import ingsoftware.zeroshop.repository.location.AddressRepository;
+import ingsoftware.zeroshop.repository.location.CityRepository;
 import ingsoftware.zeroshop.repository.org.OfficeRepository;
 import ingsoftware.zeroshop.repository.transaction.OrderDetailRepository;
 import ingsoftware.zeroshop.repository.transaction.SaleOrderRepository;
@@ -55,6 +57,9 @@ public class SaleOrderServiceUnitTest {
     private ClientRepository clientRepository;
 
     @Mock
+    private PersonRepository personRepository;
+
+    @Mock
     private UserRepository userRepository;
 
     @Mock
@@ -62,6 +67,9 @@ public class SaleOrderServiceUnitTest {
 
     @Mock
     private AddressRepository addressRepository;
+
+    @Mock
+    private CityRepository cityRepository;
 
     @Mock
     private PaymentService paymentService;

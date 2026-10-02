@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Casa Central Mendoza (Av. San Martín)",
+    "cuit": "30-71234567-8",
+    "type": "HEADQUARTERS",
+    "addresses": [
+      {
+        "street": "Av. San Martín",
+        "number": "1250",
+        "floor": "PB",
+        "apartment": "Local 1",
+        "zipCode": "5500",
+        "observations": "Sede central y salón de ventas al público",
+        "cityName": "Mendoza"
+      },
+      {
+        "street": "Ruta Provincial 50",
+        "number": "Km 10",
+        "floor": null,
+        "apartment": null,
+        "zipCode": "5507",
+        "observations": "Centro logístico y depósito general",
+        "cityName": "Luján de Cuyo"
+      }
+    ],
+    "contacts": [
+      {
+        "type": "PHONE",
+        "phoneNumber": "+54 261 420-0000",
+        "phoneType": "LANDLINE",
+        "contactType": "WORK",
+        "observation": "Conmutador central"
+      },
+      {
+        "type": "EMAIL",
+        "email": "contacto@zeroshop.com",
+        "contactType": "BUSINESS",
+        "observation": "Atención al cliente y consultas"
+      },
+      {
+        "type": "EMAIL",
+        "email": "administracion@zeroshop.com",
+        "contactType": "WORK",
+        "observation": "Administración y pagos corporativos"
+      }
+    ]
+  },
+  {
+    "name": "Sucursal Shopping Palmares (Godoy Cruz)",
+    "cuit": "30-71234567-9",
+    "type": "BRANCH",
+    "addresses": [
+      {
+        "street": "Av. San Martín Sur",
+        "number": "2650",
+        "floor": "1",
+        "apartment": "Local 140",
+        "zipCode": "5501",
+        "observations": "Shopping Palmares Nivel 1 frente a patio de comidas",
+        "cityName": "Godoy Cruz"
+      }
+    ],
+    "contacts": [
+      {
+        "type": "PHONE",
+        "phoneNumber": "+54 261 413-9000",
+        "phoneType": "LANDLINE",
+        "contactType": "WORK",
+        "observation": "Línea directa local Palmares"
+      },
+      {
+        "type": "EMAIL",
+        "email": "palmares@zeroshop.com",
+        "contactType": "BUSINESS",
+        "observation": "Consultas de stock sucursal"
+      }
+    ]
+  },
+  {
+    "name": "Sucursal Mendoza Plaza Shopping (Guaymallén)",
+    "cuit": "30-71234567-0",
+    "type": "BRANCH",
+    "addresses": [
+      {
+        "street": "Acceso Este",
+        "number": "3280",
+        "floor": "PB",
+        "apartment": "Local 55",
+        "zipCode": "5519",
+        "observations": "Ala Oeste acceso principal",
+        "cityName": "Guaymallén"
+      }
+    ],
+    "contacts": [
+      {
+        "type": "PHONE",
+        "phoneNumber": "+54 261 449-0100",
+        "phoneType": "LANDLINE",
+        "contactType": "WORK",
+        "observation": "Atención al público y mostrador POS"
+      },
+      {
+        "type": "EMAIL",
+        "email": "plazashopping@zeroshop.com",
+        "contactType": "BUSINESS",
+        "observation": "Mostrador y entregas web"
+      }
+    ]
+  }
+]

@@ -49,7 +49,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="text-muted small fw-semibold text-uppercase">Ventas del Mes</span>
-                                    <h3 class="fw-bold text-dark mt-1 mb-0" th:text="'$' + ${#numbers.formatDecimal(salesThisMonth != null ? salesThisMonth : 0, 1, 2)}">$0.00</h3>
+                                    <h3 class="fw-bold text-dark mt-1 mb-0" th:text="'$' + ${#numbers.formatDecimal(salesThisMonth != null ? salesThisMonth : 0, 1, 'POINT', 2, 'COMMA')}">$0,00</h3>
                                     <span class="text-success small"><i class="bi bi-calendar-check me-1"></i>Período actual</span>
                                 </div>
                                 <div class="rounded-3 bg-primary-subtle text-primary p-3 fs-3">
@@ -128,7 +128,7 @@
                                         <tr th:each="order : ${recentOrders}" th:if="${recentOrders != null and !recentOrders.empty}">
                                             <td class="fw-bold" th:text="'#' + ${#strings.substring(order.id.toString(), 0, 8)}">#ZR-89312</td>
                                             <td th:text="${order.client != null ? (order.client.firstName + ' ' + (order.client.lastName != null ? order.client.lastName : '')) : 'Consumidor Final'}">Cliente</td>
-                                            <td class="fw-bold text-dark" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : 0, 1, 2)}">$0.00</td>
+                                            <td class="fw-bold text-dark" th:text="'$' + ${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : 0, 1, 'POINT', 2, 'COMMA')}">$0,00</td>
                                             <td>
                                                 <span class="badge"
                                                       th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success-subtle text-success' :

@@ -88,10 +88,10 @@
 
                 <!-- Botones de Acción -->
                 <div class="col-12 col-md-1 d-flex gap-1">
-                    <button type="submit" class="btn btn-primary flex-fill" title="Aplicar Filtros">
+                    <button type="submit" class="btn btn-primary btn-sm btn-icon flex-fill" title="Aplicar Filtros">
                         <i class="bi bi-funnel"></i>
                     </button>
-                    <a th:href="@{/products}" class="btn btn-outline-secondary" title="Limpiar Filtros">
+                    <a th:href="@{/products}" class="btn btn-outline-secondary btn-sm btn-icon flex-fill text-center" title="Limpiar Filtros">
                         <i class="bi bi-x-lg"></i>
                     </a>
                 </div>
@@ -115,7 +115,7 @@
                             <span class="badge bg-danger-subtle text-danger fw-bold" th:if="${product.onSale}">En Promoción</span>
                             <span class="badge bg-success-subtle text-success" th:unless="${product.onSale}">En Stock</span>
                         </div>
-                        <h6 class="card-title fw-bold text-dark mb-1 text-truncate" th:text="${product.name}">Nombre del Producto</h6>
+                        <h6 class="card-title fw-bold text-dark mb-1 card-title-clamp-2" th:text="${product.name}">Nombre del Producto</h6>
                         <p class="card-text text-muted small text-truncate mb-2" th:text="${product.description}">Descripción breve del producto.</p>
                         <span class="small text-muted mb-2">Talle: <strong th:text="${product.size != null ? product.size : 'M'}">M</strong></span>
                         

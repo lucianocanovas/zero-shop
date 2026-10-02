@@ -78,17 +78,33 @@
 
                                     <div class="row g-3 mb-3">
                                         <div class="col-sm-6">
-                                            <label for="subCategoryId" class="form-label">Categoría / Subcategoría</label>
+                                            <label for="categoryId" class="form-label">Categoría Principal</label>
+                                            <select id="categoryId" class="form-select" required>
+                                                <option value="">Seleccione Categoría...</option>
+                                                <option th:each="cat : ${categories}" 
+                                                        th:value="${cat.id}" 
+                                                        th:selected="${product?.subCategory?.category?.id == cat.id}"
+                                                        th:text="${cat.name}">
+                                                    Hombres
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="subCategoryId" class="form-label">Subcategoría</label>
                                             <select id="subCategoryId" name="subCategoryId" class="form-select" required>
                                                 <option value="">Seleccione Subcategoría...</option>
                                                 <option th:each="sub : ${subCategories}" 
                                                         th:value="${sub.id}" 
+                                                        th:data-category-id="${sub.category != null ? sub.category.id : ''}"
                                                         th:selected="${product?.subCategory?.id == sub.id}"
-                                                        th:text="${(sub.category != null ? sub.category.name + ' - ' : '') + sub.name}">
-                                                    Hombres - Calzado
+                                                        th:text="${sub.name}">
+                                                    Calzado
                                                 </option>
                                             </select>
                                         </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-3">
                                         <div class="col-sm-6">
                                             <label for="size" class="form-label">Talle</label>
                                             <select id="size" name="size" class="form-select" required>
@@ -99,16 +115,16 @@
                                                         th:text="${s}">M</option>
                                             </select>
                                         </div>
-                                    </div>
-
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-12">
+                                        <div class="col-sm-6">
                                             <label for="basePrice" class="form-label">Precio de Venta ($)</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white">$</span>
                                                 <input type="number" id="basePrice" name="basePrice" class="form-control" th:value="${product?.currentPrice}" step="0.01" min="0" required>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-3">
                                         <div class="col-sm-12">
                                             <div class="form-check form-switch p-3 bg-light rounded-3 border">
                                                 <input class="form-check-input ms-0 me-2" type="checkbox" id="onSale" name="onSale" value="true" th:checked="${product?.onSale == true}">
@@ -208,6 +224,75 @@
                     previewContainer.classList.add('d-none');
                 }
             });
+        }
+
+        // Dynamic subcategory filtering based on selected main category
+        const categorySelect = document.getElementById('categoryId');
+        const subCategorySelect = document.getElementById('subCategoryId');
+
+        if (categorySelect && subCategorySelect) {
+            const allSubCategoryOptions = Array.from(subCategorySelect.querySelectorAll('option'))
+                .filter(opt => opt.value !== '')
+                .map(opt => ({
+                    value: opt.value,
+                    text: opt.text,
+                    categoryId: opt.getAttribute('data-category-id'),
+                    selected: opt.selected
+                }));
+
+            function updateSubCategories(preserveValue) {
+                const selectedCatId = categorySelect.value;
+                const valueToRestore = preserveValue !== undefined ? preserveValue : subCategorySelect.value;
+
+                subCategorySelect.innerHTML = '';
+
+                if (!selectedCatId) {
+                    const placeholder = document.createElement('option');
+                    placeholder.value = '';
+                    placeholder.textContent = 'Seleccione primero una categoría...';
+                    placeholder.selected = true;
+                    subCategorySelect.appendChild(placeholder);
+                    if (!subCategorySelect.closest('fieldset')?.disabled) {
+                        subCategorySelect.disabled = true;
+                    }
+                    return;
+                }
+
+                const filtered = allSubCategoryOptions.filter(opt => opt.categoryId === selectedCatId);
+
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.textContent = filtered.length > 0 ? 'Seleccione Subcategoría...' : 'Sin subcategorías disponibles';
+                subCategorySelect.appendChild(defaultOpt);
+
+                let hasSelection = false;
+                filtered.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item.value;
+                    opt.textContent = item.text;
+                    if (valueToRestore && item.value === valueToRestore) {
+                        opt.selected = true;
+                        hasSelection = true;
+                    }
+                    subCategorySelect.appendChild(opt);
+                });
+
+                if (!hasSelection) {
+                    defaultOpt.selected = true;
+                }
+
+                if (!subCategorySelect.closest('fieldset')?.disabled) {
+                    subCategorySelect.disabled = filtered.length === 0;
+                }
+            }
+
+            categorySelect.addEventListener('change', function() {
+                updateSubCategories('');
+            });
+
+            // Initial state on page load
+            const initialSelected = allSubCategoryOptions.find(opt => opt.selected);
+            updateSubCategories(initialSelected ? initialSelected.value : '');
         }
     </script>
 </body>

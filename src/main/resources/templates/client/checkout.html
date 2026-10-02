@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/styles/styles.css}" href="/styles/styles.css">
 </head>
+
 <body class="bg-light d-flex flex-column min-vh-100">
 
     <!-- Header Reutilizable -->
@@ -39,9 +41,9 @@
         </div>
 
         <div class="mb-4">
-            <span class="badge bg-success-subtle text-success fw-semibold"><i class="bi bi-shield-lock-fill me-1"></i>Pago Protegido</span>
             <h1 class="h3 fw-bold text-dark mb-1">Finalizar Compra</h1>
-            <p class="text-muted small mb-0">Revisa tu carrito, selecciona la sucursal de Mendoza y el medio de pago preferido</p>
+            <p class="text-muted small mb-0">Revisa tu carrito, selecciona la sucursal de Mendoza y el medio de pago
+                preferido</p>
         </div>
 
         <div class="row g-4">
@@ -59,65 +61,146 @@
 
                         <div class="row g-3">
                             <div class="col-12">
-                                <label for="officeId" class="form-label fw-semibold">Seleccionar Sucursal en Mendoza</label>
+                                <label for="officeId" class="form-label fw-semibold">Seleccionar Sucursal en
+                                    Mendoza</label>
                                 <select id="officeId" name="officeId" class="form-select" required>
-                                    <option th:each="off : ${offices}" th:value="${off.id}" th:text="${off.name}">Casa Central Mendoza</option>
-                                    <option th:if="${offices == null or offices.empty}" value="">Casa Central Mendoza (Predeterminada)</option>
+                                    <option th:each="off : ${offices}" th:value="${off.id}" th:text="${off.name}">Casa
+                                        Central Mendoza</option>
+                                    <option th:if="${offices == null or offices.empty}" value="">Casa Central Mendoza
+                                        (Predeterminada)</option>
                                 </select>
-                                <div class="form-text small">La disminución de stock se registrará en la sucursal seleccionada cuando el producto sea pagado.</div>
+                                <div class="form-text small">La disminución de stock se registrará en la sucursal
+                                    seleccionada cuando el producto sea pagado.</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 2. Dirección de Entrega Completa (Especificación del TP Integrador) -->
+                    <!-- 2. Dirección de Entrega y Contacto -->
                     <div class="card border-0 shadow-sm p-4 mb-4">
-                        <div class="d-flex align-items-center gap-2 mb-3">
-                            <span class="badge bg-primary rounded-circle p-2">2</span>
-                            <h5 class="fw-bold mb-0">Dirección de Envío y Contacto</h5>
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-primary rounded-circle p-2">2</span>
+                                <h5 class="fw-bold mb-0">Dirección de Envío y Contacto</h5>
+                            </div>
+                            <span th:if="${userAddresses != null and !userAddresses.empty}" class="badge bg-light text-muted border">
+                                <i class="bi bi-geo-alt me-1"></i><span th:text="${userAddresses.size()} + ' guardada(s)'">1 guardada(s)</span>
+                            </span>
                         </div>
 
-                        <div class="row g-3">
-                            <div class="col-12 col-sm-6">
-                                <label for="state" class="form-label">Provincia</label>
-                                <select id="state" name="state" class="form-select" required>
-                                    <option value="Mendoza" selected>Mendoza</option>
-                                    <option value="San Juan">San Juan</option>
-                                    <option value="San Luis">San Luis</option>
-                                    <option value="Buenos Aires">Buenos Aires</option>
-                                    <option value="Cordoba">Córdoba</option>
-                                    <option value="Santa Fe">Santa Fe</option>
-                                </select>
+                        <!-- Opción de direcciones guardadas -->
+                        <div th:if="${userAddresses != null and !userAddresses.empty}" class="mb-3">
+                            <p class="text-muted small mb-2">Selecciona una de tus direcciones guardadas o asocia una nueva para este pedido:</p>
+                            
+                            <div class="d-flex flex-column gap-2 mb-3">
+                                <!-- Tarjeta para cada dirección guardada -->
+                                <div th:each="addr, iter : ${userAddresses}" class="form-check card p-3 border address-card" style="cursor: pointer;">
+                                    <div class="d-flex align-items-start">
+                                        <input class="form-check-input mt-1 me-3 address-radio" type="radio" name="addressId" 
+                                               th:id="'addr-' + ${addr.id}" 
+                                               th:value="${addr.id}" 
+                                               th:checked="${iter.first}">
+                                        <label class="form-check-label w-100" th:for="'addr-' + ${addr.id}" style="cursor: pointer;">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <div class="fw-bold text-dark">
+                                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                                        <span th:text="${addr.street + ' ' + addr.number + (addr.floor != null and !addr.floor.empty ? ', Piso ' + addr.floor : '') + (addr.apartment != null and !addr.apartment.empty ? ' Depto ' + addr.apartment : '')}">Av. San Martín 1250</span>
+                                                    </div>
+                                                    <div class="text-muted small mt-1">
+                                                        <span th:if="${addr.city != null}" th:text="${addr.city.name + (addr.city.state != null ? ', ' + addr.city.state.name : '') + ' - '}">Mendoza - </span>
+                                                        <span th:text="'CP ' + ${addr.zipCode}">CP 5500</span>
+                                                        <span th:if="${addr.observations != null and !addr.observations.empty}" class="ms-2 badge bg-light text-secondary border" th:text="${addr.observations}">Tel: 261...</span>
+                                                    </div>
+                                                </div>
+                                                <span th:if="${iter.first}" class="badge bg-primary-subtle text-primary fw-semibold small">Predeterminada</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Opción para asociar una nueva dirección -->
+                                <div class="form-check card p-3 border address-card" style="cursor: pointer;">
+                                    <div class="d-flex align-items-start">
+                                        <input class="form-check-input mt-1 me-3 address-radio" type="radio" name="addressId" id="addr-new" value="">
+                                        <label class="form-check-label w-100" for="addr-new" style="cursor: pointer;">
+                                            <div class="fw-bold text-dark">
+                                                <i class="bi bi-plus-circle-fill text-primary me-1"></i>Usar o asociar una nueva dirección
+                                            </div>
+                                            <div class="text-muted small">Carga una nueva dirección de entrega para este pedido</div>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-12 col-sm-6">
-                                <label for="city" class="form-label">Departamento / Ciudad</label>
-                                <input type="text" class="form-control" id="city" name="city" value="Mendoza Capital" placeholder="Ej: Capital, Godoy Cruz, Guaymallén" required>
+                        </div>
+
+                        <!-- Formulario para ingresar / asociar nueva dirección -->
+                        <div id="newAddressContainer" th:classappend="${userAddresses != null and !userAddresses.empty} ? 'd-none' : ''">
+                            <div th:if="${userAddresses != null and !userAddresses.empty}" class="alert alert-light border py-2 px-3 small mb-3">
+                                <i class="bi bi-info-circle text-primary me-1"></i>Completa los datos de la nueva dirección para el despacho.
                             </div>
 
-                            <div class="col-12 col-sm-6">
-                                <label for="zipCode" class="form-label">Código Postal</label>
-                                <input type="text" class="form-control" id="zipCode" name="zipCode" value="M5500" placeholder="M5500" required>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <label for="phone" class="form-label">Número de Teléfono</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" value="+54 9 261 455-1234" placeholder="+54 9 261 455-1234" required>
-                            </div>
+                            <div class="row g-3">
+                                <div class="col-12 col-sm-6">
+                                    <label for="state" class="form-label">Provincia</label>
+                                    <select id="state" name="state" class="form-select new-addr-field">
+                                        <option value="Mendoza" selected>Mendoza</option>
+                                        <option value="San Juan">San Juan</option>
+                                        <option value="San Luis">San Luis</option>
+                                        <option value="Buenos Aires">Buenos Aires</option>
+                                        <option value="Cordoba">Córdoba</option>
+                                        <option value="Santa Fe">Santa Fe</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label for="city" class="form-label">Departamento / Ciudad</label>
+                                    <input type="text" class="form-control new-addr-field" id="city" name="city" value="Mendoza Capital"
+                                        placeholder="Ej: Capital, Godoy Cruz, Guaymallén">
+                                </div>
 
-                            <div class="col-8">
-                                <label for="street" class="form-label">Calle</label>
-                                <input type="text" class="form-control" id="street" name="street" value="Av. San Martín" placeholder="Av. San Martín" required>
-                            </div>
-                            <div class="col-4">
-                                <label for="number" class="form-label">N° de Calle</label>
-                                <input type="text" class="form-control" id="number" name="number" value="1250" placeholder="1250" required>
-                            </div>
+                                <div class="col-12 col-sm-6">
+                                    <label for="zipCode" class="form-label">Código Postal</label>
+                                    <input type="text" class="form-control new-addr-field" id="zipCode" name="zipCode" value="M5500"
+                                        placeholder="M5500">
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label for="phone" class="form-label">Número de Teléfono</label>
+                                    <input type="tel" class="form-control new-addr-field" id="phone" name="phone"
+                                        value="+54 9 261 455-1234" placeholder="+54 9 261 455-1234">
+                                </div>
 
-                            <div class="col-6">
-                                <label for="floor" class="form-label">Manzana / Piso <span class="text-muted small">(opc.)</span></label>
-                                <input type="text" class="form-control" id="floor" name="floor" placeholder="Mz. 4 o Piso 2">
-                            </div>
-                            <div class="col-6">
-                                <label for="apartment" class="form-label">N° Casa / Depto <span class="text-muted small">(opc.)</span></label>
-                                <input type="text" class="form-control" id="apartment" name="apartment" placeholder="Casa 12 o Depto B">
+                                <div class="col-8">
+                                    <label for="street" class="form-label">Calle</label>
+                                    <input type="text" class="form-control new-addr-field" id="street" name="street"
+                                        placeholder="Ej: Av. San Martín">
+                                </div>
+                                <div class="col-4">
+                                    <label for="number" class="form-label">N° de Calle</label>
+                                    <input type="text" class="form-control new-addr-field" id="number" name="number"
+                                        placeholder="Ej: 1250">
+                                </div>
+
+                                <div class="col-6">
+                                    <label for="floor" class="form-label">Manzana / Piso <span
+                                            class="text-muted small">(opc.)</span></label>
+                                    <input type="text" class="form-control" id="floor" name="floor"
+                                        placeholder="Mz. 4 o Piso 2">
+                                </div>
+                                <div class="col-6">
+                                    <label for="apartment" class="form-label">N° Casa / Depto <span
+                                            class="text-muted small">(opc.)</span></label>
+                                    <input type="text" class="form-control" id="apartment" name="apartment"
+                                        placeholder="Casa 12 o Depto B">
+                                </div>
+
+                                <div class="col-12 mt-3">
+                                    <div class="form-check p-3 bg-light rounded-3 border">
+                                        <input class="form-check-input ms-0 me-2" type="checkbox" id="saveNewAddress" name="saveNewAddress" value="true" checked>
+                                        <label class="form-check-label fw-bold text-dark" for="saveNewAddress">
+                                            <i class="bi bi-bookmark-plus text-primary me-1"></i>Guardar esta dirección en mi libreta para futuras compras
+                                        </label>
+                                        <div class="form-text small text-muted">Quedará asociada a tu cuenta para que puedas seleccionarla directamente en tus próximas compras.</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -132,27 +215,38 @@
                         <div class="d-flex flex-column gap-3">
                             <!-- Mercado Pago -->
                             <div class="form-check card p-3 border">
-                                <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="mercadopago" value="MERCADO_PAGO" checked>
-                                <label class="form-check-label d-flex justify-content-between align-items-center w-100" for="mercadopago">
+                                <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod"
+                                    id="mercadopago" value="MERCADO_PAGO" checked>
+                                <label class="form-check-label d-flex justify-content-between align-items-center w-100"
+                                    for="mercadopago">
                                     <div>
-                                        <div class="fw-bold text-dark"><i class="bi bi-wallet-fill text-info me-2"></i>Mercado Pago (SDK)</div>
-                                        <small class="text-muted">Paga online con dinero en cuenta, Débito o Tarjeta de Crédito</small>
+                                        <div class="fw-bold text-dark"><i
+                                                class="bi bi-wallet-fill text-info me-2"></i>Mercado Pago (SDK)</div>
+                                        <small class="text-muted">Paga online con dinero en cuenta, Débito o Tarjeta de
+                                            Crédito</small>
                                     </div>
                                     <span class="badge bg-info-subtle text-info fw-semibold">Recomendado</span>
                                 </label>
                                 <div class="mt-2 pt-2 border-top small text-muted">
                                     <i class="bi bi-info-circle text-primary me-1"></i>
-                                    <span><strong>Ambiente Sandbox:</strong> Para no vincular tu sesión personal de Mercado Pago, abre el proceso en <strong>ventana de incógnito</strong> o selecciona <em>"Nueva tarjeta"</em> con los números de prueba oficiales.</span>
+                                    <span><strong>Ambiente Sandbox:</strong> Para no vincular tu sesión personal de
+                                        Mercado Pago, abre el proceso en <strong>ventana de incógnito</strong> o
+                                        selecciona <em>"Nueva tarjeta"</em> con los números de prueba oficiales.</span>
                                 </div>
                             </div>
 
                             <!-- Efectivo -->
                             <div class="form-check card p-3 border">
-                                <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="cash" value="CASH">
-                                <label class="form-check-label d-flex justify-content-between align-items-center w-100" for="cash">
+                                <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="cash"
+                                    value="CASH">
+                                <label class="form-check-label d-flex justify-content-between align-items-center w-100"
+                                    for="cash">
                                     <div>
-                                        <div class="fw-bold text-dark"><i class="bi bi-cash-stack text-success me-2"></i>Efectivo contra entrega</div>
-                                        <small class="text-muted">Abona al recibir el producto (Estado: PENDIENTE DE PAGO)</small>
+                                        <div class="fw-bold text-dark"><i
+                                                class="bi bi-cash-stack text-success me-2"></i>Efectivo contra entrega
+                                        </div>
+                                        <small class="text-muted">Abona al recibir el producto (Estado: PENDIENTE DE
+                                            PAGO)</small>
                                     </div>
                                     <span class="badge bg-light text-muted border">Sin recargo</span>
                                 </label>
@@ -160,10 +254,14 @@
 
                             <!-- Tarjeta Directa -->
                             <div class="form-check card p-3 border">
-                                <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="credit" value="CREDIT">
-                                <label class="form-check-label d-flex justify-content-between align-items-center w-100" for="credit">
+                                <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="credit"
+                                    value="CREDIT">
+                                <label class="form-check-label d-flex justify-content-between align-items-center w-100"
+                                    for="credit">
                                     <div>
-                                        <div class="fw-bold text-dark"><i class="bi bi-credit-card text-primary me-2"></i>Tarjeta de Crédito / Débito Directa</div>
+                                        <div class="fw-bold text-dark"><i
+                                                class="bi bi-credit-card text-primary me-2"></i>Tarjeta de Crédito /
+                                            Débito Directa</div>
                                         <small class="text-muted">Visa, Mastercard, Cabal</small>
                                     </div>
                                 </label>
@@ -178,7 +276,9 @@
                 <div class="card border-0 shadow-sm p-4 position-sticky" style="top: 85px;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold mb-0">Resumen de Carrito</h5>
-                        <span class="badge bg-primary-subtle text-primary" th:text="${cartItems != null ? cartItems.size() + ' artículos' : '0 artículos'}">0 artículos</span>
+                        <span class="badge bg-primary-subtle text-primary"
+                            th:text="${cartItems != null ? cartItems.size() + ' artículos' : '0 artículos'}">0
+                            artículos</span>
                     </div>
 
                     <!-- Tabla de Ítems del Pedido -->
@@ -196,17 +296,23 @@
                                 <tr th:each="item : ${cartItems}" th:if="${cartItems != null and !cartItems.empty}">
                                     <td class="fw-semibold text-truncate" style="max-width: 140px;">
                                         <span th:text="${item.product.name}">Producto</span>
-                                        <div class="text-muted" style="font-size: 0.75rem;" th:text="'Precio: $' + ${#numbers.formatDecimal(item.unitPrice, 1, 2)}">Precio</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;"
+                                            th:text="'Precio: $' + ${#numbers.formatDecimal(item.unitPrice, 1, 2)}">
+                                            Precio</div>
                                     </td>
                                     <td class="text-center" style="width: 70px;">
-                                        <span class="badge bg-light text-dark border px-2 py-1" th:text="${item.quantity}">1</span>
+                                        <span class="badge bg-light text-dark border px-2 py-1"
+                                            th:text="${item.quantity}">1</span>
                                     </td>
-                                    <td class="text-end fw-bold" th:text="'$' + ${#numbers.formatDecimal(item.total, 1, 2)}">$0.00</td>
+                                    <td class="text-end fw-bold"
+                                        th:text="'$' + ${#numbers.formatDecimal(item.total, 1, 2)}">$0.00</td>
                                     <td class="text-end">
                                         <form th:action="@{/checkout/remove}" method="post" class="d-inline">
-                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                            <input type="hidden" th:name="${_csrf.parameterName}"
+                                                th:value="${_csrf.token}">
                                             <input type="hidden" name="detailId" th:value="${item.id}">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm p-1 border-0" title="Eliminar ítem">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm p-1 border-0"
+                                                title="Eliminar ítem">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
@@ -217,7 +323,8 @@
                                         <i class="bi bi-cart-x fs-2 d-block mb-2 text-secondary"></i>
                                         El carrito está vacío. Agrega productos desde el catálogo para continuar.
                                         <div class="mt-2">
-                                            <a th:href="@{/products}" class="btn btn-outline-primary btn-sm">Ver Catálogo</a>
+                                            <a th:href="@{/products}" class="btn btn-outline-primary btn-sm">Ver
+                                                Catálogo</a>
                                         </div>
                                     </td>
                                 </tr>
@@ -230,7 +337,8 @@
                     <!-- Desglose de Totales -->
                     <div class="d-flex justify-content-between text-muted small mb-2">
                         <span>Subtotal</span>
-                        <span class="fw-semibold text-dark" th:text="'$' + ${#numbers.formatDecimal(total != null ? total : 0, 1, 2)}">$0,00</span>
+                        <span class="fw-semibold text-dark"
+                            th:text="'$' + ${#numbers.formatDecimal(total != null ? total : 0, 1, 2)}">$0,00</span>
                     </div>
                     <div class="d-flex justify-content-between text-muted small mb-3">
                         <span>Envío en Mendoza</span>
@@ -239,16 +347,20 @@
 
                     <div class="border-top pt-3 mb-4 d-flex justify-content-between align-items-baseline">
                         <span class="h6 fw-bold mb-0">Total a Pagar:</span>
-                        <span class="h4 fw-bold text-primary mb-0" th:text="'$' + ${#numbers.formatDecimal(total != null ? total : 0, 1, 2)}">$0,00</span>
+                        <span class="h4 fw-bold text-primary mb-0"
+                            th:text="'$' + ${#numbers.formatDecimal(total != null ? total : 0, 1, 2)}">$0,00</span>
                     </div>
 
                     <!-- Botón de Confirmación -->
-                    <button type="submit" form="checkoutForm" class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow-sm" th:disabled="${cartItems == null or cartItems.empty}">
+                    <button type="submit" form="checkoutForm"
+                        class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow-sm"
+                        th:disabled="${cartItems == null or cartItems.empty}">
                         <i class="bi bi-check2-circle me-1"></i>Confirmar y Pagar
                     </button>
 
                     <div class="alert alert-light border small mt-3 p-2 text-muted">
-                        <i class="bi bi-envelope-check text-primary me-1"></i>Al confirmar, recibirás un correo electrónico con los datos de tu compra y podrás realizar el seguimiento en vivo desde tu perfil.
+                        <i class="bi bi-envelope-check text-primary me-1"></i>Al confirmar, recibirás un correo
+                        electrónico con los datos de tu compra y podrás realizar el seguimiento en vivo desde tu perfil.
                     </div>
                 </div>
             </div>
@@ -259,5 +371,66 @@
     <div th:replace="~{common/fragments/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addressRadios = document.querySelectorAll('.address-radio');
+            const newAddressContainer = document.getElementById('newAddressContainer');
+            const newAddrFields = document.querySelectorAll('.new-addr-field');
+
+            function updateAddressState() {
+                if (!addressRadios || addressRadios.length === 0) {
+                    if (newAddressContainer) newAddressContainer.classList.remove('d-none');
+                    newAddrFields.forEach(f => {
+                        if (f.id !== 'floor' && f.id !== 'apartment') {
+                            f.setAttribute('required', 'required');
+                        }
+                    });
+                    return;
+                }
+
+                const selected = Array.from(addressRadios).find(r => r.checked);
+                const isNew = !selected || selected.value === '';
+
+                if (isNew) {
+                    if (newAddressContainer) newAddressContainer.classList.remove('d-none');
+                    newAddrFields.forEach(f => {
+                        if (f.id !== 'floor' && f.id !== 'apartment') {
+                            f.setAttribute('required', 'required');
+                        }
+                    });
+                } else {
+                    if (newAddressContainer) newAddressContainer.classList.add('d-none');
+                    newAddrFields.forEach(f => f.removeAttribute('required'));
+                }
+
+                // Highlight selected card visually
+                document.querySelectorAll('.address-card').forEach(card => {
+                    const radio = card.querySelector('.address-radio');
+                    if (radio && radio.checked) {
+                        card.classList.add('border-primary', 'bg-light');
+                    } else {
+                        card.classList.remove('border-primary', 'bg-light');
+                    }
+                });
+            }
+
+            addressRadios.forEach(radio => {
+                radio.addEventListener('change', updateAddressState);
+            });
+
+            document.querySelectorAll('.address-card').forEach(card => {
+                card.addEventListener('click', function (e) {
+                    const radio = card.querySelector('.address-radio');
+                    if (radio && !radio.checked) {
+                        radio.checked = true;
+                        updateAddressState();
+                    }
+                });
+            });
+
+            updateAddressState();
+        });
+    </script>
 </body>
+
 </html>

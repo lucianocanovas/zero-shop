@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Hombres",
+    "subcategories": ["Calzado", "Ropa", "Indumentaria", "Accesorios"]
+  },
+  {
+    "name": "Mujeres",
+    "subcategories": ["Calzado", "Ropa", "Indumentaria", "Accesorios"]
+  },
+  {
+    "name": "Niños",
+    "subcategories": ["Calzado", "Ropa", "Indumentaria", "Accesorios"]
+  },
+  {
+    "name": "Niñas",
+    "subcategories": ["Calzado", "Ropa", "Indumentaria", "Accesorios"]
+  },
+  {
+    "name": "Unisex",
+    "subcategories": ["Calzado", "Ropa", "Indumentaria", "Accesorios"]
+  }
+]

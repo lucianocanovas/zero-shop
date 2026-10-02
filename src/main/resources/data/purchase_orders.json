@@ -1,0 +1,68 @@
+[
+  {
+    "supplierName": "Distribuidora Textil Cuyana S.A.",
+    "officeName": "Casa Central Mendoza (Av. San Martín)",
+    "employeeUsername": "employee@gmail.com",
+    "daysAgo": 18,
+    "status": "DELIVERED",
+    "totalAmount": 3300000.00,
+    "details": [
+      {
+        "productCode": "HOOD-FLEECE-04",
+        "quantity": 50,
+        "unitPrice": 34000.00,
+        "total": 1700000.00
+      },
+      {
+        "productCode": "TSH-OVER-05",
+        "quantity": 100,
+        "unitPrice": 16000.00,
+        "total": 1600000.00
+      }
+    ]
+  },
+  {
+    "supplierName": "Calzados y Deportes del Plata S.R.L.",
+    "officeName": "Sucursal Shopping Palmares (Godoy Cruz)",
+    "employeeUsername": "marcos.deposito@zeroshop.com",
+    "daysAgo": 7,
+    "status": "PAID",
+    "totalAmount": 3260000.00,
+    "details": [
+      {
+        "productCode": "RUN-NIKE-01",
+        "quantity": 30,
+        "unitPrice": 62000.00,
+        "total": 1860000.00
+      },
+      {
+        "productCode": "ADI-FORUM-02",
+        "quantity": 20,
+        "unitPrice": 70000.00,
+        "total": 1400000.00
+      }
+    ]
+  },
+  {
+    "supplierName": "Accesorios Urbanos y Moda S.A.",
+    "officeName": "Sucursal Mendoza Plaza Shopping (Guaymallén)",
+    "employeeUsername": "employee@gmail.com",
+    "daysAgo": 2,
+    "status": "PENDING_DELIVERY",
+    "totalAmount": 1075000.00,
+    "details": [
+      {
+        "productCode": "MOC-URB-09",
+        "quantity": 25,
+        "unitPrice": 24000.00,
+        "total": 600000.00
+      },
+      {
+        "productCode": "CAP-STREET-10",
+        "quantity": 50,
+        "unitPrice": 9500.00,
+        "total": 475000.00
+      }
+    ]
+  }
+]

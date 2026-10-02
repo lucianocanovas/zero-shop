@@ -4,7 +4,6 @@ import ingsoftware.zeroshop.entity.actor.Client;
 import ingsoftware.zeroshop.entity.actor.PendingRegistration;
 import ingsoftware.zeroshop.entity.actor.User;
 import ingsoftware.zeroshop.enums.IDType;
-import ingsoftware.zeroshop.enums.Role;
 import ingsoftware.zeroshop.repository.actor.ClientRepository;
 import ingsoftware.zeroshop.repository.actor.PendingRegistrationRepository;
 import ingsoftware.zeroshop.repository.actor.PersonRepository;
@@ -63,12 +62,12 @@ public class UserServiceUnitTest {
         when(personRepository.findByIdNumber("35123456")).thenReturn(Optional.empty());
         when(passwordEncoder.encode(rawPass)).thenReturn(encodedPass);
         when(pendingRegistrationRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.empty());
-        when(pendingRegistrationRepository.save(any(PendingRegistration.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(pendingRegistrationRepository.save(any(PendingRegistration.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         PendingRegistration pending = userService.registerClient(
                 "Juan", "Perez", IDType.DNI, "35123456",
-                LocalDate.of(1995, 5, 20), email, rawPass
-        );
+                LocalDate.of(1995, 5, 20), email, rawPass);
 
         assertNotNull(pending);
         assertEquals(email, pending.getEmail());
@@ -80,7 +79,8 @@ public class UserServiceUnitTest {
         verify(userRepository, never()).save(any());
         verify(clientRepository, never()).save(any());
 
-        verify(emailService, times(1)).sendVerificationCodeEmail(eq(email), eq(pending.getVerificationCode()), anyString());
+        verify(emailService, times(1)).sendVerificationCodeEmail(eq(email), eq(pending.getVerificationCode()),
+                anyString());
     }
 
     @Test
@@ -96,10 +96,9 @@ public class UserServiceUnitTest {
         when(personRepository.findByIdNumber("35123456")).thenReturn(Optional.of(existingPerson));
         when(userRepository.countByPersonIdAndDeletedFalse(personId)).thenReturn(2L);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                userService.registerClient("Juan", "Perez", IDType.DNI, "35123456",
-                        LocalDate.of(1995, 5, 20), email, "Password123")
-        );
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> userService.registerClient("Juan", "Perez", IDType.DNI, "35123456",
+                        LocalDate.of(1995, 5, 20), email, "Password123"));
 
         assertTrue(ex.getMessage().contains("ya posee el límite máximo de 2 usuarios vinculados"));
         verify(pendingRegistrationRepository, never()).save(any());
@@ -109,17 +108,14 @@ public class UserServiceUnitTest {
     @Test
     @DisplayName("Unit: Registro de cliente falla si las contraseñas o nombres están vacíos")
     public void testRegisterClientValidations() {
-        assertThrows(IllegalArgumentException.class, () ->
-                userService.registerClient("", "Perez", IDType.DNI, "12345678", LocalDate.of(1990, 1, 1), "test@test.com", "123456")
-        );
+        assertThrows(IllegalArgumentException.class, () -> userService.registerClient("", "Perez", IDType.DNI,
+                "12345678", LocalDate.of(1990, 1, 1), "test@test.com", "123456"));
 
-        assertThrows(IllegalArgumentException.class, () ->
-                userService.registerClient("Juan", "Perez", IDType.DNI, "12345678", LocalDate.now().plusDays(1), "test@test.com", "123456")
-        );
+        assertThrows(IllegalArgumentException.class, () -> userService.registerClient("Juan", "Perez", IDType.DNI,
+                "12345678", LocalDate.now().plusDays(1), "test@test.com", "123456"));
 
-        assertThrows(IllegalArgumentException.class, () ->
-                userService.registerClient("Juan", "Perez", IDType.DNI, "12345678", LocalDate.of(1990, 1, 1), "email-invalido", "123456")
-        );
+        assertThrows(IllegalArgumentException.class, () -> userService.registerClient("Juan", "Perez", IDType.DNI,
+                "12345678", LocalDate.of(1990, 1, 1), "email-invalido", "123456"));
     }
 
     @Test
@@ -132,9 +128,9 @@ public class UserServiceUnitTest {
 
         when(userRepository.findByUsernameIgnoreCase(email)).thenReturn(Optional.of(existing));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                userService.registerClient("Carlos", "Lopez", IDType.DNI, "20111222", LocalDate.of(1992, 3, 10), email, "Password123")
-        );
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> userService.registerClient("Carlos", "Lopez", IDType.DNI, "20111222", LocalDate.of(1992, 3, 10),
+                        email, "Password123"));
         assertTrue(ex.getMessage().contains("ya se encuentra registrado"));
     }
 

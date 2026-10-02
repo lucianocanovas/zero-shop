@@ -55,10 +55,13 @@
 
                     <!-- Botones de Acción -->
                     <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
-                        <a th:href="@{/orders}" class="btn btn-outline-primary fw-semibold px-4 py-2">
+                        <a th:if="${order != null}" th:href="@{/orders/{id}/invoice(id=${order.id})}" target="_blank" class="btn btn-outline-success fw-semibold px-3 py-2">
+                            <i class="bi bi-receipt me-1"></i>Ver Factura Oficial
+                        </a>
+                        <a th:href="@{/orders}" class="btn btn-outline-primary fw-semibold px-3 py-2">
                             <i class="bi bi-bag-check me-1"></i>Ver mis Compras
                         </a>
-                        <a th:href="@{/}" class="btn btn-primary fw-semibold px-4 py-2">
+                        <a th:href="@{/}" class="btn btn-primary fw-semibold px-3 py-2">
                             <i class="bi bi-house-door me-1"></i>Volver a la Tienda
                         </a>
                     </div>

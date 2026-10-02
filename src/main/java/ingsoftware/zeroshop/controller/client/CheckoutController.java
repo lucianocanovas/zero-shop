@@ -1,5 +1,6 @@
 package ingsoftware.zeroshop.controller.client;
 
+import ingsoftware.zeroshop.entity.location.Address;
 import ingsoftware.zeroshop.entity.org.Office;
 import ingsoftware.zeroshop.entity.transaction.OrderDetail;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
@@ -43,11 +44,13 @@ public class CheckoutController {
         SaleOrder cart = saleOrderService.getOrCreateCart(principal.getName());
         List<OrderDetail> cartItems = saleOrderService.getOrderDetails(cart.getId());
         List<Office> offices = officeService.getAllOffices();
+        List<Address> userAddresses = saleOrderService.getUserAddresses(principal.getName());
 
         model.addAttribute("cart", cart);
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("total", cart.getTotalAmount());
         model.addAttribute("offices", offices);
+        model.addAttribute("userAddresses", userAddresses);
 
         return "client/checkout";
     }
@@ -123,14 +126,16 @@ public class CheckoutController {
 
     // POST /checkout: Procesa la compra y redirige a pago o éxito
     @PostMapping("/checkout")
-    public String processCheckout(@RequestParam(value = "officeId", required = false) UUID officeId,
-                                  @RequestParam(value = "street", defaultValue = "Av. San Martín") String street,
-                                  @RequestParam(value = "number", defaultValue = "1250") String number,
+    public String processCheckout(@RequestParam(value = "addressId", required = false) UUID addressId,
+                                  @RequestParam(value = "saveNewAddress", defaultValue = "false") Boolean saveNewAddress,
+                                  @RequestParam(value = "officeId", required = false) UUID officeId,
+                                  @RequestParam(value = "street", required = false) String street,
+                                  @RequestParam(value = "number", required = false) String number,
                                   @RequestParam(value = "floor", required = false) String floor,
                                   @RequestParam(value = "apartment", required = false) String apartment,
-                                  @RequestParam(value = "zipCode", defaultValue = "5500") String zipCode,
-                                  @RequestParam(value = "city", defaultValue = "Mendoza") String city,
-                                  @RequestParam(value = "phone", defaultValue = "+54 9 261 455-1234") String phone,
+                                  @RequestParam(value = "zipCode", required = false) String zipCode,
+                                  @RequestParam(value = "city", required = false) String city,
+                                  @RequestParam(value = "phone", required = false) String phone,
                                   @RequestParam("paymentMethod") PaymentMethod paymentMethod,
                                   Principal principal,
                                   RedirectAttributes redirectAttributes) {
@@ -141,6 +146,8 @@ public class CheckoutController {
         try {
             String redirectUrl = saleOrderService.processCheckout(
                     principal.getName(),
+                    addressId,
+                    Boolean.TRUE.equals(saveNewAddress),
                     officeId,
                     street,
                     number,
@@ -152,11 +159,7 @@ public class CheckoutController {
                     paymentMethod
             );
 
-            if (redirectUrl.startsWith("http")) {
-                return "redirect:" + redirectUrl;
-            } else {
-                return "redirect:" + redirectUrl;
-            }
+            return "redirect:" + redirectUrl;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al procesar el pedido: " + e.getMessage());
             return "redirect:/checkout";

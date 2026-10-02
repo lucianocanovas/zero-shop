@@ -37,6 +37,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder;
 
@@ -113,14 +114,6 @@ public class DataInitializer implements ApplicationRunner {
         this.invoiceDetailRepository = invoiceDetailRepository;
     }
 
-    private List<Contact> createContacts(Contact... contacts) {
-        return new ArrayList<>(Arrays.asList(contacts));
-    }
-
-    private List<Address> createAddresses(Address... addresses) {
-        return new ArrayList<>(Arrays.asList(addresses));
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void run(ApplicationArguments args) {
@@ -131,35 +124,35 @@ public class DataInitializer implements ApplicationRunner {
                 && saleOrderRepository.count() > 0;
 
         if (forceReset || !alreadyHasNewSeedData || userRepository.count() == 0) {
-            log.info("Iniciando limpieza y repoblación integral de datos de Zero Shop...");
+            log.info("Iniciando carga integral de datos desde archivos JSON (data/*.json)...");
             cleanAllData();
             applyDatabaseMigrations();
 
-            // 1. Ubicaciones
+            // 1. Ubicaciones (locations.json)
             Map<String, City> cityMap = seedLocations();
 
-            // 2. Categorías y Subcategorías
+            // 2. Categorías y Subcategorías (categories.json)
             Map<String, SubCategory> subCategoryMap = seedCategoriesAndSubCategories();
 
-            // 3. Sucursales (Offices)
+            // 3. Sucursales (offices.json)
             List<Office> offices = seedOffices(cityMap);
 
-            // 4. Proveedores (Suppliers)
+            // 4. Proveedores (suppliers.json)
             List<Supplier> suppliers = seedSuppliers(cityMap);
 
-            // 5. Productos, Precios de Costo y Stock
+            // 5. Productos, Precios y Stock (products.json)
             List<Product> products = seedProductsAndStock(subCategoryMap, suppliers, offices);
 
-            // 6. Usuarios: 1 Admin, 3 Empleados, 3 Clientes con múltiples direcciones y contactos
+            // 6. Usuarios: Admin, Empleados y Clientes (users.json)
             Map<String, Object> usersMap = seedUsers(offices, cityMap);
 
-            // 7. Órdenes de Compra (a Proveedores)
+            // 7. Órdenes de Compra a Proveedores (purchase_orders.json)
             seedPurchaseOrders(suppliers, offices, (List<Employee>) usersMap.get("employees"), products);
 
-            // 8. Órdenes de Venta (a Clientes) con Detalles y Pagos
+            // 8. Órdenes de Venta a Clientes con Detalles, Pagos y Facturas (sale_orders.json)
             seedSaleOrders((List<Client>) usersMap.get("clients"), (List<Employee>) usersMap.get("employees"), offices, products);
 
-            log.info("Base de datos poblada exitosamente con datos reales para toda la plataforma.");
+            log.info("Base de datos poblada exitosamente a partir de los datos en data/*.json.");
         } else {
             log.info("La base de datos ya contiene datos registrados. Omitiendo repoblación automática.");
             updateExistingProductSeedImages();
@@ -167,29 +160,20 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void updateExistingProductSeedImages() {
-        Map<String, String[]> updates = Map.ofEntries(
-            Map.entry("RUN-NIKE-01", new String[]{"Zapatillas Running Nike Air Zoom Pegasus", "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"}),
-            Map.entry("ADI-FORUM-02", new String[]{"Zapatillas Adidas Superstar Streetwear", "https://images.unsplash.com/photo-1593287073863-c992914cb3e3?w=800&q=80"}),
-            Map.entry("PUM-CAR-03", new String[]{"Zapatillas Urbanas Puma Smash V2 Leather", "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&q=80"}),
-            Map.entry("HOOD-FLEECE-04", new String[]{"Buzo Hoodie Canguro Fleece Premium", "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=800&q=80"}),
-            Map.entry("TSH-OVER-05", new String[]{"Remera Oversize Algodón 24/1 White", "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&q=80"}),
-            Map.entry("DEN-TRUCK-06", new String[]{"Campera Denim Trucker Vintage Unisex", "https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=800&q=80"}),
-            Map.entry("JOG-CARGO-07", new String[]{"Pantalón Jogger Cargo Slim Fit", "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&q=80"}),
-            Map.entry("CREW-BEIGE-08", new String[]{"Buzo Crewneck Beige Minimalist", "https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800&q=80"}),
-            Map.entry("MOC-URB-09", new String[]{"Mochila Urbana Porta Laptop Antirrobo 20L", "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"}),
-            Map.entry("CAP-STREET-10", new String[]{"Gorra Trucker Streetwear Bordada Curve", "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&q=80"}),
-            Map.entry("BAG-SPORT-11", new String[]{"Bolso Deportivo Gym & Travel Impermeable", "https://images.unsplash.com/photo-1448582649076-3981753123b5?w=800&q=80"}),
-            Map.entry("KID-SNEAK-12", new String[]{"Zapatillas Deportivas Niños Court Retro", "https://images.unsplash.com/photo-1605523741177-cd660595c2cf?w=800&q=80"})
-        );
-
-        updates.forEach((code, info) -> {
-            productRepository.findByCodeAndDeletedFalse(code).ifPresent(p -> {
-                p.setName(info[0]);
-                p.setImageUrl(info[1]);
-                productRepository.save(p);
-            });
-        });
-        log.info("Imágenes y nombres del catálogo inicial sincronizados con éxito.");
+        try {
+            InputStream inputStream = new ClassPathResource("data/products.json").getInputStream();
+            List<ProductSeedJSON> productsJSON = objectMapper.readValue(inputStream, new TypeReference<List<ProductSeedJSON>>() {});
+            for (ProductSeedJSON pJson : productsJSON) {
+                productRepository.findByCodeAndDeletedFalse(pJson.getCode()).ifPresent(p -> {
+                    p.setName(pJson.getName());
+                    p.setImageUrl(pJson.getImageUrl());
+                    productRepository.save(p);
+                });
+            }
+            log.info("Imágenes y nombres del catálogo inicial sincronizados con éxito desde products.json.");
+        } catch (Exception e) {
+            log.error("Error al sincronizar imágenes desde products.json: {}", e.getMessage());
+        }
     }
 
     private void cleanAllData() {
@@ -251,13 +235,13 @@ public class DataInitializer implements ApplicationRunner {
         }
     }
 
+    // 1. Ubicaciones
     private Map<String, City> seedLocations() {
-        log.info("Cargando ubicaciones desde locations.json...");
+        log.info("Cargando ubicaciones desde data/locations.json...");
         Map<String, City> cityMap = new HashMap<>();
         try {
-            ObjectMapper mapper = new ObjectMapper();
             InputStream inputStream = new ClassPathResource("data/locations.json").getInputStream();
-            List<CountryJSON> countriesJSON = mapper.readValue(inputStream, new TypeReference<List<CountryJSON>>() {});
+            List<CountryJSON> countriesJSON = objectMapper.readValue(inputStream, new TypeReference<List<CountryJSON>>() {});
 
             for (CountryJSON cJson : countriesJSON) {
                 Country country = new Country();
@@ -288,1269 +272,550 @@ public class DataInitializer implements ApplicationRunner {
             }
             log.info("Ubicaciones cargadas con éxito ({} ciudades indexadas).", cityMap.size());
         } catch (Exception e) {
-            log.error("Error al cargar locations.json: {}", e.getMessage());
+            log.error("Error al cargar locations.json: {}", e.getMessage(), e);
         }
         return cityMap;
     }
 
     private City findCity(Map<String, City> cityMap, String name) {
-        City city = cityMap.get(name.toLowerCase());
+        if (name == null) return null;
+        City city = cityMap.get(name.trim().toLowerCase());
         if (city == null) {
             city = cityRepository.findAll().stream().findFirst().orElse(null);
         }
         return city;
     }
 
+    // 2. Categorías y Subcategorías
     private Map<String, SubCategory> seedCategoriesAndSubCategories() {
-        log.info("Creando categorías y subcategorías...");
+        log.info("Cargando categorías y subcategorías desde data/categories.json...");
         Map<String, SubCategory> subCategoryMap = new HashMap<>();
-        List<String> categoryNames = List.of("Hombres", "Mujeres", "Niños", "Niñas", "Unisex");
-        List<String> subCategoryNames = List.of("Calzado", "Ropa", "Indumentaria", "Accesorios");
+        try {
+            InputStream is = new ClassPathResource("data/categories.json").getInputStream();
+            List<CategorySeedJSON> list = objectMapper.readValue(is, new TypeReference<List<CategorySeedJSON>>() {});
 
-        for (String catName : categoryNames) {
-            Category category = categoryRepository.save(
-                Category.builder()
-                    .name(catName)
-                    .deleted(false)
-                    .build()
-            );
-
-            for (String subName : subCategoryNames) {
-                SubCategory subCategory = subCategoryRepository.save(
-                    SubCategory.builder()
-                        .name(subName)
-                        .category(category)
+            for (CategorySeedJSON cJson : list) {
+                Category category = categoryRepository.save(
+                    Category.builder()
+                        .name(cJson.getName())
                         .deleted(false)
                         .build()
                 );
-                subCategoryMap.put(catName + "_" + subName, subCategory);
+
+                if (cJson.getSubcategories() != null) {
+                    for (String subName : cJson.getSubcategories()) {
+                        SubCategory subCategory = subCategoryRepository.save(
+                            SubCategory.builder()
+                                .name(subName)
+                                .category(category)
+                                .deleted(false)
+                                .build()
+                        );
+                        subCategoryMap.put(cJson.getName() + "_" + subName, subCategory);
+                    }
+                }
             }
+            log.info("Categorías y subcategorías cargadas con éxito ({} subcategorías indexadas).", subCategoryMap.size());
+        } catch (Exception e) {
+            log.error("Error al cargar categories.json: {}", e.getMessage(), e);
         }
         return subCategoryMap;
     }
 
+    // 3. Sucursales (Offices)
     private List<Office> seedOffices(Map<String, City> cityMap) {
-        log.info("Creando sucursales con múltiples direcciones y contactos...");
-        City mendozaCity = findCity(cityMap, "Mendoza");
-        City godoyCruzCity = findCity(cityMap, "Godoy Cruz");
-        City lujanCity = findCity(cityMap, "Luján de Cuyo");
-        City guaymallenCity = findCity(cityMap, "Guaymallén");
+        log.info("Cargando sucursales desde data/offices.json...");
+        List<Office> savedOffices = new ArrayList<>();
+        try {
+            InputStream is = new ClassPathResource("data/offices.json").getInputStream();
+            List<OfficeSeedJSON> list = objectMapper.readValue(is, new TypeReference<List<OfficeSeedJSON>>() {});
 
-        // 1. Casa Central Mendoza
-        Office central = new Office();
-        central.setName("Casa Central Mendoza (Av. San Martín)");
-        central.setCuit("30-71234567-8");
-        central.setType(OfficeType.HEADQUARTERS);
-        central.setDeleted(false);
+            for (OfficeSeedJSON oJson : list) {
+                Office office = new Office();
+                office.setName(oJson.getName());
+                office.setCuit(oJson.getCuit());
+                office.setType(OfficeType.valueOf(oJson.getType()));
+                office.setDeleted(false);
 
-        central.setAddress(createAddresses(
-            Address.builder()
-                .street("Av. San Martín")
-                .number("1250")
-                .floor("PB")
-                .apartment("Local 1")
-                .zipCode("5500")
-                .observations("Sede central y salón de ventas al público")
-                .city(mendozaCity)
-                .deleted(false)
-                .build(),
-            Address.builder()
-                .street("Ruta Provincial 50")
-                .number("Km 10")
-                .zipCode("5507")
-                .observations("Centro logístico y depósito general")
-                .city(lujanCity)
-                .deleted(false)
-                .build()
-        ));
-
-        central.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 261 420-0000")
-                .phoneType(PhoneType.LANDLINE)
-                .contactType(ContactType.WORK)
-                .observation("Conmutador central")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("contacto@zeroshop.com")
-                .contactType(ContactType.BUSINESS)
-                .observation("Atención al cliente y consultas")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("administracion@zeroshop.com")
-                .contactType(ContactType.WORK)
-                .observation("Administración y pagos corporativos")
-                .deleted(false)
-                .build()
-        ));
-        central = officeRepository.save(central);
-
-        // 2. Shopping Palmares
-        Office palmares = new Office();
-        palmares.setName("Sucursal Shopping Palmares (Godoy Cruz)");
-        palmares.setCuit("30-71234567-9");
-        palmares.setType(OfficeType.BRANCH);
-        palmares.setDeleted(false);
-
-        palmares.setAddress(createAddresses(
-            Address.builder()
-                .street("Av. San Martín Sur")
-                .number("2650")
-                .floor("1")
-                .apartment("Local 140")
-                .zipCode("5501")
-                .observations("Shopping Palmares Nivel 1 frente a patio de comidas")
-                .city(godoyCruzCity)
-                .deleted(false)
-                .build()
-        ));
-
-        palmares.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 261 413-9000")
-                .phoneType(PhoneType.LANDLINE)
-                .contactType(ContactType.WORK)
-                .observation("Línea directa local Palmares")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("palmares@zeroshop.com")
-                .contactType(ContactType.BUSINESS)
-                .observation("Consultas de stock sucursal")
-                .deleted(false)
-                .build()
-        ));
-        palmares = officeRepository.save(palmares);
-
-        // 3. Mendoza Plaza Shopping
-        Office plaza = new Office();
-        plaza.setName("Sucursal Mendoza Plaza Shopping (Guaymallén)");
-        plaza.setCuit("30-71234567-0");
-        plaza.setType(OfficeType.BRANCH);
-        plaza.setDeleted(false);
-
-        plaza.setAddress(createAddresses(
-            Address.builder()
-                .street("Acceso Este")
-                .number("3280")
-                .floor("PB")
-                .apartment("Local 55")
-                .zipCode("5519")
-                .observations("Ala Oeste acceso principal")
-                .city(guaymallenCity)
-                .deleted(false)
-                .build()
-        ));
-
-        plaza.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 261 449-0100")
-                .phoneType(PhoneType.LANDLINE)
-                .contactType(ContactType.WORK)
-                .observation("Atención al público y mostrador POS")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("plazashopping@zeroshop.com")
-                .contactType(ContactType.BUSINESS)
-                .observation("Mostrador y entregas web")
-                .deleted(false)
-                .build()
-        ));
-        plaza = officeRepository.save(plaza);
-
-        return List.of(central, palmares, plaza);
+                if (oJson.getAddresses() != null) {
+                    List<Address> addresses = oJson.getAddresses().stream()
+                        .map(a -> buildAddress(a, cityMap))
+                        .toList();
+                    office.setAddress(new ArrayList<>(addresses));
+                }
+                if (oJson.getContacts() != null) {
+                    List<Contact> contacts = oJson.getContacts().stream()
+                        .map(this::buildContact)
+                        .toList();
+                    office.setContact(new ArrayList<>(contacts));
+                }
+                savedOffices.add(officeRepository.save(office));
+            }
+            log.info("Sucursales cargadas con éxito ({} sucursales).", savedOffices.size());
+        } catch (Exception e) {
+            log.error("Error al cargar offices.json: {}", e.getMessage(), e);
+        }
+        return savedOffices;
     }
 
+    // 4. Proveedores (Suppliers)
     private List<Supplier> seedSuppliers(Map<String, City> cityMap) {
-        log.info("Creando proveedores con múltiples direcciones y contactos...");
-        City mendozaCity = findCity(cityMap, "Mendoza");
-        City laPlataCity = findCity(cityMap, "La Plata");
+        log.info("Cargando proveedores desde data/suppliers.json...");
+        List<Supplier> savedSuppliers = new ArrayList<>();
+        try {
+            InputStream is = new ClassPathResource("data/suppliers.json").getInputStream();
+            List<SupplierSeedJSON> list = objectMapper.readValue(is, new TypeReference<List<SupplierSeedJSON>>() {});
 
-        // 1. Distribuidora Textil Cuyana S.A.
-        Supplier sup1 = new Supplier();
-        sup1.setName("Distribuidora Textil Cuyana S.A.");
-        sup1.setCuit("30-70891234-5");
-        sup1.setDeleted(false);
+            for (SupplierSeedJSON sJson : list) {
+                Supplier supplier = new Supplier();
+                supplier.setName(sJson.getName());
+                supplier.setCuit(sJson.getCuit());
+                supplier.setDeleted(false);
 
-        sup1.setAddress(createAddresses(
-            Address.builder()
-                .street("Parque Industrial Las Heras")
-                .number("Calle 4 Galpón B")
-                .zipCode("5539")
-                .observations("Planta de confección y despacho mayorista")
-                .city(mendozaCity)
-                .deleted(false)
-                .build(),
-            Address.builder()
-                .street("Av. Mitre")
-                .number("540")
-                .floor("2")
-                .apartment("Of. 201")
-                .zipCode("5500")
-                .observations("Oficina administrativa y pagos")
-                .city(mendozaCity)
-                .deleted(false)
-                .build()
-        ));
-
-        sup1.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 261 498-1122")
-                .phoneType(PhoneType.LANDLINE)
-                .contactType(ContactType.WORK)
-                .observation("Ventas mayoristas indumentaria")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("ventas@textilcuyana.com")
-                .contactType(ContactType.BUSINESS)
-                .observation("Recepción de órdenes de compra")
-                .deleted(false)
-                .build()
-        ));
-        sup1 = supplierRepository.save(sup1);
-
-        // 2. Calzados y Deportes del Plata S.R.L.
-        Supplier sup2 = new Supplier();
-        sup2.setName("Calzados y Deportes del Plata S.R.L.");
-        sup2.setCuit("30-65432198-1");
-        sup2.setDeleted(false);
-
-        sup2.setAddress(createAddresses(
-            Address.builder()
-                .street("Av. del Libertador")
-                .number("4800")
-                .floor("6")
-                .apartment("A")
-                .zipCode("1426")
-                .observations("Showroom y centro de distribución de calzado deportivo")
-                .city(laPlataCity)
-                .deleted(false)
-                .build()
-        ));
-
-        sup2.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 11 4780-5500")
-                .phoneType(PhoneType.LANDLINE)
-                .contactType(ContactType.WORK)
-                .observation("Mesa corporativa de atención")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("pedidos@calzadosdelplata.com.ar")
-                .contactType(ContactType.BUSINESS)
-                .observation("Ventas calzado y accesorios deportivos")
-                .deleted(false)
-                .build()
-        ));
-        sup2 = supplierRepository.save(sup2);
-
-        // 3. Accesorios Urbanos y Moda S.A.
-        Supplier sup3 = new Supplier();
-        sup3.setName("Accesorios Urbanos y Moda S.A.");
-        sup3.setCuit("30-71829304-3");
-        sup3.setDeleted(false);
-
-        sup3.setAddress(createAddresses(
-            Address.builder()
-                .street("Calle Defensa")
-                .number("1020")
-                .floor("PB")
-                .apartment(null)
-                .zipCode("1065")
-                .observations("Depósito y taller central San Telmo")
-                .city(laPlataCity)
-                .deleted(false)
-                .build()
-        ));
-
-        sup3.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 11 4361-9090")
-                .phoneType(PhoneType.LANDLINE)
-                .contactType(ContactType.WORK)
-                .observation("Línea corporativa")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("info@accesoriosurbanos.com.ar")
-                .contactType(ContactType.BUSINESS)
-                .observation("Catálogos y presupuestos")
-                .deleted(false)
-                .build()
-        ));
-        sup3 = supplierRepository.save(sup3);
-
-        return List.of(sup1, sup2, sup3);
+                if (sJson.getAddresses() != null) {
+                    List<Address> addresses = sJson.getAddresses().stream()
+                        .map(a -> buildAddress(a, cityMap))
+                        .toList();
+                    supplier.setAddress(new ArrayList<>(addresses));
+                }
+                if (sJson.getContacts() != null) {
+                    List<Contact> contacts = sJson.getContacts().stream()
+                        .map(this::buildContact)
+                        .toList();
+                    supplier.setContact(new ArrayList<>(contacts));
+                }
+                savedSuppliers.add(supplierRepository.save(supplier));
+            }
+            log.info("Proveedores cargados con éxito ({} proveedores).", savedSuppliers.size());
+        } catch (Exception e) {
+            log.error("Error al cargar suppliers.json: {}", e.getMessage(), e);
+        }
+        return savedSuppliers;
     }
 
+    // 5. Productos, Precios y Stock
     private List<Product> seedProductsAndStock(Map<String, SubCategory> subCategoryMap,
                                                List<Supplier> suppliers,
                                                List<Office> offices) {
-        log.info("Creando productos con imágenes, precios, promociones y stock...");
-
-        Supplier supTextil = suppliers.get(0);
-        Supplier supCalzado = suppliers.get(1);
-        Supplier supAccesorios = suppliers.get(2);
-
-        Office central = offices.get(0);
-        Office palmares = offices.get(1);
-        Office plaza = offices.get(2);
-
-        record ProdDef(String code, String name, String description, Size size,
-                       String imageUrl, String catSub, boolean onSale,
-                       BigDecimal regularPrice, BigDecimal salePrice,
-                       Supplier supplier, BigDecimal costPrice,
-                       int stockCentral, int stockPalmares, int stockPlaza) {}
-
-        List<ProdDef> defs = List.of(
-            new ProdDef("RUN-NIKE-01", "Zapatillas Running Nike Air Zoom Pegasus",
-                "Calzado running de alto rendimiento con amortiguación React y cápsula Zoom Air para máxima respuesta.",
-                Size.M, "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80",
-                "Hombres_Calzado", true,
-                new BigDecimal("145000.00"), new BigDecimal("115000.00"),
-                supCalzado, new BigDecimal("62000.00"), 45, 25, 18),
-
-            new ProdDef("ADI-FORUM-02", "Zapatillas Adidas Superstar Streetwear",
-                "Diseño clásico de las 3 tiras con puntera de caucho en relieve y cuero prémium para el streetstyle urbano.",
-                Size.M, "https://images.unsplash.com/photo-1593287073863-c992914cb3e3?w=800&q=80",
-                "Unisex_Calzado", false,
-                new BigDecimal("129000.00"), null,
-                supCalzado, new BigDecimal("70000.00"), 35, 20, 15),
-
-            new ProdDef("PUM-CAR-03", "Zapatillas Urbanas Puma Smash V2 Leather",
-                "Zapatillas urbanas de corte bajo en cuero sintético suave con franja clásica Puma y suela de caucho durable.",
-                Size.S, "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&q=80",
-                "Mujeres_Calzado", false,
-                new BigDecimal("98000.00"), null,
-                supCalzado, new BigDecimal("52000.00"), 40, 22, 12),
-
-            new ProdDef("HOOD-FLEECE-04", "Buzo Hoodie Canguro Fleece Premium",
-                "Buzo con capucha confeccionado en algodón frisado con bolsillo frontal tipo canguro, cordones de ajuste y rib elastizado.",
-                Size.L, "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=800&q=80",
-                "Hombres_Indumentaria", true,
-                new BigDecimal("85000.00"), new BigDecimal("68000.00"),
-                supTextil, new BigDecimal("34000.00"), 50, 30, 20),
-
-            new ProdDef("TSH-OVER-05", "Remera Oversize Algodón 24/1 White",
-                "Corte moderno cuadrado oversize, tejido suave en jersey de algodón peinado 100% de máxima durabilidad.",
-                Size.M, "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&q=80",
-                "Unisex_Indumentaria", false,
-                new BigDecimal("32000.00"), null,
-                supTextil, new BigDecimal("16000.00"), 60, 35, 25),
-
-            new ProdDef("DEN-TRUCK-06", "Campera Denim Trucker Vintage Unisex",
-                "Campera de jean rígido lavado con cuello en contraste, botones metálicos envejecidos y bolsillos frontales con solapa.",
-                Size.L, "https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=800&q=80",
-                "Unisex_Indumentaria", true,
-                new BigDecimal("120000.00"), new BigDecimal("96000.00"),
-                supTextil, new BigDecimal("48000.00"), 25, 15, 8),
-
-            new ProdDef("JOG-CARGO-07", "Pantalón Jogger Cargo Slim Fit",
-                "Jogger elastizado con múltiples bolsillos funcionales en muslos y botamangas con puño elástico reforzado.",
-                Size.M, "https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&q=80",
-                "Hombres_Indumentaria", false,
-                new BigDecimal("54000.00"), null,
-                supTextil, new BigDecimal("27000.00"), 35, 20, 15),
-
-            new ProdDef("CREW-BEIGE-08", "Buzo Crewneck Beige Minimalist",
-                "Cuello redondo clásico en algodón perchado, color neutro beige versátil de tacto ultra suave.",
-                Size.S, "https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800&q=80",
-                "Mujeres_Indumentaria", false,
-                new BigDecimal("59000.00"), null,
-                supTextil, new BigDecimal("30000.00"), 30, 18, 10),
-
-            new ProdDef("MOC-URB-09", "Mochila Urbana Porta Laptop Antirrobo 20L",
-                "Compartimento acolchado para notebook de hasta 15.6'', cierre trasero oculto y tela cordura impermeable.",
-                Size.M, "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",
-                "Unisex_Accesorios", true,
-                new BigDecimal("65000.00"), new BigDecimal("49000.00"),
-                supAccesorios, new BigDecimal("24000.00"), 40, 25, 14),
-
-            new ProdDef("CAP-STREET-10", "Gorra Trucker Streetwear Bordada Curve",
-                "Gorra con frente estructurado de gabardina, malla trasera respirable y broche regulable snapback.",
-                Size.M, "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&q=80",
-                "Unisex_Accesorios", false,
-                new BigDecimal("22000.00"), null,
-                supAccesorios, new BigDecimal("9500.00"), 50, 30, 20),
-
-            new ProdDef("BAG-SPORT-11", "Bolso Deportivo Gym & Travel Impermeable",
-                "Bolso espacioso estilo duffle con asas de mano reforzadas y correa desmontable, ideal para entrenamiento y viajes.",
-                Size.L, "https://images.unsplash.com/photo-1448582649076-3981753123b5?w=800&q=80",
-                "Unisex_Accesorios", false,
-                new BigDecimal("42000.00"), null,
-                supAccesorios, new BigDecimal("21000.00"), 20, 12, 4), // 4 en Plaza Shopping (Stock crítico para semáforo)
-
-            new ProdDef("KID-SNEAK-12", "Zapatillas Deportivas Niños Court Retro",
-                "Calzado deportivo infantil de alto impacto con diseño urbano retro, amortiguación Air y suela de goma antideslizante.",
-                Size.S, "https://images.unsplash.com/photo-1605523741177-cd660595c2cf?w=800&q=80",
-                "Niños_Calzado", false,
-                new BigDecimal("48000.00"), null,
-                supCalzado, new BigDecimal("24000.00"), 25, 15, 8)
-        );
-
+        log.info("Cargando productos, precios y stock desde data/products.json...");
         List<Product> savedProducts = new ArrayList<>();
+        Map<String, Supplier> supplierByName = mapSuppliersByName(suppliers);
+        Map<String, Office> officeByName = mapOfficesByName(offices);
+
         LocalDateTime pastMonth = LocalDateTime.now().minusDays(30);
         LocalDateTime pastWeek = LocalDateTime.now().minusDays(7);
 
-        for (ProdDef def : defs) {
-            SubCategory subCat = subCategoryMap.get(def.catSub());
-            if (subCat == null) {
-                subCat = subCategoryMap.values().stream().findFirst().orElse(null);
-            }
+        try {
+            InputStream is = new ClassPathResource("data/products.json").getInputStream();
+            List<ProductSeedJSON> list = objectMapper.readValue(is, new TypeReference<List<ProductSeedJSON>>() {});
 
-            Product product = Product.builder()
-                .code(def.code())
-                .name(def.name())
-                .description(def.description())
-                .size(def.size())
-                .imageUrl(def.imageUrl())
-                .subCategory(subCat)
-                .onSale(def.onSale())
-                .deleted(false)
-                .build();
-            product = productRepository.save(product);
-            savedProducts.add(product);
+            for (ProductSeedJSON pJson : list) {
+                String catSubKey = pJson.getCategory() + "_" + pJson.getSubcategory();
+                SubCategory subCat = subCategoryMap.get(catSubKey);
+                if (subCat == null) {
+                    subCat = subCategoryMap.values().stream().findFirst().orElse(null);
+                }
 
-            // Precios e Historial de Precios
-            if (def.onSale() && def.salePrice() != null) {
-                // Precio anterior
-                priceHistoryRepository.save(
-                    PriceHistory.builder()
+                Product product = Product.builder()
+                    .code(pJson.getCode())
+                    .name(pJson.getName())
+                    .description(pJson.getDescription())
+                    .size(pJson.getSize() != null ? Size.valueOf(pJson.getSize()) : Size.M)
+                    .imageUrl(pJson.getImageUrl())
+                    .subCategory(subCat)
+                    .onSale(Boolean.TRUE.equals(pJson.getOnSale()))
+                    .deleted(false)
+                    .build();
+                product = productRepository.save(product);
+                savedProducts.add(product);
+
+                // Precios e Historial de Precios
+                if (Boolean.TRUE.equals(pJson.getOnSale()) && pJson.getSalePrice() != null) {
+                    // Precio anterior regular
+                    priceHistoryRepository.save(PriceHistory.builder()
                         .product(product)
-                        .price(def.regularPrice())
+                        .price(pJson.getRegularPrice())
                         .startDate(pastMonth)
                         .endDate(pastWeek)
                         .deleted(false)
-                        .build()
-                );
-                // Precio promocional actual
-                priceHistoryRepository.save(
-                    PriceHistory.builder()
+                        .build());
+                    // Precio promocional actual
+                    priceHistoryRepository.save(PriceHistory.builder()
                         .product(product)
-                        .price(def.salePrice())
+                        .price(pJson.getSalePrice())
                         .startDate(pastWeek)
                         .endDate(null)
                         .deleted(false)
-                        .build()
-                );
-            } else {
-                // Precio estándar activo
-                priceHistoryRepository.save(
-                    PriceHistory.builder()
+                        .build());
+                } else {
+                    // Precio estándar activo
+                    priceHistoryRepository.save(PriceHistory.builder()
                         .product(product)
-                        .price(def.regularPrice())
+                        .price(pJson.getRegularPrice())
                         .startDate(pastMonth)
                         .endDate(null)
                         .deleted(false)
-                        .build()
-                );
+                        .build());
+                }
+
+                // Vínculo con Proveedor y Costo
+                Supplier sup = supplierByName.get(pJson.getSupplierName());
+                if (sup != null && pJson.getCostPrice() != null) {
+                    supplierProductRepository.save(SupplierProduct.builder()
+                        .product(product)
+                        .supplier(sup)
+                        .costPrice(pJson.getCostPrice())
+                        .deleted(false)
+                        .build());
+                }
+
+                // Stock por sucursal
+                if (pJson.getStocks() != null) {
+                    for (Map.Entry<String, Integer> entry : pJson.getStocks().entrySet()) {
+                        Office office = officeByName.get(entry.getKey());
+                        if (office != null) {
+                            stockRepository.save(Stock.builder()
+                                .product(product)
+                                .office(office)
+                                .quantity(entry.getValue())
+                                .deleted(false)
+                                .build());
+                        }
+                    }
+                }
             }
-
-            // Vínculo con Proveedor y Costo
-            supplierProductRepository.save(
-                SupplierProduct.builder()
-                    .product(product)
-                    .supplier(def.supplier())
-                    .costPrice(def.costPrice())
-                    .deleted(false)
-                    .build()
-            );
-
-            // Stock en las 3 sucursales
-            stockRepository.save(
-                Stock.builder()
-                    .product(product)
-                    .office(central)
-                    .quantity(def.stockCentral())
-                    .deleted(false)
-                    .build()
-            );
-            stockRepository.save(
-                Stock.builder()
-                    .product(product)
-                    .office(palmares)
-                    .quantity(def.stockPalmares())
-                    .deleted(false)
-                    .build()
-            );
-            stockRepository.save(
-                Stock.builder()
-                    .product(product)
-                    .office(plaza)
-                    .quantity(def.stockPlaza())
-                    .deleted(false)
-                    .build()
-            );
+            log.info("Productos y stock cargados con éxito ({} productos).", savedProducts.size());
+        } catch (Exception e) {
+            log.error("Error al cargar products.json: {}", e.getMessage(), e);
         }
-
         return savedProducts;
     }
 
+    // 6. Usuarios: Admin, Empleados y Clientes
     private Map<String, Object> seedUsers(List<Office> offices, Map<String, City> cityMap) {
-        log.info("Creando 1 Administrador, 3 Empleados y 3 Clientes con direcciones y contactos...");
-        City mendozaCity = findCity(cityMap, "Mendoza");
-        City godoyCruzCity = findCity(cityMap, "Godoy Cruz");
-        City guaymallenCity = findCity(cityMap, "Guaymallén");
+        log.info("Cargando usuarios desde data/users.json...");
+        Map<String, Office> officeByName = mapOfficesByName(offices);
 
-        Office centralOffice = offices.get(0);
-        Office palmaresOffice = offices.get(1);
-        Office plazaOffice = offices.get(2);
+        Employee adminEmployee = null;
+        List<Employee> employeeList = new ArrayList<>();
+        List<Client> clientList = new ArrayList<>();
 
-        // ==========================================
-        // 1. ADMIN USER
-        // ==========================================
-        Employee adminPerson = new Employee();
-        adminPerson.setFirstName("Martín");
-        adminPerson.setLastName("Administrador");
-        adminPerson.setIdType(IDType.DNI);
-        adminPerson.setIdNumber("28123456");
-        adminPerson.setGender(Gender.MALE);
-        adminPerson.setDateOfBirth(LocalDate.of(1982, 4, 10));
-        adminPerson.setEmployeeType(EmployeeType.MANAGER);
-        adminPerson.setHireDate(LocalDate.of(2020, 1, 15));
-        adminPerson.setOffice(new ArrayList<>(List.of(centralOffice)));
-        adminPerson.setDeleted(false);
+        try {
+            InputStream is = new ClassPathResource("data/users.json").getInputStream();
+            List<UserSeedJSON> list = objectMapper.readValue(is, new TypeReference<List<UserSeedJSON>>() {});
 
-        adminPerson.setAddress(createAddresses(
-            Address.builder()
-                .street("Av. Emilio Civit")
-                .number("150")
-                .floor("4")
-                .apartment("A")
-                .zipCode("5500")
-                .observations("Domicilio particular administración")
-                .city(mendozaCity)
-                .deleted(false)
-                .build()
-        ));
+            for (UserSeedJSON uJson : list) {
+                PersonSeedJSON pJson = uJson.getPerson();
+                Person person = null;
 
-        adminPerson.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 261 400-0001")
-                .phoneType(PhoneType.LANDLINE)
-                .contactType(ContactType.WORK)
-                .observation("Línea corporativa")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("admin@zeroshop.com")
-                .contactType(ContactType.WORK)
-                .observation("Email de gestión gerencial")
-                .deleted(false)
-                .build()
-        ));
-        adminPerson = employeeRepository.save(adminPerson);
+                if ("CLIENT".equalsIgnoreCase(pJson.getType())) {
+                    Client client = new Client();
+                    client.setClientNumber(pJson.getClientNumber());
+                    client.setFirstName(pJson.getFirstName());
+                    client.setLastName(pJson.getLastName());
+                    client.setIdType(pJson.getIdType() != null ? IDType.valueOf(pJson.getIdType()) : IDType.DNI);
+                    client.setIdNumber(pJson.getIdNumber());
+                    client.setGender(pJson.getGender() != null ? Gender.valueOf(pJson.getGender()) : Gender.OTHER);
+                    client.setDateOfBirth(pJson.getDateOfBirth() != null ? LocalDate.parse(pJson.getDateOfBirth()) : null);
+                    client.setDeleted(false);
 
-        User adminUser = new User();
-        adminUser.setUsername("admin@gmail.com");
-        adminUser.setPassword(passwordEncoder.encode("admin123"));
-        adminUser.setRole(Role.ADMIN);
-        adminUser.setPerson(adminPerson);
-        adminUser.setDeleted(false);
-        userRepository.save(adminUser);
+                    if (pJson.getAddresses() != null) {
+                        List<Address> addresses = pJson.getAddresses().stream()
+                            .map(a -> buildAddress(a, cityMap))
+                            .toList();
+                        client.setAddress(new ArrayList<>(addresses));
+                    }
+                    if (pJson.getContacts() != null) {
+                        List<Contact> contacts = pJson.getContacts().stream()
+                            .map(this::buildContact)
+                            .toList();
+                        client.setContact(new ArrayList<>(contacts));
+                    }
+                    client = clientRepository.save(client);
+                    clientList.add(client);
+                    person = client;
+                } else {
+                    Employee employee = new Employee();
+                    employee.setFirstName(pJson.getFirstName());
+                    employee.setLastName(pJson.getLastName());
+                    employee.setIdType(pJson.getIdType() != null ? IDType.valueOf(pJson.getIdType()) : IDType.DNI);
+                    employee.setIdNumber(pJson.getIdNumber());
+                    employee.setGender(pJson.getGender() != null ? Gender.valueOf(pJson.getGender()) : Gender.OTHER);
+                    employee.setDateOfBirth(pJson.getDateOfBirth() != null ? LocalDate.parse(pJson.getDateOfBirth()) : null);
+                    employee.setEmployeeType(pJson.getEmployeeType() != null ? EmployeeType.valueOf(pJson.getEmployeeType()) : EmployeeType.VENDOR);
+                    employee.setHireDate(pJson.getHireDate() != null ? LocalDate.parse(pJson.getHireDate()) : LocalDate.now());
+                    employee.setDeleted(false);
 
-        // ==========================================
-        // 2. 3 EMPLEADOS
-        // ==========================================
-        // Empleado 1: Carlos Gómez (Vendedor en Casa Central) - usuario: employee@gmail.com
-        Employee emp1 = new Employee();
-        emp1.setFirstName("Carlos");
-        emp1.setLastName("Gómez");
-        emp1.setIdType(IDType.DNI);
-        emp1.setIdNumber("32456789");
-        emp1.setGender(Gender.MALE);
-        emp1.setDateOfBirth(LocalDate.of(1990, 3, 15));
-        emp1.setEmployeeType(EmployeeType.VENDOR);
-        emp1.setHireDate(LocalDate.of(2021, 6, 1));
-        emp1.setOffice(new ArrayList<>(List.of(centralOffice)));
-        emp1.setDeleted(false);
+                    if (pJson.getOfficeNames() != null) {
+                        List<Office> empOffices = pJson.getOfficeNames().stream()
+                            .map(officeByName::get)
+                            .filter(Objects::nonNull)
+                            .toList();
+                        employee.setOffice(new ArrayList<>(empOffices));
+                    }
+                    if (pJson.getAddresses() != null) {
+                        List<Address> addresses = pJson.getAddresses().stream()
+                            .map(a -> buildAddress(a, cityMap))
+                            .toList();
+                        employee.setAddress(new ArrayList<>(addresses));
+                    }
+                    if (pJson.getContacts() != null) {
+                        List<Contact> contacts = pJson.getContacts().stream()
+                            .map(this::buildContact)
+                            .toList();
+                        employee.setContact(new ArrayList<>(contacts));
+                    }
+                    employee = employeeRepository.save(employee);
+                    if ("ADMIN".equalsIgnoreCase(uJson.getRole())) {
+                        adminEmployee = employee;
+                    } else {
+                        employeeList.add(employee);
+                    }
+                    person = employee;
+                }
 
-        emp1.setAddress(createAddresses(
-            Address.builder()
-                .street("Calle Las Heras")
-                .number("340")
-                .floor("PB")
-                .apartment("A")
-                .zipCode("5500")
-                .observations("Cerca de plaza Independencia")
-                .city(mendozaCity)
-                .deleted(false)
-                .build()
-        ));
-        emp1.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 261 411-2233")
-                .phoneType(PhoneType.MOBILE)
-                .contactType(ContactType.PERSONAL)
-                .observation("Celular personal")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("carlos.gomez@zeroshop.com")
-                .contactType(ContactType.WORK)
-                .observation("Correo corporativo ventas")
-                .deleted(false)
-                .build()
-        ));
-        emp1 = employeeRepository.save(emp1);
-
-        User empUser1 = new User();
-        empUser1.setUsername("employee@gmail.com");
-        empUser1.setPassword(passwordEncoder.encode("employee123"));
-        empUser1.setRole(Role.EMPLOYEE);
-        empUser1.setPerson(emp1);
-        empUser1.setDeleted(false);
-        userRepository.save(empUser1);
-
-        // Empleado 2: Lucía Fernández (Cajera en Palmares) - usuario: lucia.cajera@zeroshop.com
-        Employee emp2 = new Employee();
-        emp2.setFirstName("Lucía");
-        emp2.setLastName("Fernández");
-        emp2.setIdType(IDType.DNI);
-        emp2.setIdNumber("35123987");
-        emp2.setGender(Gender.FEMALE);
-        emp2.setDateOfBirth(LocalDate.of(1994, 8, 22));
-        emp2.setEmployeeType(EmployeeType.CASHIER);
-        emp2.setHireDate(LocalDate.of(2022, 3, 15));
-        emp2.setOffice(new ArrayList<>(List.of(palmaresOffice)));
-        emp2.setDeleted(false);
-
-        emp2.setAddress(createAddresses(
-            Address.builder()
-                .street("Av. San Martín Sur")
-                .number("2550")
-                .floor("2")
-                .apartment("4B")
-                .zipCode("5501")
-                .observations("Frente a ciclovía")
-                .city(godoyCruzCity)
-                .deleted(false)
-                .build()
-        ));
-        emp2.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 261 455-6677")
-                .phoneType(PhoneType.MOBILE)
-                .contactType(ContactType.PERSONAL)
-                .observation("Celular personal de contacto")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("lucia.fernandez@zeroshop.com")
-                .contactType(ContactType.WORK)
-                .observation("Email laboral Palmares")
-                .deleted(false)
-                .build()
-        ));
-        emp2 = employeeRepository.save(emp2);
-
-        User empUser2 = new User();
-        empUser2.setUsername("lucia.cajera@zeroshop.com");
-        empUser2.setPassword(passwordEncoder.encode("employee123"));
-        empUser2.setRole(Role.EMPLOYEE);
-        empUser2.setPerson(emp2);
-        empUser2.setDeleted(false);
-        userRepository.save(empUser2);
-
-        // Empleado 3: Marcos Sosa (Encargado de Depósito y Stock en Plaza Shopping) - usuario: marcos.deposito@zeroshop.com
-        Employee emp3 = new Employee();
-        emp3.setFirstName("Marcos");
-        emp3.setLastName("Sosa");
-        emp3.setIdType(IDType.DNI);
-        emp3.setIdNumber("29876543");
-        emp3.setGender(Gender.MALE);
-        emp3.setDateOfBirth(LocalDate.of(1988, 11, 5));
-        emp3.setEmployeeType(EmployeeType.STOCKER);
-        emp3.setHireDate(LocalDate.of(2021, 9, 10));
-        emp3.setOffice(new ArrayList<>(List.of(plazaOffice)));
-        emp3.setDeleted(false);
-
-        emp3.setAddress(createAddresses(
-            Address.builder()
-                .street("Calle Belgrano")
-                .number("820")
-                .floor("PB")
-                .apartment(null)
-                .zipCode("5519")
-                .observations("Casa con rejas blancas")
-                .city(guaymallenCity)
-                .deleted(false)
-                .build()
-        ));
-        emp3.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 261 488-9900")
-                .phoneType(PhoneType.MOBILE)
-                .contactType(ContactType.PERSONAL)
-                .observation("Celular guardia de stock")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("marcos.sosa@zeroshop.com")
-                .contactType(ContactType.WORK)
-                .observation("Logística y recepción")
-                .deleted(false)
-                .build()
-        ));
-        emp3 = employeeRepository.save(emp3);
-
-        User empUser3 = new User();
-        empUser3.setUsername("marcos.deposito@zeroshop.com");
-        empUser3.setPassword(passwordEncoder.encode("employee123"));
-        empUser3.setRole(Role.EMPLOYEE);
-        empUser3.setPerson(emp3);
-        empUser3.setDeleted(false);
-        userRepository.save(empUser3);
-
-        // ==========================================
-        // 3. 3 CLIENTES
-        // ==========================================
-        // Cliente 1: Juan Pérez - client@gmail.com
-        Client cli1 = new Client();
-        cli1.setClientNumber("CLI-0001");
-        cli1.setFirstName("Juan");
-        cli1.setLastName("Pérez");
-        cli1.setIdType(IDType.DNI);
-        cli1.setIdNumber("40123456");
-        cli1.setGender(Gender.MALE);
-        cli1.setDateOfBirth(LocalDate.of(1995, 5, 20));
-        cli1.setDeleted(false);
-
-        cli1.setAddress(createAddresses(
-            Address.builder()
-                .street("Av. Emilio Civit")
-                .number("450")
-                .floor("PB")
-                .apartment(null)
-                .zipCode("5500")
-                .observations("Casa particular frente al parque con timbre negro")
-                .city(mendozaCity)
-                .deleted(false)
-                .build(),
-            Address.builder()
-                .street("Calle Colón")
-                .number("120")
-                .floor("3")
-                .apartment("B")
-                .zipCode("5500")
-                .observations("Oficina laboral (recibir de 9:00 a 18:00 hs)")
-                .city(mendozaCity)
-                .deleted(false)
-                .build()
-        ));
-
-        cli1.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 9 261 511-2233")
-                .phoneType(PhoneType.MOBILE)
-                .contactType(ContactType.PERSONAL)
-                .observation("Celular personal con WhatsApp")
-                .deleted(false)
-                .build(),
-            ContactPhone.builder()
-                .phoneNumber("+54 261 425-9988")
-                .phoneType(PhoneType.LANDLINE)
-                .contactType(ContactType.PERSONAL)
-                .observation("Teléfono fijo del hogar")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("juan.perez@gmail.com")
-                .contactType(ContactType.PERSONAL)
-                .observation("Email de compras y notificaciones")
-                .deleted(false)
-                .build()
-        ));
-        cli1 = clientRepository.save(cli1);
-
-        User cliUser1 = new User();
-        cliUser1.setUsername("client@gmail.com");
-        cliUser1.setPassword(passwordEncoder.encode("client123"));
-        cliUser1.setRole(Role.CLIENT);
-        cliUser1.setPerson(cli1);
-        cliUser1.setDeleted(false);
-        userRepository.save(cliUser1);
-
-        // Cliente 2: María González - maria.gonzalez@gmail.com
-        Client cli2 = new Client();
-        cli2.setClientNumber("CLI-0002");
-        cli2.setFirstName("María");
-        cli2.setLastName("González");
-        cli2.setIdType(IDType.DNI);
-        cli2.setIdNumber("38999888");
-        cli2.setGender(Gender.FEMALE);
-        cli2.setDateOfBirth(LocalDate.of(1993, 10, 12));
-        cli2.setDeleted(false);
-
-        cli2.setAddress(createAddresses(
-            Address.builder()
-                .street("Calle Sarmiento")
-                .number("780")
-                .floor("PB")
-                .apartment(null)
-                .zipCode("5519")
-                .observations("Portón corredizo negro, dejar paquete con encargado")
-                .city(guaymallenCity)
-                .deleted(false)
-                .build(),
-            Address.builder()
-                .street("Av. Champagnat")
-                .number("1500")
-                .floor("Mza C")
-                .apartment("Casa 12")
-                .zipCode("5500")
-                .observations("Barrio Dalvian - Ingreso por guardia")
-                .city(mendozaCity)
-                .deleted(false)
-                .build()
-        ));
-
-        cli2.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 9 261 633-4455")
-                .phoneType(PhoneType.MOBILE)
-                .contactType(ContactType.PERSONAL)
-                .observation("Celular con WhatsApp")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("maria.gonzalez@gmail.com")
-                .contactType(ContactType.PERSONAL)
-                .observation("Email particular")
-                .deleted(false)
-                .build()
-        ));
-        cli2 = clientRepository.save(cli2);
-
-        User cliUser2 = new User();
-        cliUser2.setUsername("maria.gonzalez@gmail.com");
-        cliUser2.setPassword(passwordEncoder.encode("client123"));
-        cliUser2.setRole(Role.CLIENT);
-        cliUser2.setPerson(cli2);
-        cliUser2.setDeleted(false);
-        userRepository.save(cliUser2);
-
-        // Cliente 3: Agustín Rodríguez - agustin.rodriguez@gmail.com
-        Client cli3 = new Client();
-        cli3.setClientNumber("CLI-0003");
-        cli3.setFirstName("Agustín");
-        cli3.setLastName("Rodríguez");
-        cli3.setIdType(IDType.DNI);
-        cli3.setIdNumber("42111222");
-        cli3.setGender(Gender.MALE);
-        cli3.setDateOfBirth(LocalDate.of(1998, 2, 18));
-        cli3.setDeleted(false);
-
-        cli3.setAddress(createAddresses(
-            Address.builder()
-                .street("Calle Espejo")
-                .number("330")
-                .floor("1")
-                .apartment("2")
-                .zipCode("5500")
-                .observations("Edificio centro, tocar timbre 1B")
-                .city(mendozaCity)
-                .deleted(false)
-                .build()
-        ));
-
-        cli3.setContact(createContacts(
-            ContactPhone.builder()
-                .phoneNumber("+54 9 261 744-8899")
-                .phoneType(PhoneType.MOBILE)
-                .contactType(ContactType.PERSONAL)
-                .observation("Celular personal")
-                .deleted(false)
-                .build(),
-            ContactEmail.builder()
-                .email("agustin.rodriguez@gmail.com")
-                .contactType(ContactType.PERSONAL)
-                .observation("Email de contacto")
-                .deleted(false)
-                .build()
-        ));
-        cli3 = clientRepository.save(cli3);
-
-        User cliUser3 = new User();
-        cliUser3.setUsername("agustin.rodriguez@gmail.com");
-        cliUser3.setPassword(passwordEncoder.encode("client123"));
-        cliUser3.setRole(Role.CLIENT);
-        cliUser3.setPerson(cli3);
-        cliUser3.setDeleted(false);
-        userRepository.save(cliUser3);
+                User user = new User();
+                user.setUsername(uJson.getUsername());
+                user.setPassword(passwordEncoder.encode(uJson.getPassword()));
+                user.setRole(Role.valueOf(uJson.getRole()));
+                user.setPerson(person);
+                user.setDeleted(false);
+                userRepository.save(user);
+            }
+            log.info("Usuarios cargados con éxito ({} empleados, {} clientes).", employeeList.size() + (adminEmployee != null ? 1 : 0), clientList.size());
+        } catch (Exception e) {
+            log.error("Error al cargar users.json: {}", e.getMessage(), e);
+        }
 
         Map<String, Object> res = new HashMap<>();
-        res.put("admin", adminPerson);
-        res.put("employees", List.of(emp1, emp2, emp3));
-        res.put("clients", List.of(cli1, cli2, cli3));
+        res.put("admin", adminEmployee);
+        res.put("employees", employeeList);
+        res.put("clients", clientList);
         return res;
     }
 
+    // 7. Órdenes de Compra (a Proveedores)
     private void seedPurchaseOrders(List<Supplier> suppliers,
                                     List<Office> offices,
                                     List<Employee> employees,
                                     List<Product> products) {
-        log.info("Creando órdenes de compra a proveedores...");
+        log.info("Cargando órdenes de compra desde data/purchase_orders.json...");
+        Map<String, Supplier> supplierByName = mapSuppliersByName(suppliers);
+        Map<String, Office> officeByName = mapOfficesByName(offices);
+        Map<String, Product> productByCode = mapProductsByCode(products);
 
-        Supplier supTextil = suppliers.get(0);
-        Supplier supCalzado = suppliers.get(1);
-        Supplier supAccesorios = suppliers.get(2);
+        try {
+            InputStream is = new ClassPathResource("data/purchase_orders.json").getInputStream();
+            List<PurchaseOrderSeedJSON> list = objectMapper.readValue(is, new TypeReference<List<PurchaseOrderSeedJSON>>() {});
 
-        Office centralOffice = offices.get(0);
-        Office palmaresOffice = offices.get(1);
-        Office plazaOffice = offices.get(2);
+            for (PurchaseOrderSeedJSON poJson : list) {
+                Supplier sup = supplierByName.get(poJson.getSupplierName());
+                Office off = officeByName.get(poJson.getOfficeName());
+                Employee emp = userRepository.findByUsernameIgnoreCaseAndDeletedFalse(poJson.getEmployeeUsername())
+                    .map(u -> (Employee) u.getPerson())
+                    .orElse(employees.isEmpty() ? null : employees.get(0));
 
-        Employee carlos = employees.get(0);
-        Employee marcos = employees.get(2);
+                PurchaseOrder po = PurchaseOrder.builder()
+                    .supplier(sup)
+                    .office(off)
+                    .employee(emp)
+                    .date(LocalDateTime.now().minusDays(poJson.getDaysAgo() != null ? poJson.getDaysAgo() : 0))
+                    .status(OrderStatus.valueOf(poJson.getStatus()))
+                    .totalAmount(poJson.getTotalAmount())
+                    .deleted(false)
+                    .build();
+                po = purchaseOrderRepository.save(po);
 
-        // OC 1: Ropa de Textil Cuyana a Casa Central (Entregada)
-        PurchaseOrder po1 = PurchaseOrder.builder()
-            .supplier(supTextil)
-            .office(centralOffice)
-            .employee(carlos)
-            .date(LocalDateTime.now().minusDays(18))
-            .status(OrderStatus.DELIVERED)
-            .totalAmount(new BigDecimal("3300000.00"))
-            .deleted(false)
-            .build();
-        po1 = purchaseOrderRepository.save(po1);
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(po1)
-            .product(products.get(3)) // Buzo Hoodie
-            .quantity(50)
-            .unitPrice(new BigDecimal("34000.00"))
-            .total(new BigDecimal("1700000.00"))
-            .deleted(false)
-            .build());
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(po1)
-            .product(products.get(4)) // Remera Oversize
-            .quantity(100)
-            .unitPrice(new BigDecimal("16000.00"))
-            .total(new BigDecimal("1600000.00"))
-            .deleted(false)
-            .build());
-
-        // OC 2: Calzados a Sucursal Palmares (Pagada)
-        PurchaseOrder po2 = PurchaseOrder.builder()
-            .supplier(supCalzado)
-            .office(palmaresOffice)
-            .employee(marcos)
-            .date(LocalDateTime.now().minusDays(7))
-            .status(OrderStatus.PAID)
-            .totalAmount(new BigDecimal("3260000.00"))
-            .deleted(false)
-            .build();
-        po2 = purchaseOrderRepository.save(po2);
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(po2)
-            .product(products.get(0)) // Nike Pegasus
-            .quantity(30)
-            .unitPrice(new BigDecimal("62000.00"))
-            .total(new BigDecimal("1860000.00"))
-            .deleted(false)
-            .build());
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(po2)
-            .product(products.get(1)) // Adidas Forum
-            .quantity(20)
-            .unitPrice(new BigDecimal("70000.00"))
-            .total(new BigDecimal("1400000.00"))
-            .deleted(false)
-            .build());
-
-        // OC 3: Accesorios a Plaza Shopping (Pendiente de Entrega)
-        PurchaseOrder po3 = PurchaseOrder.builder()
-            .supplier(supAccesorios)
-            .office(plazaOffice)
-            .employee(carlos)
-            .date(LocalDateTime.now().minusDays(2))
-            .status(OrderStatus.PENDING_DELIVERY)
-            .totalAmount(new BigDecimal("1075000.00"))
-            .deleted(false)
-            .build();
-        po3 = purchaseOrderRepository.save(po3);
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(po3)
-            .product(products.get(8)) // Mochila Urbana
-            .quantity(25)
-            .unitPrice(new BigDecimal("24000.00"))
-            .total(new BigDecimal("600000.00"))
-            .deleted(false)
-            .build());
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(po3)
-            .product(products.get(9)) // Gorra Streetwear
-            .quantity(50)
-            .unitPrice(new BigDecimal("9500.00"))
-            .total(new BigDecimal("475000.00"))
-            .deleted(false)
-            .build());
+                if (poJson.getDetails() != null) {
+                    for (OrderDetailSeedJSON dJson : poJson.getDetails()) {
+                        Product prod = productByCode.get(dJson.getProductCode());
+                        orderDetailRepository.save(OrderDetail.builder()
+                            .order(po)
+                            .product(prod)
+                            .quantity(dJson.getQuantity())
+                            .unitPrice(dJson.getUnitPrice())
+                            .total(dJson.getTotal())
+                            .deleted(false)
+                            .build());
+                    }
+                }
+            }
+            log.info("Órdenes de compra cargadas con éxito ({} órdenes).", list.size());
+        } catch (Exception e) {
+            log.error("Error al cargar purchase_orders.json: {}", e.getMessage(), e);
+        }
     }
 
+    // 8. Órdenes de Venta (a Clientes)
     private void seedSaleOrders(List<Client> clients,
                                 List<Employee> employees,
                                 List<Office> offices,
                                 List<Product> products) {
-        log.info("Creando órdenes de venta a clientes con detalles y pagos...");
+        log.info("Cargando órdenes de venta desde data/sale_orders.json...");
+        Map<String, Office> officeByName = mapOfficesByName(offices);
+        Map<String, Product> productByCode = mapProductsByCode(products);
 
-        Client juan = clients.get(0);
-        Client maria = clients.get(1);
-        Client agustin = clients.get(2);
+        try {
+            InputStream is = new ClassPathResource("data/sale_orders.json").getInputStream();
+            List<SaleOrderSeedJSON> list = objectMapper.readValue(is, new TypeReference<List<SaleOrderSeedJSON>>() {});
 
-        Employee carlos = employees.get(0);
-        Employee lucia = employees.get(1);
+            for (SaleOrderSeedJSON soJson : list) {
+                Client client = userRepository.findByUsernameIgnoreCaseAndDeletedFalse(soJson.getClientUsername())
+                    .map(u -> (Client) u.getPerson())
+                    .orElse(null);
 
-        Office central = offices.get(0);
-        Office palmares = offices.get(1);
-        Office plaza = offices.get(2);
+                Employee employee = soJson.getEmployeeUsername() != null ?
+                    userRepository.findByUsernameIgnoreCaseAndDeletedFalse(soJson.getEmployeeUsername())
+                        .map(u -> (Employee) u.getPerson())
+                        .orElse(null) : null;
 
-        Address juanAddr1 = juan.getAddress().iterator().next();
-        Address juanAddr2 = juan.getAddress().stream().skip(1).findFirst().orElse(juanAddr1);
-        Address mariaAddr1 = maria.getAddress().iterator().next();
-        Address agustinAddr1 = agustin.getAddress().iterator().next();
+                Office office = soJson.getOfficeName() != null ? officeByName.get(soJson.getOfficeName()) : null;
 
-        // 1. Venta a Juan Pérez (Entregada, pagada con Tarjeta de Crédito)
-        SaleOrder so1 = SaleOrder.builder()
-            .client(juan)
-            .employee(carlos)
-            .office(central)
-            .shippingAddress(juanAddr1)
-            .date(LocalDateTime.now().minusDays(12))
-            .status(OrderStatus.DELIVERED)
-            .paymentMethod(PaymentMethod.CREDIT)
-            .totalAmount(new BigDecimal("137000.00"))
-            .deleted(false)
-            .build();
-        so1 = saleOrderRepository.save(so1);
+                Address shippingAddress = null;
+                if (client != null && soJson.getShippingAddressStreet() != null && client.getAddress() != null) {
+                    shippingAddress = client.getAddress().stream()
+                        .filter(a -> a.getStreet().toLowerCase().contains(soJson.getShippingAddressStreet().toLowerCase()))
+                        .findFirst()
+                        .orElse(client.getAddress().isEmpty() ? null : client.getAddress().iterator().next());
+                }
 
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(so1)
-            .product(products.get(0)) // Nike Pegasus ($115.000)
-            .quantity(1)
-            .unitPrice(new BigDecimal("115000.00"))
-            .total(new BigDecimal("115000.00"))
-            .deleted(false)
-            .build());
+                LocalDateTime orderDate = LocalDateTime.now().minusDays(soJson.getDaysAgo() != null ? soJson.getDaysAgo() : 0);
 
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(so1)
-            .product(products.get(9)) // Gorra Streetwear ($22.000)
-            .quantity(1)
-            .unitPrice(new BigDecimal("22000.00"))
-            .total(new BigDecimal("22000.00"))
-            .deleted(false)
-            .build());
+                SaleOrder so = SaleOrder.builder()
+                    .client(client)
+                    .employee(employee)
+                    .office(office)
+                    .shippingAddress(shippingAddress)
+                    .date(orderDate)
+                    .status(OrderStatus.valueOf(soJson.getStatus()))
+                    .paymentMethod(soJson.getPaymentMethod() != null ? PaymentMethod.valueOf(soJson.getPaymentMethod()) : null)
+                    .totalAmount(soJson.getTotalAmount())
+                    .deleted(false)
+                    .build();
+                so = saleOrderRepository.save(so);
 
-        paymentRepository.save(Payment.builder()
-            .order(so1)
-            .amount(new BigDecimal("137000.00"))
-            .date(LocalDateTime.now().minusDays(12))
-            .method(PaymentMethod.CREDIT)
-            .deleted(false)
-            .build());
+                if (soJson.getDetails() != null) {
+                    for (OrderDetailSeedJSON dJson : soJson.getDetails()) {
+                        Product prod = productByCode.get(dJson.getProductCode());
+                        orderDetailRepository.save(OrderDetail.builder()
+                            .order(so)
+                            .product(prod)
+                            .quantity(dJson.getQuantity())
+                            .unitPrice(dJson.getUnitPrice())
+                            .total(dJson.getTotal())
+                            .deleted(false)
+                            .build());
+                    }
+                }
 
-        Invoice inv1 = invoiceRepository.save(Invoice.builder()
-            .number("FC-0001-00000001")
-            .date(LocalDateTime.now().minusDays(12))
-            .totalAmount(new BigDecimal("137000.00"))
-            .status(InvoiceStatus.PAID)
-            .order(so1)
-            .deleted(false)
-            .build());
+                if (soJson.getPayment() != null) {
+                    paymentRepository.save(Payment.builder()
+                        .order(so)
+                        .amount(soJson.getPayment().getAmount())
+                        .date(LocalDateTime.now().minusDays(soJson.getPayment().getDaysAgo() != null ? soJson.getPayment().getDaysAgo() : 0))
+                        .method(PaymentMethod.valueOf(soJson.getPayment().getMethod()))
+                        .deleted(false)
+                        .build());
+                }
 
-        invoiceDetailRepository.save(InvoiceDetail.builder()
-            .invoice(inv1)
-            .product(products.get(0))
-            .quantity(1)
-            .unitPrice(new BigDecimal("115000.00"))
-            .total(new BigDecimal("115000.00"))
-            .deleted(false)
-            .build());
+                if (soJson.getInvoice() != null) {
+                    InvoiceSeedJSON invJson = soJson.getInvoice();
+                    Invoice inv = invoiceRepository.save(Invoice.builder()
+                        .number(invJson.getNumber())
+                        .date(LocalDateTime.now().minusDays(invJson.getDaysAgo() != null ? invJson.getDaysAgo() : 0))
+                        .totalAmount(invJson.getTotalAmount())
+                        .status(InvoiceStatus.valueOf(invJson.getStatus()))
+                        .order(so)
+                        .deleted(false)
+                        .build());
 
-        invoiceDetailRepository.save(InvoiceDetail.builder()
-            .invoice(inv1)
-            .product(products.get(9))
-            .quantity(1)
-            .unitPrice(new BigDecimal("22000.00"))
-            .total(new BigDecimal("22000.00"))
-            .deleted(false)
-            .build());
-
-        // 2. Venta a Juan Pérez (Pendiente de Envío, pagada con Mercado Pago)
-        SaleOrder so2 = SaleOrder.builder()
-            .client(juan)
-            .employee(lucia)
-            .office(palmares)
-            .shippingAddress(juanAddr2)
-            .date(LocalDateTime.now().minusDays(3))
-            .status(OrderStatus.PENDING_SHIPPING)
-            .paymentMethod(PaymentMethod.MERCADO_PAGO)
-            .totalAmount(new BigDecimal("68000.00"))
-            .deleted(false)
-            .build();
-        so2 = saleOrderRepository.save(so2);
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(so2)
-            .product(products.get(3)) // Buzo Hoodie ($68.000)
-            .quantity(1)
-            .unitPrice(new BigDecimal("68000.00"))
-            .total(new BigDecimal("68000.00"))
-            .deleted(false)
-            .build());
-
-        paymentRepository.save(Payment.builder()
-            .order(so2)
-            .amount(new BigDecimal("68000.00"))
-            .date(LocalDateTime.now().minusDays(3))
-            .method(PaymentMethod.MERCADO_PAGO)
-            .deleted(false)
-            .build());
-
-        Invoice inv2 = invoiceRepository.save(Invoice.builder()
-            .number("FC-0001-00000002")
-            .date(LocalDateTime.now().minusDays(3))
-            .totalAmount(new BigDecimal("68000.00"))
-            .status(InvoiceStatus.PAID)
-            .order(so2)
-            .deleted(false)
-            .build());
-
-        invoiceDetailRepository.save(InvoiceDetail.builder()
-            .invoice(inv2)
-            .product(products.get(3))
-            .quantity(1)
-            .unitPrice(new BigDecimal("68000.00"))
-            .total(new BigDecimal("68000.00"))
-            .deleted(false)
-            .build());
-
-        // 3. Venta a María González (Entregada, pagada con Débito)
-        SaleOrder so3 = SaleOrder.builder()
-            .client(maria)
-            .employee(carlos)
-            .office(central)
-            .shippingAddress(mariaAddr1)
-            .date(LocalDateTime.now().minusDays(6))
-            .status(OrderStatus.DELIVERED)
-            .paymentMethod(PaymentMethod.DEBIT)
-            .totalAmount(new BigDecimal("113000.00"))
-            .deleted(false)
-            .build();
-        so3 = saleOrderRepository.save(so3);
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(so3)
-            .product(products.get(8)) // Mochila Urbana ($49.000)
-            .quantity(1)
-            .unitPrice(new BigDecimal("49000.00"))
-            .total(new BigDecimal("49000.00"))
-            .deleted(false)
-            .build());
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(so3)
-            .product(products.get(4)) // 2 Remeras Oversize ($32.000 c/u)
-            .quantity(2)
-            .unitPrice(new BigDecimal("32000.00"))
-            .total(new BigDecimal("64000.00"))
-            .deleted(false)
-            .build());
-
-        paymentRepository.save(Payment.builder()
-            .order(so3)
-            .amount(new BigDecimal("113000.00"))
-            .date(LocalDateTime.now().minusDays(6))
-            .method(PaymentMethod.DEBIT)
-            .deleted(false)
-            .build());
-
-        Invoice inv3 = invoiceRepository.save(Invoice.builder()
-            .number("FC-0001-00000003")
-            .date(LocalDateTime.now().minusDays(6))
-            .totalAmount(new BigDecimal("113000.00"))
-            .status(InvoiceStatus.PAID)
-            .order(so3)
-            .deleted(false)
-            .build());
-
-        invoiceDetailRepository.save(InvoiceDetail.builder()
-            .invoice(inv3)
-            .product(products.get(8))
-            .quantity(1)
-            .unitPrice(new BigDecimal("49000.00"))
-            .total(new BigDecimal("49000.00"))
-            .deleted(false)
-            .build());
-
-        invoiceDetailRepository.save(InvoiceDetail.builder()
-            .invoice(inv3)
-            .product(products.get(4))
-            .quantity(2)
-            .unitPrice(new BigDecimal("32000.00"))
-            .total(new BigDecimal("64000.00"))
-            .deleted(false)
-            .build());
-
-        // 4. Venta a Agustín Rodríguez (Pendiente de Pago)
-        SaleOrder so4 = SaleOrder.builder()
-            .client(agustin)
-            .employee(null)
-            .office(plaza)
-            .shippingAddress(agustinAddr1)
-            .date(LocalDateTime.now().minusDays(1))
-            .status(OrderStatus.PENDING_PAYMENT)
-            .paymentMethod(PaymentMethod.MERCADO_PAGO)
-            .totalAmount(new BigDecimal("96000.00"))
-            .deleted(false)
-            .build();
-        so4 = saleOrderRepository.save(so4);
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(so4)
-            .product(products.get(5)) // Campera Denim ($96.000)
-            .quantity(1)
-            .unitPrice(new BigDecimal("96000.00"))
-            .total(new BigDecimal("96000.00"))
-            .deleted(false)
-            .build());
-
-        // 5. Carrito activo para Juan Pérez
-        SaleOrder soCart = SaleOrder.builder()
-            .client(juan)
-            .employee(null)
-            .office(null)
-            .shippingAddress(null)
-            .date(LocalDateTime.now())
-            .status(OrderStatus.ON_CART)
-            .totalAmount(new BigDecimal("54000.00"))
-            .deleted(false)
-            .build();
-        soCart = saleOrderRepository.save(soCart);
-
-        orderDetailRepository.save(OrderDetail.builder()
-            .order(soCart)
-            .product(products.get(6)) // Jogger Cargo ($54.000)
-            .quantity(1)
-            .unitPrice(new BigDecimal("54000.00"))
-            .total(new BigDecimal("54000.00"))
-            .deleted(false)
-            .build());
+                    if (invJson.getDetails() != null) {
+                        for (OrderDetailSeedJSON dJson : invJson.getDetails()) {
+                            Product prod = productByCode.get(dJson.getProductCode());
+                            invoiceDetailRepository.save(InvoiceDetail.builder()
+                                .invoice(inv)
+                                .product(prod)
+                                .quantity(dJson.getQuantity())
+                                .unitPrice(dJson.getUnitPrice())
+                                .total(dJson.getTotal())
+                                .deleted(false)
+                                .build());
+                        }
+                    }
+                }
+            }
+            log.info("Órdenes de venta, pagos y facturas cargados con éxito ({} órdenes).", list.size());
+        } catch (Exception e) {
+            log.error("Error al cargar sale_orders.json: {}", e.getMessage(), e);
+        }
     }
 
-    // --- DTOs internos para leer locations.json ---
+    // --- Helpers de Construcción y Mapeo de Entidades ---
+
+    private Map<String, Office> mapOfficesByName(List<Office> offices) {
+        Map<String, Office> map = new HashMap<>();
+        for (Office o : offices) {
+            if (o.getName() != null) {
+                map.putIfAbsent(o.getName(), o);
+            }
+        }
+        return map;
+    }
+
+    private Map<String, Supplier> mapSuppliersByName(List<Supplier> suppliers) {
+        Map<String, Supplier> map = new HashMap<>();
+        for (Supplier s : suppliers) {
+            if (s.getName() != null) {
+                map.putIfAbsent(s.getName(), s);
+            }
+        }
+        return map;
+    }
+
+    private Map<String, Product> mapProductsByCode(List<Product> products) {
+        Map<String, Product> map = new HashMap<>();
+        for (Product p : products) {
+            if (p.getCode() != null) {
+                map.putIfAbsent(p.getCode(), p);
+            }
+        }
+        return map;
+    }
+
+    private Address buildAddress(AddressSeedJSON aJson, Map<String, City> cityMap) {
+        City city = findCity(cityMap, aJson.getCityName());
+        return Address.builder()
+            .street(aJson.getStreet())
+            .number(aJson.getNumber())
+            .floor(aJson.getFloor())
+            .apartment(aJson.getApartment())
+            .zipCode(aJson.getZipCode())
+            .observations(aJson.getObservations())
+            .city(city)
+            .deleted(false)
+            .build();
+    }
+
+    private Contact buildContact(ContactSeedJSON cJson) {
+        if ("EMAIL".equalsIgnoreCase(cJson.getType())) {
+            return ContactEmail.builder()
+                .email(cJson.getEmail())
+                .contactType(cJson.getContactType() != null ? ContactType.valueOf(cJson.getContactType()) : ContactType.WORK)
+                .observation(cJson.getObservation())
+                .deleted(false)
+                .build();
+        } else {
+            return ContactPhone.builder()
+                .phoneNumber(cJson.getPhoneNumber())
+                .phoneType(cJson.getPhoneType() != null ? PhoneType.valueOf(cJson.getPhoneType()) : PhoneType.MOBILE)
+                .contactType(cJson.getContactType() != null ? ContactType.valueOf(cJson.getContactType()) : ContactType.PERSONAL)
+                .observation(cJson.getObservation())
+                .deleted(false)
+                .build();
+        }
+    }
+
+    // --- DTOs internos para mapear los archivos JSON de inicialización ---
 
     @Data
     public static class CountryJSON {
@@ -1570,6 +835,142 @@ public class DataInitializer implements ApplicationRunner {
     public static class CityJSON {
         private String name;
         private String code;
+    }
+
+    @Data
+    public static class CategorySeedJSON {
+        private String name;
+        private List<String> subcategories;
+    }
+
+    @Data
+    public static class OfficeSeedJSON {
+        private String name;
+        private String cuit;
+        private String type;
+        private List<AddressSeedJSON> addresses;
+        private List<ContactSeedJSON> contacts;
+    }
+
+    @Data
+    public static class SupplierSeedJSON {
+        private String name;
+        private String cuit;
+        private List<AddressSeedJSON> addresses;
+        private List<ContactSeedJSON> contacts;
+    }
+
+    @Data
+    public static class AddressSeedJSON {
+        private String street;
+        private String number;
+        private String floor;
+        private String apartment;
+        private String zipCode;
+        private String observations;
+        private String cityName;
+    }
+
+    @Data
+    public static class ContactSeedJSON {
+        private String type; // "PHONE" o "EMAIL"
+        private String phoneNumber;
+        private String phoneType;
+        private String email;
+        private String contactType;
+        private String observation;
+    }
+
+    @Data
+    public static class ProductSeedJSON {
+        private String code;
+        private String name;
+        private String description;
+        private String size;
+        private String imageUrl;
+        private String category;
+        private String subcategory;
+        private Boolean onSale;
+        private BigDecimal regularPrice;
+        private BigDecimal salePrice;
+        private String supplierName;
+        private BigDecimal costPrice;
+        private Map<String, Integer> stocks;
+    }
+
+    @Data
+    public static class UserSeedJSON {
+        private String username;
+        private String password;
+        private String role;
+        private PersonSeedJSON person;
+    }
+
+    @Data
+    public static class PersonSeedJSON {
+        private String type; // "EMPLOYEE" o "CLIENT"
+        private String clientNumber;
+        private String firstName;
+        private String lastName;
+        private String idType;
+        private String idNumber;
+        private String gender;
+        private String dateOfBirth;
+        private String employeeType;
+        private String hireDate;
+        private List<String> officeNames;
+        private List<AddressSeedJSON> addresses;
+        private List<ContactSeedJSON> contacts;
+    }
+
+    @Data
+    public static class PurchaseOrderSeedJSON {
+        private String supplierName;
+        private String officeName;
+        private String employeeUsername;
+        private Integer daysAgo;
+        private String status;
+        private BigDecimal totalAmount;
+        private List<OrderDetailSeedJSON> details;
+    }
+
+    @Data
+    public static class SaleOrderSeedJSON {
+        private String clientUsername;
+        private String employeeUsername;
+        private String officeName;
+        private String shippingAddressStreet;
+        private Integer daysAgo;
+        private String status;
+        private String paymentMethod;
+        private BigDecimal totalAmount;
+        private List<OrderDetailSeedJSON> details;
+        private PaymentSeedJSON payment;
+        private InvoiceSeedJSON invoice;
+    }
+
+    @Data
+    public static class OrderDetailSeedJSON {
+        private String productCode;
+        private Integer quantity;
+        private BigDecimal unitPrice;
+        private BigDecimal total;
+    }
+
+    @Data
+    public static class PaymentSeedJSON {
+        private BigDecimal amount;
+        private Integer daysAgo;
+        private String method;
+    }
+
+    @Data
+    public static class InvoiceSeedJSON {
+        private String number;
+        private Integer daysAgo;
+        private BigDecimal totalAmount;
+        private String status;
+        private List<OrderDetailSeedJSON> details;
     }
 
 }

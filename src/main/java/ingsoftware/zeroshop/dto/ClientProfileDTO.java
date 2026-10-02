@@ -41,5 +41,5 @@ public class ClientProfileDTO {
 
     // 4. Preferencias de Comunicación
     @Builder.Default
-    private Boolean emailPromotionsEnabled = true;
+    private Boolean emailPromotionsEnabled = false;
 }

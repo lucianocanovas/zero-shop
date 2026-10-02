@@ -1,6 +1,7 @@
 package ingsoftware.zeroshop.controller.client;
 
 import ingsoftware.zeroshop.dto.PageResult;
+import ingsoftware.zeroshop.entity.transaction.Invoice;
 import ingsoftware.zeroshop.entity.transaction.SaleOrder;
 import ingsoftware.zeroshop.enums.OrderStatus;
 import ingsoftware.zeroshop.service.transaction.PaymentService;
@@ -105,12 +106,61 @@ public class OrderController {
         model.addAttribute("details", saleOrderService.getOrderDetails(id));
         model.addAttribute("payments", paymentService.getPaymentsByOrder(id));
 
-        paymentService.getInvoiceByOrderId(id).ifPresent(invoice -> {
+        Optional<Invoice> invoiceOpt = paymentService.getInvoiceByOrderId(id);
+        if (invoiceOpt.isEmpty() && (order.getStatus() == OrderStatus.PAID 
+                || order.getStatus() == OrderStatus.PENDING_SHIPPING 
+                || order.getStatus() == OrderStatus.PENDING_DELIVERY 
+                || order.getStatus() == OrderStatus.DELIVERED)) {
+            try {
+                invoiceOpt = Optional.ofNullable(paymentService.createInvoiceForOrder(order));
+            } catch (Exception ignored) {
+            }
+        }
+
+        invoiceOpt.ifPresent(invoice -> {
             model.addAttribute("invoice", invoice);
             model.addAttribute("invoiceDetails", paymentService.getInvoiceDetails(invoice.getId()));
         });
 
         return "client/order-detail";
+    }
+
+    // GET /orders/:id/invoice: Muestra la factura de compra directamente al cliente
+    @GetMapping("/orders/{id}/invoice")
+    @Transactional(readOnly = true)
+    public String getOrderInvoice(@PathVariable("id") UUID id, Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        Optional<SaleOrder> orderOpt = saleOrderService.getOrderById(id);
+        if (orderOpt.isEmpty()) {
+            return "redirect:/orders";
+        }
+        SaleOrder order = orderOpt.get();
+
+        Optional<Invoice> invoiceOpt = paymentService.getInvoiceByOrderId(id);
+        if (invoiceOpt.isEmpty() && (order.getStatus() == OrderStatus.PAID 
+                || order.getStatus() == OrderStatus.PENDING_SHIPPING 
+                || order.getStatus() == OrderStatus.PENDING_DELIVERY 
+                || order.getStatus() == OrderStatus.DELIVERED)) {
+            try {
+                invoiceOpt = Optional.ofNullable(paymentService.createInvoiceForOrder(order));
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (invoiceOpt.isEmpty()) {
+            return "redirect:/orders/" + id;
+        }
+
+        Invoice invoice = invoiceOpt.get();
+        model.addAttribute("order", order);
+        model.addAttribute("details", saleOrderService.getOrderDetails(id));
+        model.addAttribute("invoice", invoice);
+        model.addAttribute("invoiceDetails", paymentService.getInvoiceDetails(invoice.getId()));
+
+        return "client/invoice";
     }
 
     // DELETE /orders/:id: Anula una compra
