@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,9 +47,14 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<Product> searchProducts(String search, String categoryId, String subCategory, BigDecimal maxPrice) {
+        return searchProducts(search, categoryId, subCategory, maxPrice, null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> searchProducts(String search, String categoryId, String subCategory, BigDecimal maxPrice, String sort) {
         List<Product> products = findAllActive();
 
-        return products.stream()
+        List<Product> filtered = products.stream()
             .filter(p -> {
                 // Search filter (text in name, code, description, subcategory, category)
                 if (search != null && !search.isBlank()) {
@@ -112,6 +118,27 @@ public class ProductService {
                 return true;
             })
             .toList();
+
+        // Ordenamiento resuelto en la capa de servicio
+        if ("price_asc".equalsIgnoreCase(sort)) {
+            return filtered.stream()
+                    .sorted(Comparator.comparing(p -> p.getCurrentPrice() != null ? p.getCurrentPrice() : BigDecimal.ZERO))
+                    .toList();
+        } else if ("price_desc".equalsIgnoreCase(sort)) {
+            return filtered.stream()
+                    .sorted((p1, p2) -> {
+                        BigDecimal pr1 = p1.getCurrentPrice() != null ? p1.getCurrentPrice() : BigDecimal.ZERO;
+                        BigDecimal pr2 = p2.getCurrentPrice() != null ? p2.getCurrentPrice() : BigDecimal.ZERO;
+                        return pr2.compareTo(pr1);
+                    })
+                    .toList();
+        } else if ("name_asc".equalsIgnoreCase(sort)) {
+            return filtered.stream()
+                    .sorted(Comparator.comparing(p -> p.getName() != null ? p.getName().toLowerCase() : ""))
+                    .toList();
+        }
+
+        return filtered;
     }
 
     @Transactional(readOnly = true)
@@ -254,6 +281,38 @@ public class ProductService {
             enrichProductData(product);
         }
         return products;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> findOnSaleProducts(String search, String categoryId, BigDecimal maxPrice) {
+        List<Product> onSaleProducts = findOnSaleProducts();
+        return onSaleProducts.stream()
+            .filter(p -> {
+                if (search != null && !search.trim().isBlank()) {
+                    String q = search.trim().toLowerCase();
+                    boolean matchName = p.getName() != null && p.getName().toLowerCase().contains(q);
+                    boolean matchCode = p.getCode() != null && p.getCode().toLowerCase().contains(q);
+                    boolean matchDesc = p.getDescription() != null && p.getDescription().toLowerCase().contains(q);
+                    if (!matchName && !matchCode && !matchDesc) {
+                        return false;
+                    }
+                }
+                if (categoryId != null && !categoryId.trim().isBlank()) {
+                    try {
+                        UUID catId = UUID.fromString(categoryId.trim());
+                        if (p.getCategory() == null || !catId.equals(p.getCategory().getId())) {
+                            return false;
+                        }
+                    } catch (Exception ignored) {}
+                }
+                if (maxPrice != null && maxPrice.compareTo(BigDecimal.ZERO) > 0) {
+                    if (p.getCurrentPrice() == null || p.getCurrentPrice().compareTo(maxPrice) > 0) {
+                        return false;
+                    }
+                }
+                return true;
+            })
+            .toList();
     }
 
     public PriceHistory addProductPrice(UUID productId, BigDecimal price) {
