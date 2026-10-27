@@ -6,14 +6,15 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-zero-shop}
       POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-SuperPasswordProduccion2026!}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 15s
     networks:
       - app-network
 
@@ -28,7 +29,7 @@ services:
       - DB_PORT=5432
       - DB_NAME=${DB_NAME:-zero-shop}
       - DB_USER=${DB_USER:-postgres}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD:-SuperPasswordProduccion2026!}
       - APP_BASE_URL=${APP_BASE_URL:-http://localhost}
       - MAIL_USERNAME=${MAIL_USERNAME:-}
       - MAIL_PASSWORD=${MAIL_PASSWORD:-}
