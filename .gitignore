@@ -45,7 +45,7 @@ build/
 .ROUTE_INSTRUCTIONS.md
 
 ### Application config ###
-src/main/resources/application.properties
+# src/main/resources/application.properties (tracked with environment variable defaults)
 
 ### Spring logs ###
-.log
+*.log
